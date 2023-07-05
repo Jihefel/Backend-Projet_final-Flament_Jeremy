@@ -22,16 +22,17 @@ from shop import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index ,name='home'),
-    path('cart/', views.cart ,name='cart'),
-    path('checkout/', views.checkout ,name='checkout'),
-    path('contact/', views.contact ,name='contact'),
-    path('login/', views.login ,name='login'),
-    path('products/', views.all_products ,name='all_products'),
-    path('product/<int:id>', views.product ,name='product'),
-    path('signup/', views.signup ,name='signup'),
-    path('blog/<int:id>', views.article ,name='article'),
-    path('blog/', views.blog ,name='blog'),
+    path('', views.index, name='home'),
+    path('cart/', views.cart, name='cart'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('contact/', views.contact, name='contact'),
+    path('login/', views.login, name='login'),
+    path('products/', views.all_products, name='all_products'),
+    path('product/', views.product, name='product'),
+    path('signup/', views.signup, name='signup'),
+    path('blogs/', views.article, name='article'),
+    path('blog/', views.blog, name='blog'),
+    path('test/<str:email>', views.subscribe_newsletter, name='test'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

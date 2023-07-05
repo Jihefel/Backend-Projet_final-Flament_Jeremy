@@ -35,7 +35,7 @@
                         <li><a href="products-left-sidebar.html">Shop Now!</a></li>
                         <li><a href="products-left-sidebar-2.html">Woman's</a></li>
                         <li><a href="faqs.html">FAQ's</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
                         <li><a href="customer-service.html">Customer Services</a></li>
                     </ul>
                 </div>
@@ -46,12 +46,12 @@
                     <h3>Customer Support</h3>
 
                     <ul class="customer-support">
-                        <li><a href="login.html">My Account</a></li>
-                        <li><a href="checkout.html">Checkout</a></li>
-                        <li><a href="cart.html">Cart</a></li>
-                        <li><a href="faqs.html">FAQ's</a></li>
-                        <li><a href="track-order.html">Order Tracking</a></li>
-                        <li><a href="contact.html">Help & Support</a></li>
+                        <li><a href="{% url 'home' %}">My Account</a></li>
+                        <li><a href="{% url 'checkout' %}">Checkout</a></li>
+                        <li><a href="{% url 'cart' %}">Cart</a></li>
+                        <li><a href="#">FAQ's</a></li>
+                        <li><a href="#">Order Tracking</a></li>
+                        <li><a href="{% url 'contact' %}">Help & Support</a></li>
                     </ul>
                 </div>
             </div>

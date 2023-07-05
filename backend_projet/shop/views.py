@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from .models import Pays, President
 from .forms import PaysForm, PresidentForm
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 def index(request):
@@ -52,3 +54,14 @@ def article(request):
 
 def blog(request):
     return render(request, 'shop/blog-5.html')
+
+
+def subscribe_newsletter(request, email):
+    send_mail(
+    f"{email}, thanks for your subscription to our newsletter",
+    "",
+    "jfl.jflament@gmail.com",
+    [email],
+    html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
+    )
+    return redirect('home')
