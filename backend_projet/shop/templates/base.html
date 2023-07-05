@@ -1,0 +1,18 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  {% block head %}{% endblock head %}
+</head>
+
+<body>
+  {% include "shop/components/header.html" %}
+  {% include "shop/components/navbar.html" %}
+  {% block content %}{% endblock content %}
+  {% include "shop/components/footer.html" %}
+  {% include "shop/components/scripts_js.html" %}
+</body>
+
+</html>
