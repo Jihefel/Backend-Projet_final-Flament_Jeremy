@@ -1,24 +1,145 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class Pays(models.Model):
+class Categorie(models.Model):
     nom = models.CharField(max_length=255)
-    population = models.IntegerField()
+    promo = models.BooleanField(default=False)
+    pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
 
-    def __str__(self):
-        return self.nom
+class Promotions(models.Model):
+    nom = models.CharField(max_length=255)
+    pourcentage_promo = models.PositiveIntegerField()
+    slogan = models.CharField(max_length=255)
+    description = models.TextField()
+    image_illustration = models.ImageField(upload_to='promotions/')
+    date_debut = models.DateField()
+    date_fin = models.DateField()
+    categorie_en_promo = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    produit_en_promo = models.ForeignKey('Produits', on_delete=models.CASCADE)
 
-
-class President(models.Model):
-    GENRE_CHOICES = (
-        ('M', 'Homme'),
-        ('F', 'Femme'),
+class Produits(models.Model):
+    nom = models.CharField(max_length=255)
+    image_1 = models.ImageField(upload_to='produits/')
+    image_2 = models.ImageField(upload_to='produits/')
+    image_3 = models.ImageField(upload_to='produits/')
+    image_4 = models.ImageField(upload_to='produits/')
+    image_5 = models.ImageField(upload_to='produits/')
+    image_6 = models.ImageField(upload_to='produits/')
+    marque_vendeur = models.CharField(max_length=255)
+    TYPE_CHOICES = (
+        ('gélules', 'Gélules'),
+        ('poudre', 'Poudre'),
     )
+    type = models.CharField(max_length=255, choices=TYPE_CHOICES)
+    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    description = models.TextField()
+    ingredients = models.TextField()
+    macronutriments = models.TextField()
+    variations = models.CharField(max_length=255)
+    en_promo = models.BooleanField(default=False)
+    nature_promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
+    pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
+    prix_normal = models.DecimalField(max_digits=10, decimal_places=2)
+    prix_promo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    quantite_stock = models.PositiveIntegerField()
+    review_produit = models.ForeignKey('Review', null=True, blank=True, on_delete=models.CASCADE)
+    commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
+    date_ajout_produit_db = models.DateField(auto_now_add=True)
+    date_ajout_panier_user = models.DateField(null=True, blank=True)
+    date_ajout_wishlist_user = models.DateField(null=True, blank=True)
 
+class Commentaires(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    reponse_a = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
+    produit_associe = models.ForeignKey(Produits, null=True, blank=True, on_delete=models.CASCADE)
+    blog_post_associe = models.ForeignKey('BlogPost', null=True, blank=True, on_delete=models.CASCADE)
+
+class Avatar(models.Model):
+    image_avatar = models.ImageField(upload_to='avatars/')
+    users_lies = models.ManyToManyField(User)
+
+class Tags(models.Model):
     nom = models.CharField(max_length=255)
-    age = models.IntegerField()
-    image = models.ImageField(upload_to='presidents/')
-    genre = models.CharField(max_length=1, choices=GENRE_CHOICES)
-    pays = models.ForeignKey(Pays, on_delete=models.CASCADE)
+    blog_posts_lies = models.ManyToManyField('BlogPost')
 
-    def __str__(self):
-        return self.nom
+class UserExtension(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar_lie = models.ForeignKey(Avatar, null=True, blank=True, on_delete=models.SET_NULL)
+    metiers_hobbies = models.CharField(max_length=255)
+    bio = models.TextField()
+    image_banniere_profil = models.ImageField(upload_to='bannieres/')
+    produits_panier = models.ManyToManyField(Produits, related_name='paniers')
+    produits_wishlist = models.ManyToManyField(Produits, related_name='wishlists')
+    commandes_passees = models.ManyToManyField('Commandes')
+    contacts_echanges = models.ManyToManyField('Contacts')
+    abonne_newsletter = models.BooleanField(default=False)
+
+class Group(models.Model):
+    ADMIN = 'admin'
+    MEMBRE = 'membre'
+    ROLE_CHOICES = (
+        (ADMIN, 'Admin'),
+        (MEMBRE, 'Membre'),
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=255, choices=ROLE_CHOICES)
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(UserExtension, on_delete=models.CASCADE)
+    produits_ajoutes = models.ManyToManyField(Produits)
+
+class Panier(models.Model):
+    user = models.ForeignKey(UserExtension, on_delete=models.CASCADE)
+    produit_inclus = models.ForeignKey(Produits, on_delete=models.CASCADE)
+    quantite_ajoutee = models.PositiveIntegerField()
+
+class Commandes(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_commande = models.DateField()
+    produits_commandes = models.ManyToManyField(Produits, through='ProduitsCommandes')
+    statut_commande = models.BooleanField(default=False)
+
+class ProduitsCommandes(models.Model):
+    commande = models.ForeignKey(Commandes, on_delete=models.CASCADE)
+    produit = models.ForeignKey(Produits, on_delete=models.CASCADE)
+
+class Review(models.Model):
+    note_moyenne = models.DecimalField(max_digits=2, decimal_places=1)
+    produit_ou_blogpost_lie = models.ForeignKey(Produits, on_delete=models.CASCADE, null=True, blank=True)
+
+class BlogPost(models.Model):
+    titre = models.CharField(max_length=255)
+    texte = models.TextField()
+    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    image_illustration = models.ImageField(upload_to='blogposts/')
+    date_post = models.DateField(auto_now_add=True)
+    date_modification = models.DateField(auto_now=True)
+    commentaires_lies = models.ManyToManyField(Commentaires)
+    user_auteur = models.ForeignKey(User, on_delete=models.CASCADE)
+    review_blogpost = models.ForeignKey(Review, null=True, blank=True, on_delete=models.CASCADE)
+
+class Contacts(models.Model):
+    user_auteur = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    texte = models.TextField()
+
+class InfosQDP(models.Model):
+    adresse = models.CharField(max_length=255)
+    email = models.EmailField()
+    telephone = models.CharField(max_length=20)
+    fax = models.CharField(max_length=20)
+    slogan_site = models.CharField(max_length=255)
+
+class Partenaires(models.Model):
+    nom = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to='partenaires/')
+
+class ChangePassword(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+class Newsletter(models.Model):
+    email = models.EmailField(unique=True)
+    user_associated = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+

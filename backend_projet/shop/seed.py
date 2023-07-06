@@ -1,8 +1,10 @@
 from django_seed import Seed    
 from shop.models import Pays, President
 import random
+import os
 
 def run():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend_projet.settings')
     seeder = Seed.seeder()
     
     # Seed pour le modèle Pays

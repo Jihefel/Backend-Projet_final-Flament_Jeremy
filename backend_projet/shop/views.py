@@ -1,30 +1,32 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
-from .models import Pays, President
-from .forms import PaysForm, PresidentForm
 from django.core.mail import send_mail
+from .forms import *
+from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 
 
 def index(request):
     if request.method == 'POST':
-        pays_form = PaysForm(request.POST)
-        president_form = PresidentForm(request.POST, request.FILES)
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            newsletter = form.save()
 
-        if pays_form.is_valid():
-            pays_form.save()
-            return redirect('index')
+            # Envoyer un e-mail de confirmation ou effectuer d'autres actions
+            send_mail(
+                f"{email}, thanks for your subscription to our newsletter",
+                "Admin QDP",
+                "jfl.jflament@gmail.com",
+                [email],
+                html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
+            )
 
-        if president_form.is_valid():
-            president_form.save()
-            return redirect('index')
+            return redirect('home')
     else:
-        pays_form = PaysForm()
-        president_form = PresidentForm()
+        form = NewsletterForm()
 
-    pays = Pays.objects.all()
-    presidents = President.objects.all()
-    context = locals()
+    context = {'form': form}  # Ajoutez le formulaire au contexte
     return render(request, 'shop/index.html', context)
 
 
@@ -56,12 +58,26 @@ def blog(request):
     return render(request, 'shop/blog-5.html')
 
 
-def subscribe_newsletter(request, email):
-    send_mail(
-    f"{email}, thanks for your subscription to our newsletter",
-    "",
-    "jfl.jflament@gmail.com",
-    [email],
-    html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
-    )
-    return redirect('home')
+def subscribe_newsletter(request):
+    if request.method == 'POST':
+        form = NewsletterForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            # Envoyer un e-mail de confirmation ou effectuer d'autres actions
+            send_mail(
+                "Thanks for subscribing to our newsletter",
+                "Admin QDP",
+                "jfl.jflament@gmail.com",
+                [form.cleaned_data['email']],
+                html_message=render_to_string('mails/subscribe_newsletter.html', {'email': form.cleaned_data['email']}),
+            )
+
+            return redirect('home')
+    else:
+        form = NewsletterForm()
+
+    context = {'form': form}
+    return render(request, 'shop/components/footer.html', context)
+
+    

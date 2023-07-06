@@ -32,7 +32,7 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('blogs/', views.article, name='article'),
     path('blog/', views.blog, name='blog'),
-    path('test/<str:email>', views.subscribe_newsletter, name='test'),
+    path('subscribe/', views.subscribe_newsletter, name='subscribe'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

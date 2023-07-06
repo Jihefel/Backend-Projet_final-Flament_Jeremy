@@ -63,9 +63,10 @@
                     <div class="footer-newsletter-box">
                         <p>To get the latest news and latest updates from us.</p>
 
-                        <form class="newsletter-form" data-bs-toggle="validator">
+                        <form class="newsletter-form" data-bs-toggle="validator" method="post" >
+                            {% csrf_token %}
                             <label>Your E-mail Address:</label>
-                            <input type="email" class="input-newsletter" placeholder="Enter your email" name="EMAIL" required autocomplete="off">
+                            {{ form.email }}
                             <button type="submit">Subscribe</button>
                             <div id="validator-newsletter" class="form-result"></div>
                         </form>
