@@ -37,7 +37,7 @@
                 <div class="page-title-content">
                     <h2>My Account</h2>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href="{% url 'home' %}">Home</a></li>
                         <li>Signup</li>
                     </ul>
                 </div>
@@ -51,31 +51,45 @@
                 <div class="signup-content">
                     <h2>Create an Account</h2>
 
-                    <form class="signup-form">
+                    <form class="signup-form" method="post">
+                        {% csrf_token %}
+                                    
                         <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" class="form-control" placeholder="Enter your name" id="fname" name="fname">
+                            <label for="id_username">Username</label>
+                            {{ form.username }}
+                        </div>
+                                    
+                        <div class="form-group">
+                            <label for="id_password1">Password</label>
+                            {{ form.password1 }}
+                        </div>
+                                    
+                        <div class="form-group">
+                            <label for="id_password2">Confirm password</label>
+                            {{ form.password2 }}
                         </div>
 
                         <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" class="form-control" placeholder="Enter your name" id="lname" name="lname">
+                            <label for="id_email">Email</label>
+                            {{ form_extend.email }}
                         </div>
-
+                                    
                         <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control" placeholder="Enter your name" id="name" name="name">
+                            <label for="id_first_name">First Name</label>
+                            {{ form_extend.first_name }}
                         </div>
-
+                                    
                         <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" class="form-control" placeholder="Enter your password" id="password" name="password">
+                            <label for="id_last_name">Last Name</label>
+                            {{ form_extend.last_name }}
                         </div>
-
-                        <button type="submit" class="default-btn">Signup</button>
-
+                        <button type="submit" class="default-btn">Next</button>
+                                    
                         <a href="{% url 'home' %}" class="return-store">or Return to Store</a>
                     </form>
+                    
+                    
+                    
                 </div>
             </div>
         </section>

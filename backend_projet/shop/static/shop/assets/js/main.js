@@ -443,7 +443,7 @@
             submitMSGSub(false, "Please enter your email correctly.");
         } else {
             // everything looks good!
-            event.preventDefault();
+            // event.preventDefault();
         }
     });
     function callbackFunction (resp) {
@@ -475,11 +475,6 @@
         }
         $("#validator-newsletter").removeClass().addClass(msgClasses).text(msg);
     }
-    // AJAX MailChimp
-    $(".newsletter-form").ajaxChimp({
-        url: "https://envytheme.us20.list-manage.com/subscribe/post?u=60e1ffe2e8a68ce1204cd39a5&amp;id=42d6d188d9", // Your url MailChimp
-        callback: callbackFunction
-    });
 
     // Popup Image
     $('.popup-btn').magnificPopup({

@@ -1,5 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.username
 
 class Categorie(models.Model):
     nom = models.CharField(max_length=255)
@@ -14,8 +22,8 @@ class Promotions(models.Model):
     image_illustration = models.ImageField(upload_to='promotions/')
     date_debut = models.DateField()
     date_fin = models.DateField()
-    categorie_en_promo = models.ForeignKey(Categorie, on_delete=models.CASCADE)
-    produit_en_promo = models.ForeignKey('Produits', on_delete=models.CASCADE)
+    categorie_en_promo = models.ForeignKey(Categorie, on_delete=models.CASCADE, null=True, blank=True)
+    produit_en_promo = models.ForeignKey('Produits', on_delete=models.CASCADE, null=True, blank=True)
 
 class Produits(models.Model):
     nom = models.CharField(max_length=255)
@@ -57,14 +65,29 @@ class Commentaires(models.Model):
 
 class Avatar(models.Model):
     image_avatar = models.ImageField(upload_to='avatars/')
-    users_lies = models.ManyToManyField(User)
+    users_lies = models.ManyToManyField(User, blank=True)
 
 class Tags(models.Model):
     nom = models.CharField(max_length=255)
     blog_posts_lies = models.ManyToManyField('BlogPost')
 
+class Roles(models.Model):
+    ADMIN = 'admin'
+    MEMBRE = 'membre'
+    WEB = 'webmaster'
+    STOCK = 'stock'
+    ROLE_CHOICES = (
+        (ADMIN, 'Admin'),
+        (MEMBRE, 'Membre'),
+        (WEB, 'Webmaster'),
+        (STOCK, 'Stock'),
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=255, choices=ROLE_CHOICES)
+
 class UserExtension(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.ForeignKey(Roles, blank=True, on_delete=models.SET_DEFAULT, default=2)
     avatar_lie = models.ForeignKey(Avatar, null=True, blank=True, on_delete=models.SET_NULL)
     metiers_hobbies = models.CharField(max_length=255)
     bio = models.TextField()
@@ -74,16 +97,6 @@ class UserExtension(models.Model):
     commandes_passees = models.ManyToManyField('Commandes')
     contacts_echanges = models.ManyToManyField('Contacts')
     abonne_newsletter = models.BooleanField(default=False)
-
-class Group(models.Model):
-    ADMIN = 'admin'
-    MEMBRE = 'membre'
-    ROLE_CHOICES = (
-        (ADMIN, 'Admin'),
-        (MEMBRE, 'Membre'),
-    )
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=255, choices=ROLE_CHOICES)
 
 class Wishlist(models.Model):
     user = models.ForeignKey(UserExtension, on_delete=models.CASCADE)
@@ -135,9 +148,6 @@ class InfosQDP(models.Model):
 class Partenaires(models.Model):
     nom = models.CharField(max_length=255)
     logo = models.ImageField(upload_to='partenaires/')
-
-class ChangePassword(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class Newsletter(models.Model):
     email = models.EmailField(unique=True)

@@ -65,8 +65,7 @@
 
                         <form class="newsletter-form" data-bs-toggle="validator" method="post" >
                             {% csrf_token %}
-                            <label>Your E-mail Address:</label>
-                            {{ form.email }}
+                            {{ newsletter_form }}
                             <button type="submit">Subscribe</button>
                             <div id="validator-newsletter" class="form-result"></div>
                         </form>

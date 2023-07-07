@@ -30,7 +30,7 @@
 {% endblock head %}
 
     {% block content %}
-        
+
         <!-- Start Page Title -->
         <div class="page-title-area">
             <div class="container">
@@ -38,51 +38,34 @@
                     <h2>My Account</h2>
                     <ul>
                         <li><a href="{% url 'home' %}">Home</a></li>
-                        <li>Login</li>
+                        <li>Signup</li>
                     </ul>
                 </div>
             </div>
         </div>
         <!-- End Page Title -->
 
-        <!-- Start Login Area -->
-        <section class="login-area ptb-100">
+        <!-- Start SignUP Area -->
+        <section class="signup-area ptb-100">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="login-content">
-                            <h2>Login</h2>
+                <div class="signup-content">
+                    <h2>Create an Account</h2>
 
-                            <form class="login-form" method="post">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Username" name="username">
-                                </div>
+                    <form class="signup-form" method="post" enctype="multipart/form-data">
 
-                                <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Password" name="password">
-                                </div>
-
-                                <button type="submit" class="default-btn">Login</button>
-
-                                <a href="#" class="forgot-password">Lost your password?</a>
-                            </form>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form }}
                         </div>
-                    </div>
 
-                    <div class="col-lg-6 col-md-6">
-                        <div class="new-customer-content">
-                            <h2>New Customer</h2>
-
-                            <span>Create A Account</span>
-                            <p>Sign up for a free account at our store. Registration is quick and easy. It allows you to be able to order from our shop. To start shopping click register.</p>
-                            <a href="{% url 'signup' %}" class="optional-btn">Create A Account</a>
-                        </div>
-                    </div>
+                        <button type="submit" class="default-btn mt-4">Signup</button>
+                    
+                        <a href="{% url 'home' %}" class="return-store">or Return to Store</a>
+                    </form>
                 </div>
             </div>
         </section>
-        <!-- End Login Area -->
+        <!-- End SignUP Area -->
 
         <!-- Start Facility Area -->
         <section class="facility-area pb-70">

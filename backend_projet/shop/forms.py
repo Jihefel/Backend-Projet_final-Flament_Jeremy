@@ -1,6 +1,16 @@
 from django import forms
-from django.contrib.auth.models import User
-from .models import *
+from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Avatar, Commentaires, Roles, UserExtension, Tags, Review, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
+from django import forms
+
+
+class RegistrationForm(forms.ModelForm):
+    password1 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2', 'first_name', 'last_name', 'email']
+
 
 class CategorieForm(forms.ModelForm):
     class Meta:
@@ -43,9 +53,9 @@ class UserExtensionForm(forms.ModelForm):
         model = UserExtension
         fields = ['user', 'avatar_lie', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'produits_panier', 'produits_wishlist', 'commandes_passees', 'contacts_echanges', 'abonne_newsletter']
 
-class GroupForm(forms.ModelForm):
+class RolesForm(forms.ModelForm):
     class Meta:
-        model = Group
+        model = Roles
         fields = ['user', 'role']
 
 class PanierForm(forms.ModelForm):
@@ -89,17 +99,22 @@ class PartenairesForm(forms.ModelForm):
         model = Partenaires
         fields = ['nom', 'logo']
 
-class ChangePasswordForm(forms.ModelForm):
-    class Meta:
-        model = ChangePassword
-        fields = ['user']
-
 class NewsletterForm(forms.ModelForm):
+    email = forms.EmailField(label='Your E-mail Address:', widget=forms.EmailInput(attrs={'class': 'input-newsletter', 'placeholder': 'Enter your email', 'required': True, 'autocomplete': 'off'}))
+    
     class Meta:
         model = Newsletter
         fields = ['email']
+
+class SignupForm2(forms.ModelForm):
+    avatar_lie = forms.ModelChoiceField(queryset=Avatar.objects.all(), widget=forms.RadioSelect, required=False)
+    
+    class Meta:
+        model = UserExtension
+        fields = ['avatar_lie', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'abonne_newsletter']
         widgets = {
-            'email': forms.EmailInput(attrs={'class': 'input-newsletter', 'placeholder': 'Enter your email', 'required': True, 'autocomplete': 'off'})
+            'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your jobs or hobbies'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Introduce yourself', 'rows': 4}),
+            'image_banniere_profil': forms.ClearableFileInput(attrs={'class': 'form-control', 'type': 'file'}),
+            'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
-
-

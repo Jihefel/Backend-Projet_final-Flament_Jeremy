@@ -26,13 +26,13 @@ urlpatterns = [
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('contact/', views.contact, name='contact'),
-    path('login/', views.login, name='login'),
+    path('login/', views.connection, name='login'),
     path('products/', views.all_products, name='all_products'),
     path('product/', views.product, name='product'),
     path('signup/', views.signup, name='signup'),
+    path('signup2/', views.signup2, name='signup2'),
     path('blogs/', views.article, name='article'),
     path('blog/', views.blog, name='blog'),
-    path('subscribe/', views.subscribe_newsletter, name='subscribe'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
