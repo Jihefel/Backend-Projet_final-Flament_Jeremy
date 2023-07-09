@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
 
-AUTH_USER_MODEL = 'shop.User'
 
 MESSAGE_TAGS = {
         messages.DEBUG: 'alert-secondary',
@@ -70,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend_projet.accessRestrictionMiddleware.AccessRestrictionMiddleware'
 ]
 
 ROOT_URLCONF = 'backend_projet.urls'
@@ -150,3 +150,5 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'shop.User'

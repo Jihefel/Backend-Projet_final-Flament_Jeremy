@@ -63,9 +63,9 @@
                     <div class="footer-newsletter-box">
                         <p>To get the latest news and latest updates from us.</p>
 
-                        <form class="newsletter-form" data-bs-toggle="validator" method="post" >
+                        <form class="newsletter-form" data-bs-toggle="validator" method="post">
                             {% csrf_token %}
-                            {{ newsletter_form }}
+                            {% if not user.abonne_newsletter %}{{ newsletter_form }} {% else %}<input type="text" disabled class="input-newsletter" placeholder="You already subscribed to newsletter" />{% endif %}
                             <button type="submit">Subscribe</button>
                             <div id="validator-newsletter" class="form-result"></div>
                         </form>

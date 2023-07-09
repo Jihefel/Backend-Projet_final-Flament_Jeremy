@@ -1,6 +1,7 @@
 from django import forms
-from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Avatar, Commentaires, Roles, UserExtension, Tags, Review, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
+from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Avatar, Commentaires, Roles, Tags, Review, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 class RegistrationForm(forms.ModelForm):
@@ -9,7 +10,37 @@ class RegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'first_name', 'last_name', 'email']
+        fields = ['username', 'password1', 'password2', 'email', 'first_name', 'last_name']
+
+class BootstrapUserCreationForm(RegistrationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter your username'})
+        self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter your password'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm your password'})
+        self.fields['email'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter your email address'})
+        self.fields['first_name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter your first name'})
+        self.fields['last_name'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Enter your last name'})
+
+class SignupForm(forms.Form):
+    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}))
+    last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
+
+class EditProfileForm(forms.ModelForm):
+    metiers_hobbies = forms.CharField(label="Jobs or hobbies", widget=forms.TextInput(attrs={'class': 'form-control'}))
+    class Meta:
+        model = User
+        fields = ['image_banniere_profil', 'avatar_lie', 'first_name', 'last_name', 'email', 'username', 'metiers_hobbies', 'bio' ]
+        widgets = {
+            'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'avatar_lie': forms.Select(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
 
 
 class CategorieForm(forms.ModelForm):
@@ -41,22 +72,16 @@ class WishlistForm(forms.ModelForm):
 class AvatarForm(forms.ModelForm):
     class Meta:
         model = Avatar
-        fields = ['image_avatar', 'users_lies']
-
+        fields = ['image_avatar']
 class TagsForm(forms.ModelForm):
     class Meta:
         model = Tags
         fields = ['nom', 'blog_posts_lies']
 
-class UserExtensionForm(forms.ModelForm):
-    class Meta:
-        model = UserExtension
-        fields = ['user', 'avatar_lie', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'produits_panier', 'produits_wishlist', 'commandes_passees', 'contacts_echanges', 'abonne_newsletter']
-
 class RolesForm(forms.ModelForm):
     class Meta:
         model = Roles
-        fields = ['user', 'role']
+        fields = ['role']
 
 class PanierForm(forms.ModelForm):
     class Meta:
@@ -110,7 +135,7 @@ class SignupForm2(forms.ModelForm):
     avatar_lie = forms.ModelChoiceField(queryset=Avatar.objects.all(), widget=forms.RadioSelect, required=False)
     
     class Meta:
-        model = UserExtension
+        model = User
         fields = ['avatar_lie', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'abonne_newsletter']
         widgets = {
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your jobs or hobbies'}),
@@ -118,3 +143,9 @@ class SignupForm2(forms.ModelForm):
             'image_banniere_profil': forms.ClearableFileInput(attrs={'class': 'form-control', 'type': 'file'}),
             'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

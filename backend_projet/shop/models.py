@@ -1,10 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+    
+class Roles(models.Model):
+    ADMIN = 'admin'
+    MEMBRE = 'membre'
+    WEB = 'webmaster'
+    STOCK = 'stock'
+    ROLE_CHOICES = (
+        (ADMIN, 'Admin'),
+        (MEMBRE, 'Membre'),
+        (WEB, 'Webmaster'),
+        (STOCK, 'Stock'),
+    )
+    role = models.CharField(max_length=255, choices=ROLE_CHOICES)
+
+
 class User(AbstractUser):
+    username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
+    role = models.ManyToManyField(Roles, default=2)
+    avatar_lie = models.ForeignKey('Avatar', null=True, blank=True, on_delete=models.SET_NULL)
+    metiers_hobbies = models.CharField(max_length=255, null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    image_banniere_profil = models.ImageField(upload_to='bannieres/', null=True, blank=True)
+    produits_panier = models.ManyToManyField('Produits', related_name='paniers')
+    produits_wishlist = models.ManyToManyField('Produits', related_name='wishlists')
+    commandes_passees = models.ManyToManyField('Commandes',related_name='commandes')
+    contacts_echanges = models.ManyToManyField('Contacts', related_name='contacts')
+    abonne_newsletter = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
@@ -65,45 +91,17 @@ class Commentaires(models.Model):
 
 class Avatar(models.Model):
     image_avatar = models.ImageField(upload_to='avatars/')
-    users_lies = models.ManyToManyField(User, blank=True)
 
 class Tags(models.Model):
     nom = models.CharField(max_length=255)
     blog_posts_lies = models.ManyToManyField('BlogPost')
-
-class Roles(models.Model):
-    ADMIN = 'admin'
-    MEMBRE = 'membre'
-    WEB = 'webmaster'
-    STOCK = 'stock'
-    ROLE_CHOICES = (
-        (ADMIN, 'Admin'),
-        (MEMBRE, 'Membre'),
-        (WEB, 'Webmaster'),
-        (STOCK, 'Stock'),
-    )
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=255, choices=ROLE_CHOICES)
-
-class UserExtension(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.ForeignKey(Roles, blank=True, on_delete=models.SET_DEFAULT, default=2)
-    avatar_lie = models.ForeignKey(Avatar, null=True, blank=True, on_delete=models.SET_NULL)
-    metiers_hobbies = models.CharField(max_length=255)
-    bio = models.TextField()
-    image_banniere_profil = models.ImageField(upload_to='bannieres/')
-    produits_panier = models.ManyToManyField(Produits, related_name='paniers')
-    produits_wishlist = models.ManyToManyField(Produits, related_name='wishlists')
-    commandes_passees = models.ManyToManyField('Commandes')
-    contacts_echanges = models.ManyToManyField('Contacts')
-    abonne_newsletter = models.BooleanField(default=False)
-
+    
 class Wishlist(models.Model):
-    user = models.ForeignKey(UserExtension, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     produits_ajoutes = models.ManyToManyField(Produits)
 
 class Panier(models.Model):
-    user = models.ForeignKey(UserExtension, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     produit_inclus = models.ForeignKey(Produits, on_delete=models.CASCADE)
     quantite_ajoutee = models.PositiveIntegerField()
 
