@@ -14,14 +14,15 @@ class Roles(models.Model):
         (STOCK, 'Stock'),
     )
     role = models.CharField(max_length=255, choices=ROLE_CHOICES)
-
+    def __str__(self):
+        return self.get_role_display()
 
 class User(AbstractUser):
     username = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
-    role = models.ManyToManyField(Roles, default=2)
+    role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, default=2)
     avatar_lie = models.ForeignKey('Avatar', null=True, blank=True, on_delete=models.SET_NULL)
     metiers_hobbies = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
@@ -149,5 +150,5 @@ class Partenaires(models.Model):
 
 class Newsletter(models.Model):
     email = models.EmailField(unique=True)
-    user_associated = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    user_associated = models.ManyToManyField(User, blank=True)
 

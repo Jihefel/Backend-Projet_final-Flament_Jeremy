@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from admin import views as admin_views
 
 urlpatterns = [
     path('', views.index, name='home'),
@@ -18,4 +19,5 @@ urlpatterns = [
     path('signup2/', views.signup2, name='signup2'),
     path('blogs/', views.article, name='article'),
     path('blog/', views.blog, name='blog'),
+    path('admin/', admin_views.admin_home, name='admin_home'),
 ]

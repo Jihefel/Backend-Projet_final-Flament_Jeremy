@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 
+
 def index(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -16,6 +17,10 @@ def index(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
 
         
     # Form newsletter
@@ -51,6 +56,9 @@ def account(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Infos du site
+    infos = InfosQDP.objects.first()
     
     context = locals()
     return render(request, 'shop/my_account.html', context)
@@ -63,6 +71,10 @@ def edit_account(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
 
     if request.method == "POST":
         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
@@ -94,6 +106,10 @@ def direct_newsletter_subscription(request):
 
 
 def cart(request):
+
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
@@ -120,6 +136,10 @@ def cart(request):
     return render(request, 'shop/cart.html', context)
 
 def checkout(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
@@ -146,6 +166,10 @@ def checkout(request):
     return render(request, 'shop/checkout.html', context)
 
 def contact(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -179,6 +203,10 @@ def contact(request):
     return render(request, 'shop/contact.html', context)
 
 def connection(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -192,13 +220,13 @@ def connection(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f"Bienvenue {user.username}")
+                messages.success(request, f"Welcome {user.username}")
                 return redirect('home')
             else:
                 if not username in User.objects.all():
-                    messages.error(request, "Compte inconnu.")
+                    messages.error(request, "Unknown account.")
                 else :
-                    messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+                    messages.error(request, "Username or password incorrect.")
                 
                 context = locals()
                 return render(request, 'shop/login.html', context)
@@ -213,6 +241,10 @@ def deconnection(request):
 
 @login_required(login_url = 'connexion')
 def change_password(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -242,6 +274,10 @@ def change_password(request):
     return render(request, 'shop/change_password.html', context)
 
 def all_products(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -275,6 +311,10 @@ def all_products(request):
     return render(request, 'shop/products-left-sidebar-2.html', context)
 
 def product(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -308,6 +348,10 @@ def product(request):
     return render(request, 'shop/products-type-1.html', context)
 
 def signup(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -318,7 +362,7 @@ def signup(request):
     if request.method == 'POST':
         form = BootstrapUserCreationForm(request.POST)
 
-        if form.is_valid() and form.is_valid():
+        if form.is_valid():
             user = form.save(commit=False)
             user.username = form.cleaned_data['username']
             user.first_name = form.cleaned_data['first_name']
@@ -329,18 +373,25 @@ def signup(request):
             first_user = User.objects.first()
             new_user = User.objects.last()
             if first_user == new_user:
-                first_user.role.set([Roles.objects.get(role='admin')])
+                role = Roles.objects.get(id=1)
+                first_user.role = role
                 first_user.is_superuser = True
                 first_user.is_staff = True
                 first_user.save()
             else:
-                new_user.role.set([Roles.objects.get(role='membre')])
+                role = Roles.objects.get(id=2)
+                new_user.role = role
                 new_user.save()
 
             return redirect('signup2')
 
         else:
-            messages.error(request, "Something went wrong.")
+            if User.objects.filter(email=request.POST['email']).exists():
+                messages.error(request, "Email already used.")
+            elif User.objects.filter(username=request.POST['username']).exists():
+                messages.error(request, "Username already used.")
+            else:
+                messages.error(request, "Something went wrong.")
 
     else:
         newsletter_form = NewsletterForm()
@@ -352,6 +403,10 @@ def signup(request):
 # ...
 
 def signup2(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -366,6 +421,14 @@ def signup2(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your account has been created. Please now log in.")
+            user = User.objects.last()
+            send_mail(
+            f"{user.first_name}, thanks for joining QDP",
+            "",
+            "jfl.jflament@gmail.com",
+            [user.email],
+            html_message=render_to_string('mails/account_created.html', {'user': user}),
+            )
             return redirect('login')
     else:
         form = SignupForm2()
@@ -375,6 +438,10 @@ def signup2(request):
     return render(request, 'shop/signup2.html', context)
 
 def article(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -408,6 +475,10 @@ def article(request):
     return render(request, 'shop/single-blog-1.html', context)
 
 def blog(request):
+    
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     role_id_admin = 1
     role_id_membre = 2
     

@@ -8,11 +8,11 @@
                     <h3>About The Store</h3>
 
                     <div class="about-the-store">
-                        <p>One of the most popular on the web is shopping.</p>
+                        <p>{{ infos.slogan_site }}</p>
                         <ul class="footer-contact-info">
-                            <li><i class='bx bx-map'></i> <a href="#" target="_blank">Wonder Street, USA, New York</a></li>
-                            <li><i class='bx bx-phone-call'></i> <a href="tel:+01321654214">+01 321 654 214</a></li>
-                            <li><i class='bx bx-envelope'></i> <a href="mailto:hello@xton.com">hello@xton.com</a></li>
+                            <li><i class='bx bx-map'></i> <a href="#" target="_blank">{{ infos.adresse }}</a></li>
+                            <li><i class='bx bx-phone-call'></i> <a href="tel:{{ infos.telephone }}">{{ infos.telephone }}</a></li>
+                            <li><i class='bx bx-envelope'></i> <a href="mailto:{{ infos.email }}">{{ infos.email }}</a></li>
                         </ul>
                     </div>
 
@@ -66,7 +66,7 @@
                         <form class="newsletter-form" data-bs-toggle="validator" method="post">
                             {% csrf_token %}
                             {% if not user.abonne_newsletter %}{{ newsletter_form }} {% else %}<input type="text" disabled class="input-newsletter" placeholder="You already subscribed to newsletter" />{% endif %}
-                            <button type="submit">Subscribe</button>
+                            {% if not user.abonne_newsletter %}<button type="submit">Subscribe</button>{% else %}<button type="submit" disabled>Subscribe</button>{% endif %}
                             <div id="validator-newsletter" class="form-result"></div>
                         </form>
                     </div>

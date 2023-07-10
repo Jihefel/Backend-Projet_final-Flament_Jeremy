@@ -1,0 +1,36 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="py-5 px-5 my-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="list-group">
+                    <div class="btn-group">
+                        <a href="{% url 'custom_admin:infos_site' %}" class="default-btn text-center w-100">
+                          Infos site
+                        </a>
+                    </div>
+
+                    <div class="btn-group dropend">
+                        <a href="{% url 'custom_admin:members_all' %}" class="btn default-btn w-100">Members</a>
+                        <button type="button" class="btn optional-btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                          <span class="visually-hidden">Toggle Dropend</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'custom_admin:members_create' %}"> Create</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 text-center px-5">
+                <i class="fa-solid fa-screwdriver-wrench display-2 mb-4"></i>
+                <h1 class="display-5 fw-bold">Panneau d'administration</h1>
+                <p class="lead mb-4">
+                    Bienvenue dans notre panneau d'administration ! Ici, vous pouvez facilement ajouter des articles ou des projets pour mettre à jour le contenu de notre site. Profitez d'une interface conviviale pour saisir les détails essentiels tels que les titres, descriptions et images associées. Restez en contrôle total de votre contenu en quelques clics.
+                </p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock admincontent %}

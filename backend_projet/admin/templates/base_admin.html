@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Links of CSS files -->
+        <link rel="stylesheet" href="{% static 'shop/assets/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/animate.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/boxicons.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/flaticon.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/magnific-popup.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/nice-select.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/slick.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/owl.carousel.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/meanmenu.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/rangeSlider.min.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/dark.css' %}">
+        <link rel="stylesheet" href="{% static 'shop/assets/css/responsive.css' %}">
+
+        <title>QDP - Que d'la poudre</title>
+
+        <link rel="icon" type="image/png" href="{% static 'shop/assets/img/favicon.png' %}">
+        <script src="https://kit.fontawesome.com/508b7484b8.js"
+                crossorigin="anonymous"></script>
+        <title>Admin Dashboard</title>
+    </head>
+    <body>
+        {% include "shop/components/messages.html" %}
+        {% include "admin/components/admin_navbar.html" %}
+            {% block admincontent %}
+            {% endblock admincontent %}
+    </body>
+</html>

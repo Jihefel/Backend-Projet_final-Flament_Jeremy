@@ -42,6 +42,54 @@ class EditProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
+class UserCreationForm(forms.ModelForm):
+    role = forms.ModelChoiceField(
+        queryset=Roles.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        to_field_name='role',
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        help_text="Enter a strong password."
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar_lie', 'metiers_hobbies', 'bio', 'abonne_newsletter']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'avatar_lie': forms.Select(attrs={'class': 'form-control'}),
+            'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+class UserUpdateForm(forms.ModelForm):
+    role = forms.ModelChoiceField(
+        queryset=Roles.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        to_field_name='role',
+    )
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar_lie', 'metiers_hobbies', 'bio', 'abonne_newsletter']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'avatar_lie': forms.Select(attrs={'class': 'form-control'}),
+            'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
+        }
+
 
 class CategorieForm(forms.ModelForm):
     class Meta:
@@ -115,9 +163,18 @@ class ContactsForm(forms.ModelForm):
         fields = ['user_auteur', 'name', 'email', 'texte']
 
 class InfosQDPForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['adresse'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Adresse'})
+        self.fields['email'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Email'})
+        self.fields['telephone'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Téléphone'})
+        self.fields['fax'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Fax'})
+        self.fields['slogan_site'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Slogan du site'})
+
     class Meta:
         model = InfosQDP
         fields = ['adresse', 'email', 'telephone', 'fax', 'slogan_site']
+
 
 class PartenairesForm(forms.ModelForm):
     class Meta:

@@ -22,5 +22,13 @@ def run():
             'role': lambda x, roles_iter=itertools.cycle(roles): next(roles_iter),
         },
     )
+
+    seeder.add_entity(InfosQDP, 1, {
+        'adresse': 'Wonder Street, USA, New York',
+        'email': 'hello@xton.com',
+        'telephone': '+01 321 654 214',
+        'fax': '+123456789',
+        'slogan_site': 'One of the most popular on the web is shopping. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+    })
     inserted_pks = seeder.execute()
     print(inserted_pks)
