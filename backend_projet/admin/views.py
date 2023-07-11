@@ -26,16 +26,6 @@ def infos_site(request):
 def members_all(request):
     members = User.objects.all()
     
-    # for member in members:
-    #     if member.role.filter(id=1).exists():
-    #         member.role_id = 1
-    #     elif member.role.filter(id=3).exists():
-    #         member.role_id = 3
-    #     elif member.role.filter(id=4).exists():
-    #         member.role_id = 4
-    #     else:
-    #         member.role_id = 2
-    
     context = locals()
     return render(request, 'admin/pages/members/all.html', context)
 
@@ -73,13 +63,39 @@ def members_update(request, id):
             messages.success(request, f"Member {member.username} successfully updated.")
             return redirect('custom_admin:members_all')
     else:
-        form = UserUpdateForm(instance=member)
+        # Initialiser le champ "role" avec la valeur actuelle de l'utilisateur
+        initial_data = {'role': member.role}
+        form = UserUpdateForm(instance=member, initial=initial_data)
     
     context = locals()
     return render(request, 'admin/pages/members/update.html', context)
 
 def members_show(request, id):
     member = User.objects.get(id=id)
-    
+
     context = locals()
     return render(request, 'admin/pages/members/show.html', context)
+
+
+# AVATARS
+
+def avatars_all(request):
+    avatars = Avatar.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/avatars/all.html', context)
+
+def avatars_create(request):
+    avatars = Avatar.objects.all()
+    
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Avatar successfully created.")
+            return redirect('custom_admin:avatars_all')
+    else:
+        form = AvatarForm()
+    
+    context = locals()
+    return render(request, 'admin/pages/avatars/create.html', context)

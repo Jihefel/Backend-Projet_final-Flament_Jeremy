@@ -120,7 +120,7 @@ class WishlistForm(forms.ModelForm):
 class AvatarForm(forms.ModelForm):
     class Meta:
         model = Avatar
-        fields = ['image_avatar']
+        fields = ['image_avatar', 'name']
 class TagsForm(forms.ModelForm):
     class Meta:
         model = Tags

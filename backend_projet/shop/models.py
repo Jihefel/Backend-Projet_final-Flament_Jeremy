@@ -22,7 +22,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
     email = models.EmailField(unique=True)
-    role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, default=2)
+    role = models.ForeignKey(Roles, on_delete=models.SET_NULL, null=True, blank=True, default=2)
     avatar_lie = models.ForeignKey('Avatar', null=True, blank=True, on_delete=models.SET_NULL)
     metiers_hobbies = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
@@ -92,6 +92,9 @@ class Commentaires(models.Model):
 
 class Avatar(models.Model):
     image_avatar = models.ImageField(upload_to='avatars/')
+    name = models.CharField(max_length=255, null=True)
+    def __str__(self):
+        return self.name
 
 class Tags(models.Model):
     nom = models.CharField(max_length=255)
