@@ -104,8 +104,7 @@ class PromotionsForm(forms.ModelForm):
 class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
-        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'variations', 'en_promo', 'nature_promo', 'pourcentage_promo', 'prix_normal', 'prix_promo', 'quantite_stock', 'review_produit', 'commentaire', 'date_ajout_produit_db', 'date_ajout_panier_user', 'date_ajout_wishlist_user']
-        exclude = ['date_ajout_produit_db']
+        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'quantite_stock', 'prix','description', 'ingredients', 'macronutriments', 'variations', 'en_promo', 'nature_promo', 'pourcentage_promo']
 
 class CommentairesForm(forms.ModelForm):
     class Meta:

@@ -1,15 +1,22 @@
 <div class="col-lg-3">
     <div class="list-group">
+        {% if is_membre %}
         <div class="btn-group">
-            <a href="{% url 'custom_admin:infos_site' %}" class="default-btn text-center w-100">
-              Infos site
+            <a href="{% url 'custom_admin:members_all' %}" class="default-btn text-center w-100">
+                Members
             </a>
         </div>
-
+        {% else %}
+        <div class="btn-group">
+            <a href="{% url 'custom_admin:infos_site' %}" class="default-btn text-center w-100">
+                Infos site
+            </a>
+        </div>
+        
         <div class="btn-group dropend">
             <a href="{% url 'custom_admin:members_all' %}" class="btn default-btn w-100">Members</a>
             <button type="button" class="btn optional-btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-              <span class="visually-hidden">Toggle Dropend</span>
+                <span class="visually-hidden">Toggle Dropend</span>
             </button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'custom_admin:members_create' %}"> Create</a></li>
@@ -17,13 +24,14 @@
         </div>
         
         <div class="btn-group dropend">
-            <a href="" class="btn default-btn w-100">Products</a>
+            <a href="{% url 'custom_admin:products_all' %}" class="btn default-btn w-100">Products</a>
             <button type="button" class="btn optional-btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-              <span class="visually-hidden">Toggle Dropend</span>
+                <span class="visually-hidden">Toggle Dropend</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href=""> Create</a></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:products_create' %}"> Create</a></li>
             </ul>
         </div>
+        {% endif %}
     </div>
 </div>

@@ -1,0 +1,19 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <dl>
+            <div>
+                <dt>Name</dt>
+                <dd>
+                    {{ product.nom }}
+                </dd>
+            </div>
+            <div>
+                <dt>Price</dt>
+                <dd>
+                    {{ product.prix }} €
+                </dd>
+            </div>
+        </dl>
+    </div>
+{% endblock admincontent %}

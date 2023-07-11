@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+import os
     
 class Roles(models.Model):
     ADMIN = 'admin'
@@ -27,19 +27,35 @@ class User(AbstractUser):
     metiers_hobbies = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     image_banniere_profil = models.ImageField(upload_to='bannieres/', null=True, blank=True)
-    produits_panier = models.ManyToManyField('Produits', related_name='paniers')
-    produits_wishlist = models.ManyToManyField('Produits', related_name='wishlists')
-    commandes_passees = models.ManyToManyField('Commandes',related_name='commandes')
-    contacts_echanges = models.ManyToManyField('Contacts', related_name='contacts')
+    produits_panier = models.ManyToManyField('Produits', related_name='paniers', blank=True)
+    produits_wishlist = models.ManyToManyField('Produits', related_name='wishlists', blank=True)
+    commandes_passees = models.ManyToManyField('Commandes',related_name='commandes', blank=True)
+    contacts_echanges = models.ManyToManyField('Contacts', related_name='contacts', blank=True)
     abonne_newsletter = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
 
 class Categorie(models.Model):
-    nom = models.CharField(max_length=255)
+    PROTEINES = 'proteines'
+    ACIDES_AMINES = 'acides_amines'
+    VITAMINES = 'vitamines'
+    COMPLEMENTS = 'complements'
+    BRULEURS_DE_GRAISSES = 'bruleurs_de_graisses'
+    
+    CATEGORIE_CHOICES = (
+        (PROTEINES, 'Protéines'),
+        (ACIDES_AMINES, 'Acides Aminés'),
+        (VITAMINES, 'Vitamines'),
+        (COMPLEMENTS, 'Compléments'),
+        (BRULEURS_DE_GRAISSES, 'Brûleurs de Graisses'),
+    )
+    
+    nom = models.CharField(max_length=255, choices=CATEGORIE_CHOICES)
     promo = models.BooleanField(default=False)
     pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
+    def __str__(self):
+        return self.nom
 
 class Promotions(models.Model):
     nom = models.CharField(max_length=255)
@@ -52,15 +68,37 @@ class Promotions(models.Model):
     categorie_en_promo = models.ForeignKey(Categorie, on_delete=models.CASCADE, null=True, blank=True)
     produit_en_promo = models.ForeignKey('Produits', on_delete=models.CASCADE, null=True, blank=True)
 
+
+
+def upload_to_product(instance, filename):
+    # Récupérer l'ID du produit
+    product_id = instance.id
+
+    # Construire le chemin d'upload avec l'ID du produit
+    upload_path = f"produits/{product_id}/{filename}"
+
+    return upload_path
+
 class Produits(models.Model):
     nom = models.CharField(max_length=255)
-    image_1 = models.ImageField(upload_to='produits/')
-    image_2 = models.ImageField(upload_to='produits/')
-    image_3 = models.ImageField(upload_to='produits/')
-    image_4 = models.ImageField(upload_to='produits/')
-    image_5 = models.ImageField(upload_to='produits/')
-    image_6 = models.ImageField(upload_to='produits/')
-    marque_vendeur = models.CharField(max_length=255)
+    image_1 = models.ImageField(upload_to=upload_to_product)
+    image_2 = models.ImageField(upload_to=upload_to_product)
+    image_3 = models.ImageField(upload_to=upload_to_product)
+    image_4 = models.ImageField(upload_to=upload_to_product)
+    image_5 = models.ImageField(upload_to=upload_to_product)
+    image_6 = models.ImageField(upload_to=upload_to_product)
+    MARQUE_CHOICES = (
+        ('MyProtein', 'MyProtein'),
+        ('Prozis', 'Prozis'),
+        ('HSN', 'HSN'),
+        ('Optimum Nutrition', 'Optimum Nutrition'),
+        ('MuscleTech', 'MuscleTech'),
+        ('Dymatize', 'Dymatize'),
+        ('Cellucor', 'Cellucor'),
+        ('MusclePharm', 'MusclePharm'),
+        ('Universal Nutrition', 'Universal Nutrition'),
+    )
+    marque_vendeur = models.CharField(max_length=255, choices=MARQUE_CHOICES)
     TYPE_CHOICES = (
         ('gélules', 'Gélules'),
         ('poudre', 'Poudre'),
@@ -74,8 +112,7 @@ class Produits(models.Model):
     en_promo = models.BooleanField(default=False)
     nature_promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
     pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
-    prix_normal = models.DecimalField(max_digits=10, decimal_places=2)
-    prix_promo = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    prix = models.DecimalField(max_digits=10, decimal_places=2)
     quantite_stock = models.PositiveIntegerField()
     review_produit = models.ForeignKey('Review', null=True, blank=True, on_delete=models.CASCADE)
     commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)

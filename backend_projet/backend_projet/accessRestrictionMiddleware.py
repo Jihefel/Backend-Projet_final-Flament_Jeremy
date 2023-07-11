@@ -12,7 +12,7 @@ class AccessRestrictionMiddleware:
 
         # Restriction d'accès au panneau d'administration pour les utilisateurs non connectés ou avec des rôles non autorisés
         if request.path.startswith(reverse('admin_home')):
-            allowed_roles = ['admin', 'webmaster', 'stock']
+            allowed_roles = ['admin', 'webmaster', 'stock', 'membre']
             if not request.user.is_authenticated or not request.user.role.role in allowed_roles:
                 return redirect('home')  # Rediriger vers la page d'accueil ou une autre page lorsque l'accès est restreint
 
