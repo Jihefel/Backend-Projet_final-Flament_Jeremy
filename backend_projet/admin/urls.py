@@ -12,7 +12,5 @@ urlpatterns = [
     path('members/show/<int:id>', views.members_show, name='members_show'),
     path('members/update/<int:id>', views.members_update, name='members_update'),
     path('members/delete/<int:id>', views.members_delete, name='members_delete'),
-    # Avatars
-    path('avatars/', views.avatars_all, name='avatars_all'),
-    path('avatars/create', views.avatars_create, name='avatars_create'),
+    
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Avatar, Commentaires, Roles, Tags, Review, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
+from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Commentaires, Roles, Tags, Review, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 
@@ -31,10 +31,10 @@ class EditProfileForm(forms.ModelForm):
     metiers_hobbies = forms.CharField(label="Jobs or hobbies", widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
         model = User
-        fields = ['image_banniere_profil', 'avatar_lie', 'first_name', 'last_name', 'email', 'username', 'metiers_hobbies', 'bio' ]
+        fields = ['image_banniere_profil', 'avatar', 'first_name', 'last_name', 'email', 'username', 'metiers_hobbies', 'bio' ]
         widgets = {
             'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'avatar_lie': forms.Select(attrs={'class': 'form-control'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -55,14 +55,14 @@ class UserCreationForm(forms.ModelForm):
     
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar_lie', 'metiers_hobbies', 'bio', 'abonne_newsletter']
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar', 'metiers_hobbies', 'bio', 'abonne_newsletter']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'avatar_lie': forms.Select(attrs={'class': 'form-control'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -76,14 +76,14 @@ class UserUpdateForm(forms.ModelForm):
     )
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar_lie', 'metiers_hobbies', 'bio', 'abonne_newsletter']
+        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar', 'metiers_hobbies', 'bio', 'abonne_newsletter']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'avatar_lie': forms.Select(attrs={'class': 'form-control'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -117,10 +117,6 @@ class WishlistForm(forms.ModelForm):
         model = Wishlist
         fields = ['user', 'produits_ajoutes']
 
-class AvatarForm(forms.ModelForm):
-    class Meta:
-        model = Avatar
-        fields = ['image_avatar', 'name']
 class TagsForm(forms.ModelForm):
     class Meta:
         model = Tags
@@ -189,12 +185,12 @@ class NewsletterForm(forms.ModelForm):
         fields = ['email']
 
 class SignupForm2(forms.ModelForm):
-    avatar_lie = forms.ModelChoiceField(queryset=Avatar.objects.all(), widget=forms.RadioSelect, required=False)
     
     class Meta:
         model = User
-        fields = ['avatar_lie', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'abonne_newsletter']
+        fields = ['avatar', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'abonne_newsletter']
         widgets = {
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control', 'type': 'file'}),
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your jobs or hobbies'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Introduce yourself', 'rows': 4}),
             'image_banniere_profil': forms.ClearableFileInput(attrs={'class': 'form-control', 'type': 'file'}),

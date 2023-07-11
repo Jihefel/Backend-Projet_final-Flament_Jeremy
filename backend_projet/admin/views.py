@@ -76,26 +76,3 @@ def members_show(request, id):
     context = locals()
     return render(request, 'admin/pages/members/show.html', context)
 
-
-# AVATARS
-
-def avatars_all(request):
-    avatars = Avatar.objects.all()
-    
-    context = locals()
-    return render(request, 'admin/pages/avatars/all.html', context)
-
-def avatars_create(request):
-    avatars = Avatar.objects.all()
-    
-    if request.method == 'POST':
-        form = AvatarForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Avatar successfully created.")
-            return redirect('custom_admin:avatars_all')
-    else:
-        form = AvatarForm()
-    
-    context = locals()
-    return render(request, 'admin/pages/avatars/create.html', context)

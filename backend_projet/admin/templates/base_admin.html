@@ -34,7 +34,12 @@
     <body>
         {% include "shop/components/messages.html" %}
         {% include "admin/components/admin_navbar.html" %}
-            {% block admincontent %}
-            {% endblock admincontent %}
+        <div class="py-5 px-5 my-5">
+            <div class="row">
+                {% include "admin/components/lateral_nav.html" %}
+                {% block admincontent %}
+                {% endblock admincontent %}
+            </div>
+        </div>
     </body>
 </html>
