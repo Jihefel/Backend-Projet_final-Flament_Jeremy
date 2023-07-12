@@ -7,6 +7,9 @@ from django.contrib.auth import login, authenticate, logout, update_session_auth
 from django.contrib.auth.hashers import make_password
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from datetime import date
+from django.core.paginator import Paginator
+
 
 
 
@@ -274,7 +277,17 @@ def change_password(request):
     return render(request, 'shop/change_password.html', context)
 
 def all_products(request):
-    
+    products = Produits.objects.all()
+    today = date.today()
+
+    for product in products:
+        product.prix_promo = float(product.prix) - (float(product.prix) * (float(product.pourcentage_promo) / 100))
+
+    paginator = Paginator(products, 12)  # Set the number of products per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     # Infos du site
     infos = InfosQDP.objects.first()
 
@@ -310,8 +323,9 @@ def all_products(request):
     context = locals()
     return render(request, 'shop/products-left-sidebar-2.html', context)
 
-def product(request):
+def product(request, id):
     
+
     # Infos du site
     infos = InfosQDP.objects.first()
 

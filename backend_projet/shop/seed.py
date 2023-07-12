@@ -106,3 +106,29 @@ def run():
 
     inserted_pks = seeder.execute()
     print(inserted_pks)
+
+    # Seed produits
+    seeder.add_entity(Produits, 36, {
+        'nom': lambda x: seeder.faker.word(),
+        'image_1': lambda x: seeder.faker.image_url(width=670, height=800),
+        'image_2': lambda x: seeder.faker.image_url(width=670, height=800),
+        'image_3': lambda x: seeder.faker.image_url(width=670, height=800),
+        'image_4': lambda x: seeder.faker.image_url(width=670, height=800),
+        'image_5': lambda x: seeder.faker.image_url(width=670, height=800),
+        'image_6': lambda x: seeder.faker.image_url(width=670, height=800),
+        'marque_vendeur': lambda x: random.choice(['MyProtein', 'Prozis', 'HSN', 'Optimum Nutrition', 'MuscleTech', 'Dymatize', 'Cellucor', 'MusclePharm', 'Universal Nutrition']),
+        'type': lambda x: random.choice(['gélules', 'poudre']),
+        'categorie': lambda x: random.choice(Categorie.objects.all()),
+        'quantite_stock': lambda x: random.randint(0, 100),
+        'prix': lambda x: random.uniform(10, 100),
+        'description': lambda x: seeder.faker.paragraph(),
+        'ingredients': lambda x: seeder.faker.text(),
+        'macronutriments': lambda x: seeder.faker.text(),
+        'variations': lambda x: seeder.faker.word(),
+        'en_promo': lambda x: random.choice([True, False]),
+        'nature_promo': None,
+        'pourcentage_promo': lambda x: random.randint(5, 90) if random.choice([True, False]) else 0,
+    })
+
+    inserted_pks = seeder.execute()
+    print(inserted_pks)

@@ -93,7 +93,10 @@ def members_update(request, id):
 
     member = User.objects.get(id=id)
     if request.method == 'POST':
-        form = UserUpdateForm(request.POST, request.FILES, instance=member)
+        if member.id == request.user.id:
+            form = UserUpdateForm(request.POST, request.FILES, instance=member)
+        else:
+            form = UserRoleUpdateForm(request.POST, request.FILES, instance=member)
         if form.is_valid():
             form.save()
             messages.success(request, f"Member {member.username} successfully updated.")
@@ -101,7 +104,10 @@ def members_update(request, id):
     else:
         # Initialiser le champ "role" avec la valeur actuelle de l'utilisateur
         initial_data = {'role': member.role}
-        form = UserUpdateForm(instance=member, initial=initial_data)
+        if member.id == request.user.id:
+            form = UserUpdateForm(instance=member, initial=initial_data)
+        else:
+            form = UserRoleUpdateForm(instance=member, initial=initial_data)
     
     context = locals()
     return render(request, 'admin/pages/members/update.html', context)

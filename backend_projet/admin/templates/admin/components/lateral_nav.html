@@ -6,6 +6,12 @@
                 Members
             </a>
         </div>
+        {% elif user.role_id == 3 %}
+        <div class="btn-group">
+            <a href="{% url 'custom_admin:members_all' %}" class="default-btn text-center w-100">
+                Members
+            </a>
+        </div>
         {% else %}
         <div class="btn-group">
             <a href="{% url 'custom_admin:infos_site' %}" class="default-btn text-center w-100">

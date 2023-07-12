@@ -114,7 +114,6 @@ class Produits(models.Model):
     pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
     prix = models.DecimalField(max_digits=10, decimal_places=2)
     quantite_stock = models.PositiveIntegerField()
-    review_produit = models.ForeignKey('Review', null=True, blank=True, on_delete=models.CASCADE)
     commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
     date_ajout_panier_user = models.DateField(null=True, blank=True)
@@ -150,10 +149,6 @@ class ProduitsCommandes(models.Model):
     commande = models.ForeignKey(Commandes, on_delete=models.CASCADE)
     produit = models.ForeignKey(Produits, on_delete=models.CASCADE)
 
-class Review(models.Model):
-    note_moyenne = models.DecimalField(max_digits=2, decimal_places=1)
-    produit_ou_blogpost_lie = models.ForeignKey(Produits, on_delete=models.CASCADE, null=True, blank=True)
-
 class BlogPost(models.Model):
     titre = models.CharField(max_length=255)
     texte = models.TextField()
@@ -163,7 +158,6 @@ class BlogPost(models.Model):
     date_modification = models.DateField(auto_now=True)
     commentaires_lies = models.ManyToManyField(Commentaires)
     user_auteur = models.ForeignKey(User, on_delete=models.CASCADE)
-    review_blogpost = models.ForeignKey(Review, null=True, blank=True, on_delete=models.CASCADE)
 
 class Contacts(models.Model):
     user_auteur = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)

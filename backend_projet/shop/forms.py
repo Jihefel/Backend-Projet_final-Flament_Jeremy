@@ -1,5 +1,5 @@
 from django import forms
-from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Commentaires, Roles, Tags, Review, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
+from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Commentaires, Roles, Tags, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 
@@ -90,6 +90,16 @@ class UserUpdateForm(forms.ModelForm):
 
         }
 
+class UserRoleUpdateForm(forms.ModelForm):
+    role = forms.ModelChoiceField(
+        queryset=Roles.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        to_field_name='role',
+    )
+    class Meta:
+        model = User
+        fields = ['role']
+
 
 class CategorieForm(forms.ModelForm):
     class Meta:
@@ -105,6 +115,28 @@ class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
         fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'quantite_stock', 'prix','description', 'ingredients', 'macronutriments', 'variations', 'en_promo', 'nature_promo', 'pourcentage_promo']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'image_1': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_2': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_3': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_4': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_5': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_6': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'marque_vendeur': forms.Select(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'categorie': forms.Select(attrs={'class': 'form-control'}),
+            'quantite_stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'prix': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'ingredients': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'macronutriments': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'variations': forms.TextInput(attrs={'class': 'form-control'}),
+            'en_promo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'nature_promo': forms.Select(attrs={'class': 'form-control'}),
+            'pourcentage_promo': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
 
 class CommentairesForm(forms.ModelForm):
     class Meta:
@@ -141,15 +173,10 @@ class ProduitsCommandesForm(forms.ModelForm):
         model = ProduitsCommandes
         fields = ['commande', 'produit']
 
-class ReviewForm(forms.ModelForm):
-    class Meta:
-        model = Review
-        fields = ['note_moyenne', 'produit_ou_blogpost_lie']
-
 class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
-        fields = ['titre', 'texte', 'categorie', 'image_illustration', 'date_post', 'date_modification', 'commentaires_lies', 'user_auteur', 'review_blogpost']
+        fields = ['titre', 'texte', 'categorie', 'image_illustration', 'date_post', 'date_modification', 'commentaires_lies', 'user_auteur']
         exclude = ['date_post', 'date_modification']
 
 class ContactsForm(forms.ModelForm):

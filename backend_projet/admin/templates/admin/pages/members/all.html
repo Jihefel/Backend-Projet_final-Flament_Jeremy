@@ -29,11 +29,11 @@
                                 <a class="optional-btn"
                                    href="{% url 'custom_admin:members_show' member.id %}"><i class="fa-solid fa-circle-info"></i></a>
                             {% endif %}
-                            {% if user.id == member.id %}
+                            {% if user.id == member.id or is_admin and not member.role.id == 1 %}
                                 <a class="optional-btn"
                                    href="{% url 'custom_admin:members_update' member.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
                             {% endif %}
-                            {% if is_admin and not member.role_id == 1 or user.id == member.id %}
+                            {% if is_admin and not member.role_id == 1  %}
                                 <a class="default-btn"
                                    href="{% url 'custom_admin:members_delete' member.id %}"><i class="fa-solid fa-trash"></i></a>
                             {% endif %}

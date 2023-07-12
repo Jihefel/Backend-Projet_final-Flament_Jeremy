@@ -2,6 +2,14 @@
 {% block admincontent %}
     <div class="col-lg-9 px-5">
         <dl>
+            <div class="row row-cols-6">
+                <img src="{{ product.image_1.url }}" alt="" style="object-fit:contain">
+                <img src="{{ product.image_2.url }}" alt="" style="object-fit:contain">
+                <img src="{{ product.image_3.url }}" alt="" style="object-fit:contain">
+                <img src="{{ product.image_4.url }}" alt="" style="object-fit:contain">
+                <img src="{{ product.image_5.url }}" alt="" style="object-fit:contain">
+                <img src="{{ product.image_6.url }}" alt="" style="object-fit:contain">
+            </div>
             <div>
                 <dt>Name</dt>
                 <dd>
@@ -14,6 +22,80 @@
                     {{ product.prix }} €
                 </dd>
             </div>
+            <div>
+                <dt>Quantity</dt>
+                <dd>
+                    {{ product.quantite_stock }}
+                </dd>
+            </div>
+            <div>
+                <dt>Vendor</dt>
+                <dd>
+                    {{ product.marque_vendeur }}
+                </dd>
+            </div>
+            <div>
+                <dt>Category</dt>
+                <dd>
+                    {{ product.categorie }}
+                </dd>
+            </div>
+            <div>
+                <dt>Type</dt>
+                <dd>
+                    {{ product.type }}
+                </dd>
+            </div>
+            <div>
+                <dt>Variant</dt>
+                <dd>
+                    {{ product.variations }}
+                </dd>
+            </div>
+            <div>
+                <dt>Description</dt>
+                <dd>
+                    {{ product.description }}
+                </dd>
+            </div>
+            <div>
+                <dt>Ingredients</dt>
+                <dd>
+                    {{ product.ingredients }}
+                </dd>
+            </div>
+            <div>
+                <dt>Macros</dt>
+                <dd>
+                    {{ product.macronutriments }}
+                </dd>
+            </div>
+            <div>
+                <dt>In sale</dt>
+                <dd>
+                    {{ product.en_promo }}
+                </dd>
+            </div>
+            {% if product.en_promo %}
+            <div>
+                <dt>Sale name</dt>
+                <dd>
+                    {{ product.nature_promo }}
+                </dd>
+            </div>
+            <div>
+                <dt>% sale</dt>
+                <dd>
+                    {{ product.pourcentage_promo }}
+                </dd>
+            </div>
+            {% endif %}
+            <div>
+                <dt>Date added</dt>
+                <dd>
+                    {{ product.date_ajout_produit_db }}
+                </dd>
+            </div> 
         </dl>
     </div>
 {% endblock admincontent %}
