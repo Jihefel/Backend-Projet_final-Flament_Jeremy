@@ -29,19 +29,13 @@
                 </dd>
             </div>
             <div>
-                <dt>Price</dt>
-                <dd>
-                    {{ product.prix }} €
-                </dd>
-            </div>
-            <div>
                 <dt>Variants</dt>
                 <dl class="ms-2">
                     {% for variant in variants %}
                             <dt>{{ variant.contenu }}</dt>
-                            <dd>
-                                Stock: {{ variant.productvariant_set.first.quantite_stock }}
-                            </dd>
+                            <dd><u>Stock:</u> {{ variant.productvariant_set.first.quantite_stock }}</dd>
+                            <dd><u>Price:</u> {{ variant.productvariant_set.first.prix }}</dd>
+                            
                     {% endfor %}
                 </dl>
             </div>

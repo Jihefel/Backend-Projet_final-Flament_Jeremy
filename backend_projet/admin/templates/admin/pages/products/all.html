@@ -8,10 +8,8 @@
                     <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}" alt="" style="max-height: 100px" class="mx-3">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">{{ product.nom }}</div>
-                        <div>{{ product.categorie }} - {{ product.type }}</div>
-                        <div>{{ product.variations.contenu }}</div>
-                        <div>{{ product.prix }} €</div>
-                        <div><dl><dt>Quantity :</dt><dd>{{ product.quantite_stock }}</dd></dl></div>
+                        <div>{{ product.categorie }}</div>
+                        <div>{{ product.type }}</div>
                     </div>
                     <div class="input-group justify-content-end w-50 align-self-center">
                         <a class="optional-btn"

@@ -114,16 +114,17 @@ class PromotionsForm(forms.ModelForm):
 class ProductVariantForm(forms.ModelForm):
     class Meta:
         model = ProductVariant
-        fields = ['quantite_stock']
+        fields = ['quantite_stock', 'prix']
         widgets = {
             'contenu': forms.TextInput(attrs={'class': 'form-control'}),
             'quantite_stock': forms.NumberInput(attrs={'class': 'form-control'}),
+            'prix': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
 class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
-        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'prix','description', 'ingredients', 'macronutriments', 'en_promo', 'nature_promo', 'pourcentage_promo']
+        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'en_promo', 'nature_promo', 'pourcentage_promo']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'image_1': forms.FileInput(attrs={'class': 'form-control-file'}),
@@ -135,7 +136,6 @@ class ProduitsForm(forms.ModelForm):
             'marque_vendeur': forms.Select(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),
             'categorie': forms.Select(attrs={'class': 'form-control'}),
-            'prix': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'ingredients': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'macronutriments': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -151,6 +151,14 @@ class VariantForm(forms.ModelForm):
         fields = ['contenu']
         widgets = {
             'contenu': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'col-form-label border-0'})
+        } 
+
+class VariantCreateForm(forms.ModelForm):
+    class Meta:
+        model = Variantes
+        fields = ['contenu']
+        widgets = {
+            'contenu': forms.Select(attrs={'class': 'col-form-label border-0'})
         } 
 
 class CommentairesForm(forms.ModelForm):

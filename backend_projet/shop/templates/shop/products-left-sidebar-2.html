@@ -57,12 +57,9 @@
                             <h3 class="woocommerce-widget-title">Collections</h3>
 
                             <ul class="collections-list-row">
-                                <li><a href="#">Men's</a></li>
-                                <li class="active"><a href="#" class="active">Women’s</a></li>
-                                <li><a href="#">Clothing</a></li>
-                                <li><a href="#">Shoes</a></li>
-                                <li><a href="#">Accessories</a></li>
-                                <li><a href="#">Uncategorized</a></li>
+                                {% for cat in categories %}
+                                <li><a href="#" class="active">{{ cat }}</a></li>
+                                {% endfor %}
                             </ul>
                         </div>
 
@@ -70,7 +67,7 @@
                             <h3 class="woocommerce-widget-title">Price</h3>
 
                             <div class="collection-filter-by-price">
-                                <input class="js-range-of-price" type="text" data-min="0" data-max="1055"
+                                <input class="js-range-of-price" type="text" data-min="0" data-max="100"
                                     name="filter_by_price" data-step="10">
                             </div>
                         </div>
@@ -79,16 +76,9 @@
                             <h3 class="woocommerce-widget-title">Size</h3>
 
                             <ul class="size-list-row">
-                                <li><a href="#">20</a></li>
-                                <li><a href="#">24</a></li>
-                                <li class="active"><a href="#">36</a></li>
-                                <li><a href="#">30</a></li>
-                                <li><a href="#">XS</a></li>
-                                <li><a href="#">S</a></li>
-                                <li><a href="#">M</a></li>
-                                <li><a href="#">L</a></li>
-                                <li><a href="#">L</a></li>
-                                <li><a href="#">XL</a></li>
+                                {% for variant in variants_all %}
+                                <li><a href="#">{{ variant }}</a></li>
+                                {% endfor %}
                             </ul>
                         </div>
                     </div>
@@ -202,10 +192,10 @@
                             
                                     <div class="price">
                                         {% if product.pourcentage_promo != 0 %}
-                                            <span class="old-price">{{ product.prix }}€</span>
-                                            <span class="new-price">{{ product.prix_promo|floatformat:2 }}€</span>
+                                            <span class="old-price">{{ product.product_variant.prix }}€</span>
+                                            <span class="new-price">{{ product.product_variant.prix_promo|floatformat:2 }}€</span>
                                         {% else %}
-                                            <span class="new-price">{{ product.prix }}€</span>
+                                            <span class="new-price">{{ product.product_variant.prix }}€</span>
                                         {% endif %}
                                     </div>
                                     <a href="#" class="add-to-cart">Add to Cart</a>
@@ -240,34 +230,31 @@
 
                                                 <div class="price">
                                                     {% if product.pourcentage_promo != 0 %}
-                                                        <span class="old-price">{{ product.prix }}€</span>
-                                                        <span class="new-price">{{ product.prix_promo|floatformat:2 }}€</span>
+                                                        <span class="old-price">{{ product.product_variant.prix }}€</span>
+                                                        <span class="new-price">{{ product.product_variant.prix_promo|floatformat:2 }}€</span>
                                                     {% else %}
-                                                        <span class="new-price">{{ product.prix }}€</span>
+                                                        <span class="new-price">{{ product.product_variant.prix }}€</span>
                                                     {% endif %}
                                                 </div>
 
-
                                                 <ul class="products-info">
                                                     <li><span>Vendor:</span> <a href="#">{{ product.marque_vendeur }}</a></li>
-                                                    <li><span>Availability:</span> <a href="#">{% if product.quantite_stock != 0 %}In stock ({{ product.quantite_stock }} items){% else %}Sold out{% endif %}</a></li>
+                                                    <li><span>Availability:</span> <a href="#">{% if product.product_variant.quantite_stock != 0 %}In stock ({{ product.product_variant.quantite_stock }} items){% else %}Sold out{% endif %}</a></li>
                                                     <li><span>Products Type:</span> <a href="#">{{ product.categorie }}</a></li>
                                                 </ul>
 
 
                                                 <div class="products-size-wrapper">
-                                                    <h4>Variations :</h4>
+                                                    <h4>Variation :</h4>
                                                     
-                                                    <ul>
-                                                        <li><a href="#">{{ product.variations }}</a></li>
-                                                    </ul>
+                                                    <p>{{ product.product_variant.variant.contenu }}</p>
                                                 </div>
 
                                                 <form class="products-add-to-cart">
                                                     {% csrf_token %}
                                                     <div class="input-counter">
                                                         <span class="minus-btn"><i class='bx bx-minus'></i></span>
-                                                        <input type="text" value="1" min="1" max="{{ product.quantite_stock }}">
+                                                        <input type="text" value="1" min="1" max="{{ product.product_variant.quantite_stock }}">
                                                         <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                                     </div>
 

@@ -128,7 +128,6 @@ class Produits(models.Model):
     en_promo = models.BooleanField(default=False)
     nature_promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
     pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
-    prix = models.DecimalField(max_digits=10, decimal_places=2)
     commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
     date_ajout_panier_user = models.DateField(null=True, blank=True)
@@ -138,9 +137,10 @@ class Produits(models.Model):
 
 
 class ProductVariant(models.Model):
-    product = models.ForeignKey(Produits, on_delete=models.CASCADE)
-    variant = models.ForeignKey(Variantes, on_delete=models.CASCADE)
+    product = models.ForeignKey(Produits, on_delete=models.CASCADE, null=True, blank=True,)
+    variant = models.ForeignKey(Variantes, on_delete=models.CASCADE, null=True, blank=True,)
     quantite_stock = models.PositiveIntegerField(blank=True)
+    prix = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
     def __str__(self):
         return f"{self.variant} ({self.product}): {self.quantite_stock}"
     class Meta:

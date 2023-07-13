@@ -126,7 +126,6 @@ def run():
         'marque_vendeur': lambda x: random.choice(['MyProtein', 'Prozis', 'HSN', 'Optimum Nutrition', 'MuscleTech', 'Dymatize', 'Cellucor', 'MusclePharm', 'Universal Nutrition']),
         'type': lambda x: random.choice(['capsules', 'powder']),
         'categorie': lambda x: random.choice(Categorie.objects.all()),
-        'prix': lambda x: random.uniform(10, 100),
         'description': lambda x: seeder.faker.paragraph(),
         'ingredients': lambda x: seeder.faker.text(),
         'macronutriments': lambda x: seeder.faker.text(),
@@ -159,10 +158,10 @@ def run():
             contenus_capsules = ['30 capsules', '60 capsules', '90 capsules', '120 capsules']
             for contenu in contenus_capsules:
                 variant = Variantes.objects.get(contenu=contenu)
-                ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50))
+                ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50), prix=random.uniform(10, 100))
         else:
             contenus_powder = ['250g', '500g', '1kg', '2kg']
             for contenu in contenus_powder:
                 variant = Variantes.objects.get(contenu=contenu)
-                ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50))
+                ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50), prix=random.uniform(10, 100))
                 

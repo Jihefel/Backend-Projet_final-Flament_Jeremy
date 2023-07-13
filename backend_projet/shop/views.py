@@ -281,9 +281,15 @@ def change_password(request):
 def all_products(request):
     products = Produits.objects.all()
     today = date.today()
-
+    variants_all = Variantes.objects.all()
+    categories = Categorie.objects.all()
     for product in products:
-        product.prix_promo = float(product.prix) - (float(product.prix) * (float(product.pourcentage_promo) / 100))
+        variants = product.variations.filter(produits=product)
+        first_variant = variants.first()
+        if first_variant:
+            product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
+            product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.pourcentage_promo) / 100))
+            product.product_variant = product_variant  # Add the product_variant to the product object
 
     paginator = Paginator(products, 12)  # Set the number of products per page
 

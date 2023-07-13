@@ -7997,6 +7997,9 @@ Woocommerce Widget Sidebar CSS
   padding-left: 0;
   margin-bottom: 0;
   margin-top: -10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .woocommerce-widget-area .size-list-widget .size-list-row li {
@@ -8006,9 +8009,12 @@ Woocommerce Widget Sidebar CSS
 }
 
 .woocommerce-widget-area .size-list-widget .size-list-row li a {
-  width: 35px;
-  height: 35px;
-  display: inline-block;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  word-wrap: break-word;
   line-height: 33px;
   border: 1px solid #eeeeee;
   text-align: center;
