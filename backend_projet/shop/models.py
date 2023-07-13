@@ -152,7 +152,7 @@ class Produits(models.Model):
     variations = models.ManyToManyField(Variantes, through='ProductVariant', related_name='produit_variations', blank=True)
     en_promo = models.BooleanField(default=False)
     nature_promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
-    pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
+    pourcentage_promo = models.PositiveIntegerField(null=True, blank=True, default=0)
     commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
     date_ajout_panier_user = models.DateField(null=True, blank=True)
