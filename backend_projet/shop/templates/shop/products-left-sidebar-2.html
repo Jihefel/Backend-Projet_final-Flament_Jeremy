@@ -132,7 +132,15 @@
                             </div>
 
                             <div class="col-lg-4 col-md-4">
-                                <p>Showing 1 – 18 of 100</p>
+                                <p>Showing
+                                    {% if page_number == 1 %}
+                                        1 – {{ per_page }}
+                                    {% else %}
+                                        {{ start_index|add:1 }} – {{ end_index }}
+                                    {% endif %}
+                                    of {{ products.count }}
+                                </p>
+                                
                             </div>
 
                             <div class="col-lg-4 col-md-4">
@@ -193,17 +201,22 @@
                                     <h3><a href="#">{{ product.nom }}</a></h3>
                             
                                     <div class="price">
-                                        <span class="old-price">{{ product.prix }}€</span>
-                                        <span class="new-price">{{ product.prix_promo|floatformat:2 }}€</span>
+                                        {% if product.pourcentage_promo != 0 %}
+                                            <span class="old-price">{{ product.prix }}€</span>
+                                            <span class="new-price">{{ product.prix_promo|floatformat:2 }}€</span>
+                                        {% else %}
+                                            <span class="new-price">{{ product.prix }}€</span>
+                                        {% endif %}
                                     </div>
                                     <a href="#" class="add-to-cart">Add to Cart</a>
                                 </div>
-
+                                {% if product.pourcentage_promo != 0 %}
                                 <span class="products-discount">
                                     <span>
                                         {{ product.pourcentage_promo }}% OFF
                                     </span>
                                 </span>
+                                {% endif %}
                             </div>
                         </div>
                         <!-- Start QuickView Modal Area -->
@@ -226,8 +239,12 @@
                                                 <h3><a href="#">{{ product.nom }}</a></h3>
 
                                                 <div class="price">
-                                                    <span class="old-price">{{ product.prix }}€</span>
-                                                    <span class="new-price">{{ product.prix_promo|floatformat:2 }}€</span>
+                                                    {% if product.pourcentage_promo != 0 %}
+                                                        <span class="old-price">{{ product.prix }}€</span>
+                                                        <span class="new-price">{{ product.prix_promo|floatformat:2 }}€</span>
+                                                    {% else %}
+                                                        <span class="new-price">{{ product.prix }}€</span>
+                                                    {% endif %}
                                                 </div>
 
 
@@ -246,15 +263,16 @@
                                                     </ul>
                                                 </div>
 
-                                                <div class="products-add-to-cart">
+                                                <form class="products-add-to-cart">
+                                                    {% csrf_token %}
                                                     <div class="input-counter">
                                                         <span class="minus-btn"><i class='bx bx-minus'></i></span>
-                                                        <input type="text" value="1" min="1">
+                                                        <input type="text" value="1" min="1" max="{{ product.quantite_stock }}">
                                                         <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                                     </div>
 
                                                     <button type="submit" class="default-btn">Add to Cart</button>
-                                                </div>
+                                                </form>
 
                                                 <a href="{% url 'product' product.id %}" class="view-full-info">View Full Info</a>
                                             </div>

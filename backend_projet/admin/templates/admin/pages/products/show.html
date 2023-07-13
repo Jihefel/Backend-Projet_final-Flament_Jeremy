@@ -2,13 +2,25 @@
 {% block admincontent %}
     <div class="col-lg-9 px-5">
         <dl>
-            <div class="row row-cols-6">
-                <img src="{{ product.image_1.url }}" alt="" style="object-fit:contain">
-                <img src="{{ product.image_2.url }}" alt="" style="object-fit:contain">
-                <img src="{{ product.image_3.url }}" alt="" style="object-fit:contain">
-                <img src="{{ product.image_4.url }}" alt="" style="object-fit:contain">
-                <img src="{{ product.image_5.url }}" alt="" style="object-fit:contain">
-                <img src="{{ product.image_6.url }}" alt="" style="object-fit:contain">
+            <div class="row row-cols-6 mb-4">
+                <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}"
+                     alt=""
+                     style="object-fit:contain">
+                <img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}"
+                     alt=""
+                     style="object-fit:contain">
+                <img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}"
+                     alt=""
+                     style="object-fit:contain">
+                <img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}"
+                     alt=""
+                     style="object-fit:contain">
+                <img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}"
+                     alt=""
+                     style="object-fit:contain">
+                <img src="{% if 'https' in product.image_6.url %}{{ product.image_6 }}{% else %}{{ product.image_6.url }}{% endif %}"
+                     alt=""
+                     style="object-fit:contain">
             </div>
             <div>
                 <dt>Name</dt>
@@ -23,10 +35,15 @@
                 </dd>
             </div>
             <div>
-                <dt>Quantity</dt>
-                <dd>
-                    {{ product.quantite_stock }}
-                </dd>
+                <dt>Variants</dt>
+                <dl class="ms-2">
+                    {% for variant in variants %}
+                            <dt>{{ variant.contenu }}</dt>
+                            <dd>
+                                Stock: {{ variant.productvariant_set.first.quantite_stock }}
+                            </dd>
+                    {% endfor %}
+                </dl>
             </div>
             <div>
                 <dt>Vendor</dt>
@@ -44,12 +61,6 @@
                 <dt>Type</dt>
                 <dd>
                     {{ product.type }}
-                </dd>
-            </div>
-            <div>
-                <dt>Variant</dt>
-                <dd>
-                    {{ product.variations }}
                 </dd>
             </div>
             <div>
@@ -77,25 +88,25 @@
                 </dd>
             </div>
             {% if product.en_promo %}
-            <div>
-                <dt>Sale name</dt>
-                <dd>
-                    {{ product.nature_promo }}
-                </dd>
-            </div>
-            <div>
-                <dt>% sale</dt>
-                <dd>
-                    {{ product.pourcentage_promo }}
-                </dd>
-            </div>
+                <div>
+                    <dt>Sale name</dt>
+                    <dd>
+                        {{ product.nature_promo }}
+                    </dd>
+                </div>
+                <div>
+                    <dt>% sale</dt>
+                    <dd>
+                        {{ product.pourcentage_promo }}
+                    </dd>
+                </div>
             {% endif %}
             <div>
                 <dt>Date added</dt>
                 <dd>
                     {{ product.date_ajout_produit_db }}
                 </dd>
-            </div> 
+            </div>
         </dl>
     </div>
 {% endblock admincontent %}

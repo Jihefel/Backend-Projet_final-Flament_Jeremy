@@ -134,7 +134,7 @@ def products_all(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
-    products = Produits.objects.all()
+    products = Produits.objects.prefetch_related('productvariant_set__variant').all()
     
     context = locals()
     return render(request, 'admin/pages/products/all.html', context)
@@ -178,15 +178,35 @@ def products_update(request, id):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     product = Produits.objects.get(id=id)
+    variants = product.variations.filter(produits=product)
 
+    
     if request.method == 'POST':
         form = ProduitsForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
+        variant_forms = []
+        for variant in variants:
+            variant_form = VariantForm(request.POST, instance=variant, prefix=f"variant_{variant.id}")
+            product_variant = ProductVariant.objects.get(product=product, variant=variant)
+            qte_form = ProductVariantForm(request.POST, instance=product_variant)
+            variant_forms.append(variant_form)
+            variant_forms.append(qte_form)
+    
+        if form.is_valid() and all([vf.is_valid() for vf in variant_forms]):
             form.save()
+            for variant_form in variant_forms:
+                variant_form.save()
             messages.success(request, f"Product {product.nom} successfully updated.")
             return redirect('custom_admin:products_all')
     else:
-        form = ProduitsForm(instance=product,)
+        form = ProduitsForm(instance=product)
+        variant_forms = []
+        for variant in variants:
+            variant_form = VariantForm(instance=variant, prefix=f"variant_{variant.id}")
+            product_variant = ProductVariant.objects.get(product=product, variant=variant)
+            qte_form = ProductVariantForm(instance=product_variant)
+            variant_forms.append(variant_form)
+            variant_forms.append(qte_form)
+        
     
     context = locals()
     return render(request, 'admin/pages/products/update.html', context)
@@ -200,6 +220,7 @@ def products_show(request, id):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     product = Produits.objects.get(id=id)
+    variants = product.variations.all()
 
     context = locals()
     return render(request, 'admin/pages/products/show.html', context)

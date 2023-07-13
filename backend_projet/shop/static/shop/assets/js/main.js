@@ -1,6 +1,20 @@
 (function($){
 	"use strict";
     
+    // Récupérez l'URL actuelle
+    let currentURL = window.location.href;
+
+    // Sélectionnez tous les liens de la barre de navigation
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    // Parcourez tous les liens et vérifiez s'ils correspondent à l'URL actuelle
+    navLinks.forEach((link) => {
+    const linkURL = link.getAttribute("href");
+ 
+    const isActive = ((currentURL === "http://localhost:8000/" || currentURL === "http://127.0.0.1:8000/") && linkURL === "/") || linkURL !== "/" ? currentURL.endsWith(linkURL) : false;
+    link.classList.toggle("active", isActive);
+    });
+
     // Search Popup JS
     $(".others-option .search-btn").on("click", function(){
         $(".search-overlay").toggleClass("search-overlay-active");

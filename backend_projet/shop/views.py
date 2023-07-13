@@ -25,6 +25,8 @@ def index(request):
     # Infos du site
     infos = InfosQDP.objects.first()
 
+    # Partenaires
+    partners = Partenaires.objects.all()
         
     # Form newsletter
     if request.method == 'POST':
@@ -285,8 +287,16 @@ def all_products(request):
 
     paginator = Paginator(products, 12)  # Set the number of products per page
 
-    page_number = request.GET.get('page')
+    page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
+    # Calculate the start and end indexes for the range of products to display
+    per_page = 12  # Number of products per page
+    start_index = (int(page_number) - 1) * per_page
+    end_index = int(page_number) * per_page
+    
+    # Slice the products based on the calculated indexes
+    sliced_products = products[start_index:end_index]
+
 
     # Infos du site
     infos = InfosQDP.objects.first()

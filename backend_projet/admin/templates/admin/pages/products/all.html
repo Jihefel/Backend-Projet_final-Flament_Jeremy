@@ -5,11 +5,11 @@
             {% for product in products %}
                 <li class="list-group-item d-flex justify-content-between align-items-start {% if member.role_id == 1 %}list-group-item-danger{% elif member.role_id == 3 %}list-group-item-info{% elif member.role_id == 4 %}list-group-item-secondary{% endif %}">
                     #{{ product.id }}
-                    <img src="{{ product.image_1.url }}" alt="" style="max-height: 100px" class="mx-3">
+                    <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}" alt="" style="max-height: 100px" class="mx-3">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">{{ product.nom }}</div>
                         <div>{{ product.categorie }} - {{ product.type }}</div>
-                        <div>{{ product.variations }}</div>
+                        <div>{{ product.variations.contenu }}</div>
                         <div>{{ product.prix }} €</div>
                         <div><dl><dt>Quantity :</dt><dd>{{ product.quantite_stock }}</dd></dl></div>
                     </div>

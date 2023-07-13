@@ -1,5 +1,5 @@
 from django import forms
-from .models import User, Categorie, Promotions, ProduitsCommandes, Panier, Partenaires, Produits, Wishlist, Commentaires, Roles, Tags, Commandes, BlogPost, Newsletter, Contacts, InfosQDP
+from .models import *
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 
@@ -111,10 +111,19 @@ class PromotionsForm(forms.ModelForm):
         model = Promotions
         fields = ['nom', 'pourcentage_promo', 'slogan', 'description', 'image_illustration', 'date_debut', 'date_fin', 'categorie_en_promo', 'produit_en_promo']
 
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields = ['quantite_stock']
+        widgets = {
+            'contenu': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantite_stock': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
 class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
-        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'quantite_stock', 'prix','description', 'ingredients', 'macronutriments', 'variations', 'en_promo', 'nature_promo', 'pourcentage_promo']
+        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'prix','description', 'ingredients', 'macronutriments', 'en_promo', 'nature_promo', 'pourcentage_promo']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'image_1': forms.FileInput(attrs={'class': 'form-control-file'}),
@@ -126,17 +135,23 @@ class ProduitsForm(forms.ModelForm):
             'marque_vendeur': forms.Select(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),
             'categorie': forms.Select(attrs={'class': 'form-control'}),
-            'quantite_stock': forms.NumberInput(attrs={'class': 'form-control'}),
             'prix': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'ingredients': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'macronutriments': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'variations': forms.TextInput(attrs={'class': 'form-control'}),
             'en_promo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'nature_promo': forms.Select(attrs={'class': 'form-control'}),
             'pourcentage_promo': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
+
+class VariantForm(forms.ModelForm):
+    class Meta:
+        model = Variantes
+        fields = ['contenu']
+        widgets = {
+            'contenu': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'col-form-label mt-3'})
+        } 
 
 class CommentairesForm(forms.ModelForm):
     class Meta:

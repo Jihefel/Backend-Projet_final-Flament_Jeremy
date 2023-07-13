@@ -9,6 +9,13 @@ import os
 
 def run():
     seeder = Seed.seeder()
+
+    User.objects.all().delete()
+    Roles.objects.all().delete()
+    InfosQDP.objects.all().delete()
+    Categorie.objects.all().delete()
+    Produits.objects.all().delete()
+    Partenaires.objects.all().delete()
     
     # Définition des trois possibilités
     roles = ['admin', 'membre', 'webmaster', 'stock']
@@ -30,7 +37,7 @@ def run():
         'email': 'hello@xton.com',
         'telephone': '+01 321 654 214',
         'fax': '+123456789',
-        'slogan_site': 'One of the most popular on the web is shopping. Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+        'slogan_site': lambda x: seeder.faker.catch_phrase() 
     })
 
     inserted_pks = seeder.execute()
@@ -117,18 +124,45 @@ def run():
         'image_5': lambda x: seeder.faker.image_url(width=670, height=800),
         'image_6': lambda x: seeder.faker.image_url(width=670, height=800),
         'marque_vendeur': lambda x: random.choice(['MyProtein', 'Prozis', 'HSN', 'Optimum Nutrition', 'MuscleTech', 'Dymatize', 'Cellucor', 'MusclePharm', 'Universal Nutrition']),
-        'type': lambda x: random.choice(['gélules', 'poudre']),
+        'type': lambda x: random.choice(['capsules', 'powder']),
         'categorie': lambda x: random.choice(Categorie.objects.all()),
-        'quantite_stock': lambda x: random.randint(0, 100),
         'prix': lambda x: random.uniform(10, 100),
         'description': lambda x: seeder.faker.paragraph(),
         'ingredients': lambda x: seeder.faker.text(),
         'macronutriments': lambda x: seeder.faker.text(),
-        'variations': lambda x: seeder.faker.word(),
         'en_promo': lambda x: random.choice([True, False]),
         'nature_promo': None,
         'pourcentage_promo': lambda x: random.randint(5, 90) if random.choice([True, False]) else 0,
     })
 
     inserted_pks = seeder.execute()
+
+    # Seed partenaires
+    seeder.add_entity(Partenaires, 6, {
+        'nom': lambda x: seeder.faker.company(),
+        'logo': lambda x: seeder.faker.image_url(width=90, height=80)
+    })
+
+    seeder.execute()
     print(inserted_pks)
+
+   # Créer les variantes
+    contenus = ['250g', '500g', '1kg', '2kg', '30 capsules', '60 capsules', '90 capsules', '120 capsules']
+    for contenu in contenus:
+        variant = Variantes.objects.create(contenu=contenu)
+
+    # Associer les variants aux produits
+    for pk in inserted_pks[Produits]:
+        produit = Produits.objects.get(pk=pk)
+
+        if produit.type == 'capsules':
+            contenus_capsules = ['30 capsules', '60 capsules', '90 capsules', '120 capsules']
+            for contenu in contenus_capsules:
+                variant = Variantes.objects.get(contenu=contenu)
+                ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50))
+        else:
+            contenus_powder = ['250g', '500g', '1kg', '2kg']
+            for contenu in contenus_powder:
+                variant = Variantes.objects.get(contenu=contenu)
+                ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50))
+                

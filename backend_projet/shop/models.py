@@ -70,6 +70,22 @@ class Promotions(models.Model):
 
 
 
+class Variantes(models.Model):
+    CONTENU_CHOICES = [
+        ('250g', '250g'),
+        ('500g', '500g'),
+        ('1kg', '1kg'),
+        ('2kg', '2kg'),
+        ('30 capsules', '30 capsules'),
+        ('60 capsules', '60 capsules'),
+        ('90 capsules', '90 capsules'),
+        ('120 capsules', '120 capsules'),
+    ]
+    contenu = models.CharField(max_length=255, choices=CONTENU_CHOICES, blank=True)
+    produits = models.ManyToManyField("Produits", through='ProductVariant', related_name='variante_produits', blank=True)
+    def __str__(self):
+        return self.contenu
+
 def upload_to_product(instance, filename):
     # Récupérer l'ID du produit
     product_id = instance.id
@@ -100,24 +116,35 @@ class Produits(models.Model):
     )
     marque_vendeur = models.CharField(max_length=255, choices=MARQUE_CHOICES)
     TYPE_CHOICES = (
-        ('gélules', 'Gélules'),
-        ('poudre', 'Poudre'),
+        ('capsules', 'Capsules'),
+        ('powder', 'Powder'),
     )
     type = models.CharField(max_length=255, choices=TYPE_CHOICES)
     categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE)
     description = models.TextField()
     ingredients = models.TextField()
     macronutriments = models.TextField()
-    variations = models.CharField(max_length=255)
+    variations = models.ManyToManyField(Variantes, through='ProductVariant', related_name='produit_variations', blank=True)
     en_promo = models.BooleanField(default=False)
     nature_promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
     pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
     prix = models.DecimalField(max_digits=10, decimal_places=2)
-    quantite_stock = models.PositiveIntegerField()
     commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
     date_ajout_panier_user = models.DateField(null=True, blank=True)
     date_ajout_wishlist_user = models.DateField(null=True, blank=True)
+    def __str__(self):
+        return f"{self.id} - {self.nom} "
+
+
+class ProductVariant(models.Model):
+    product = models.ForeignKey(Produits, on_delete=models.CASCADE)
+    variant = models.ForeignKey(Variantes, on_delete=models.CASCADE)
+    quantite_stock = models.PositiveIntegerField(blank=True)
+    def __str__(self):
+        return f"{self.variant} ({self.product}): {self.quantite_stock}"
+    class Meta:
+        unique_together = ('product', 'variant')
 
 class Commentaires(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

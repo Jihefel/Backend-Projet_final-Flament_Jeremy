@@ -4,6 +4,11 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
+            {% for f in variant_forms %}
+            <div class="form-group">
+                {{ f }}
+            </div>
+            {% endfor %}
             <button type="submit" class="default-btn">Confirm</button>
         </form>
     </div>
