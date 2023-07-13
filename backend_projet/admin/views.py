@@ -184,28 +184,34 @@ def products_update(request, id):
     if request.method == 'POST':
         form = ProduitsForm(request.POST, request.FILES, instance=product)
         variant_forms = []
+        qte_forms = []  # Nouvelle liste pour les formulaires de quantité
         for variant in variants:
-            variant_form = VariantForm(request.POST, instance=variant, prefix=f"variant_{variant.id}")
+            prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
+            variant_form = VariantForm(request.POST, instance=variant, prefix=prefix)
             product_variant = ProductVariant.objects.get(product=product, variant=variant)
-            qte_form = ProductVariantForm(request.POST, instance=product_variant)
+            qte_form = ProductVariantForm(request.POST, instance=product_variant, prefix=prefix)
             variant_forms.append(variant_form)
-            variant_forms.append(qte_form)
-    
-        if form.is_valid() and all([vf.is_valid() for vf in variant_forms]):
+            qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
+
+        if form.is_valid() and all([vf.is_valid() for vf in variant_forms]) and all([qf.is_valid() for qf in qte_forms]):
             form.save()
             for variant_form in variant_forms:
                 variant_form.save()
+            for qte_form in qte_forms:
+                qte_form.save()
             messages.success(request, f"Product {product.nom} successfully updated.")
             return redirect('custom_admin:products_all')
     else:
         form = ProduitsForm(instance=product)
         variant_forms = []
+        qte_forms = []  # Nouvelle liste pour les formulaires de quantité
         for variant in variants:
-            variant_form = VariantForm(instance=variant, prefix=f"variant_{variant.id}")
+            prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
+            variant_form = VariantForm(instance=variant, prefix=prefix)
             product_variant = ProductVariant.objects.get(product=product, variant=variant)
-            qte_form = ProductVariantForm(instance=product_variant)
+            qte_form = ProductVariantForm(instance=product_variant, prefix=prefix)
             variant_forms.append(variant_form)
-            variant_forms.append(qte_form)
+            qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
         
     
     context = locals()

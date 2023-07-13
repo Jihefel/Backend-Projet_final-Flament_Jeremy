@@ -150,7 +150,7 @@ class VariantForm(forms.ModelForm):
         model = Variantes
         fields = ['contenu']
         widgets = {
-            'contenu': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'col-form-label mt-3'})
+            'contenu': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'col-form-label border-0'})
         } 
 
 class CommentairesForm(forms.ModelForm):
