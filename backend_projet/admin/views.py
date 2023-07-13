@@ -134,7 +134,7 @@ def products_all(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
-    products = Produits.objects.all()
+    products = Produits.objects.prefetch_related('productvariant_set__variant').all()
     
     context = locals()
     return render(request, 'admin/pages/products/all.html', context)
@@ -147,25 +147,46 @@ def products_create(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    products = Produits.objects.all()
     variants = Variantes.objects.all()
 
     if request.method == 'POST':
         form = ProduitsForm(request.POST, request.FILES)
         variant_forms = []
         qte_forms = []  # Nouvelle liste pour les formulaires de quantité
+    
         for variant in variants:
             prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
-            variant_form = VariantForm(request.POST, prefix=prefix)
+            variant_form = VariantForm(request.POST, instance=variant, prefix=prefix)
             qte_form = ProductVariantForm(request.POST, prefix=prefix)
             variant_forms.append(variant_form)
             qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
 
         if form.is_valid() and all([vf.is_valid() for vf in variant_forms]) and all([qf.is_valid() for qf in qte_forms]):
-            form.save()
-            for variant_form in variant_forms:
-                variant_form.save()
-            for qte_form in qte_forms:
-                qte_form.save()
+            product = form.save(commit=False)
+            product.save()
+
+            # Determine the number of variants to save based on the product type
+            if product.type == 'powder':
+                num_variants_to_save = 4
+                start_index = 0
+            elif product.type == 'capsules':
+                num_variants_to_save = 4
+                start_index = len(variants) - num_variants_to_save
+            else:
+                num_variants_to_save = 0
+                start_index = 0
+
+            for i in range(start_index, start_index + num_variants_to_save):
+                variant_form = variant_forms[i]
+                qte_form = qte_forms[i]
+                variant = variant_form.save(commit=False)
+                variant.save()
+                product_variant = ProductVariant(product=product, variant=variant)
+                product_variant.quantite_stock = qte_form.cleaned_data['quantite_stock']
+                product_variant.prix = qte_form.cleaned_data['prix']
+                product_variant.save()
+
             messages.success(request, f"Product successfully created.")
             return redirect('custom_admin:products_all')
     else:
@@ -174,14 +195,14 @@ def products_create(request):
         qte_forms = []  # Nouvelle liste pour les formulaires de quantité
         for variant in variants:
             prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
-            variant_form = VariantCreateForm(prefix=prefix)
+            variant_form = VariantForm(instance=variant, prefix=prefix)
             qte_form = ProductVariantForm(prefix=prefix)
             variant_forms.append(variant_form)
             qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
     
-    
     context = locals()
     return render(request, 'admin/pages/products/create.html', context)
+
 
 
 def products_delete(request, id):

@@ -103,6 +103,31 @@ class Produits(models.Model):
     image_4 = models.ImageField(upload_to=upload_to_product)
     image_5 = models.ImageField(upload_to=upload_to_product)
     image_6 = models.ImageField(upload_to=upload_to_product)
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Call the parent's save method to save the instance
+        self.image_1.upload_to = upload_to_product(self, self.image_1.name)  # Update the upload path for each image field
+        self.image_2.upload_to = upload_to_product(self, self.image_2.name)
+        self.image_3.upload_to = upload_to_product(self, self.image_3.name)
+        self.image_4.upload_to = upload_to_product(self, self.image_4.name)
+        self.image_5.upload_to = upload_to_product(self, self.image_5.name)
+        self.image_6.upload_to = upload_to_product(self, self.image_6.name)
+        super().save(*args, **kwargs)  # Call the parent's save method again to save the updated fields
+    def delete(self, *args, **kwargs):
+        # Delete the associated image files
+        image_files = [
+            self.image_1.path,
+            self.image_2.path,
+            self.image_3.path,
+            self.image_4.path,
+            self.image_5.path,
+            self.image_6.path,
+        ]
+        for file_path in image_files:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+        # Call the parent's delete method to delete the instance from the database
+        super().delete(*args, **kwargs)
     MARQUE_CHOICES = (
         ('MyProtein', 'MyProtein'),
         ('Prozis', 'Prozis'),
@@ -139,8 +164,8 @@ class Produits(models.Model):
 class ProductVariant(models.Model):
     product = models.ForeignKey(Produits, on_delete=models.CASCADE, null=True, blank=True,)
     variant = models.ForeignKey(Variantes, on_delete=models.CASCADE, null=True, blank=True,)
-    quantite_stock = models.PositiveIntegerField(blank=True)
-    prix = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
+    quantite_stock = models.PositiveIntegerField(blank=True, null=True)
+    prix = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     def __str__(self):
         return f"{self.variant} ({self.product}): {self.quantite_stock}"
     class Meta:
