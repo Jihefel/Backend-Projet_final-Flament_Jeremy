@@ -27,7 +27,17 @@ def index(request):
 
     # Partenaires
     partners = Partenaires.objects.all()
-        
+    
+    # Promotions
+    promos = Promotions.objects.all()
+
+    # Categories
+    categories = Categorie.objects.all()
+    categories_in_promo = []
+    for category in categories:
+        if category.promo:
+            categories_in_promo.append(category)
+
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)

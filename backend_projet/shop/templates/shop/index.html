@@ -37,24 +37,31 @@
 {% block content %}
     <!-- Start Main Banner Area -->
     <div class="home-slides owl-carousel owl-theme">
-        <div class="main-banner banner-bg1">
+        {% for promo in promos %}
+        <div class="main-banner banner-bg{{ promo.id }}" style="background-image: url({% if 'https' in promo.image_illustration.url %}{{ promo.image_illustration }}{% else %}{{ promo.image_illustration.url }}{% endif %})">
             <div class="d-table">
                 <div class="d-table-cell">
                     <div class="container">
-                        <div class="main-banner-content text-center">
-                            <span class="sub-title">Limited Time Offer!</span>
-                            <h1>Winter-Spring!</h1>
-                            <p>Take 20% Off ‘Sale Must-Haves'</p>
+                        <div class="main-banner-content {% if promo.id == 3 %}text-center{% endif %}">
+                            {% comment %} TODO - Changer url {% endcomment %}
+                            <span class="sub-title">{{ promo.slogan }} </span>
+                            <h1>{{ promo.nom }} </h1>
+                            <p>Take {{ promo.pourcentage_promo }}% Off ‘Sale Must-Haves'</p>
                             <div class="btn-box">
-                                <a href="products-left-sidebar.html" class="default-btn">Shop Women's</a>
-                                <a href="products-right-sidebar-2.html" class="optional-btn">Shop Men's</a>
+                                {% for c in categories_in_promo %}
+                                {% if promo.id == c.promo_id %}
+                                <a href="products-left-sidebar.html" class="default-btn">{{c.nom}} </a>
+                                {% endif %}
+                                {% endfor %}
+                                <a href="products-right-sidebar-2.html" class="optional-btn">See products</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="main-banner banner-bg2">
+        {% endfor %}
+        {% comment %} <div class="main-banner banner-bg2">
             <div class="d-table">
                 <div class="d-table-cell">
                     <div class="container">
@@ -87,7 +94,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
     </div>
     <!-- End Main Banner Area -->
     <!-- Start Categories Banner Area -->
