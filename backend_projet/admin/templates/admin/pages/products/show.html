@@ -51,7 +51,7 @@
             <div>
                 <dt>Category</dt>
                 <dd>
-                    {{ product.categorie }}
+                    <a href="{% url 'custom_admin:categories_show' product.categorie.id %}">{{ product.categorie }}</a>
                 </dd>
             </div>
             <div>
@@ -92,7 +92,7 @@
                 <div>
                     <dt>Sale name</dt>
                     <dd>
-                        {{ product.promo.nom }}
+                        <a href="{% url 'custom_admin:promos_show' product.promo.id %}">{{ product.promo.nom }}</a>
                     </dd>
                 </div>
                 <div>

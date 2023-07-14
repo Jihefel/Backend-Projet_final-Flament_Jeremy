@@ -16,6 +16,7 @@ def admin_home(request):
     context = locals()
     return render(request, 'admin/home.html', context)
 
+#SECTION - INFOS
 def infos_site(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -36,7 +37,9 @@ def infos_site(request):
     
     context = locals()
     return render(request, 'admin/pages/infos-site/update.html', context)
+#!SECTION
 
+#SECTION - MEMBRES
 # MEMBERS
 def members_all(request):
     role_id_admin = 1
@@ -124,7 +127,10 @@ def members_show(request, id):
 
     context = locals()
     return render(request, 'admin/pages/members/show.html', context)
+#!SECTION
 
+
+#SECTION - PRODUITS
 # Produits
 def products_all(request):
     role_id_admin = 1
@@ -273,3 +279,170 @@ def products_show(request, id):
 
     context = locals()
     return render(request, 'admin/pages/products/show.html', context)
+#!SECTION
+
+
+# SECTION - PROMOS
+# Promotions
+def promos_all(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    promos = Promotions.objects.all()
+
+    categories = Categorie.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/promos/all.html', context)
+
+def promos_create(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+
+    if request.method == 'POST':
+        form = PromotionsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Promotion successfully created.")
+            return redirect('custom_admin:promos_all')
+    else:
+        form = PromotionsForm()
+    
+    
+    context = locals()
+    return render(request, 'admin/pages/promos/create.html', context)
+
+
+
+def promos_delete(request, id):
+    promo = Promotions.objects.get(id=id)
+    messages.success(request, f"Promotion {promo.nom} successfully deleted.")
+    promo.delete()
+    
+    return redirect('custom_admin:promos_all')
+
+def promos_update(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    promo = Promotions.objects.get(id=id)
+
+
+    if request.method == 'POST':
+        form = PromotionsForm(request.POST, request.FILES, instance=promo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Promotion {promo.nom} successfully updated.")
+            return redirect('custom_admin:promos_all')
+    else:
+        form = PromotionsForm(instance=promo)
+        
+    
+    context = locals()
+    return render(request, 'admin/pages/promos/update.html', context)
+
+def promos_show(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    promo = Promotions.objects.get(id=id)
+    categories = Categorie.objects.filter(promo=promo)
+    products = Produits.objects.filter(promo=promo)
+
+    context = locals()
+    return render(request, 'admin/pages/promos/show.html', context)
+#!SECTION
+
+
+# SECTION - CATEGORIES
+def categories_all(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    categories = Categorie.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/categories/all.html', context)
+
+def categories_create(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+
+    
+    
+    context = locals()
+    return render(request, 'admin/pages/categories/create.html', context)
+
+
+def categories_delete(request, id):
+    categorie = Categorie.objects.get(id=id)
+    messages.success(request, f"Promotion {categorie.nom} successfully deleted.")
+    categorie.delete()
+    
+    return redirect('custom_admin:categories_all')
+
+def categories_update(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    categorie = Categorie.objects.get(id=id)
+
+
+    if request.method == 'POST':
+        form = CategorieForm(request.POST, request.FILES, instance=categorie)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Categorie {categorie.nom} successfully updated.")
+            return redirect('custom_admin:categories_all')
+    else:
+        form = CategorieForm(instance=categorie)
+        
+    
+    context = locals()
+    return render(request, 'admin/pages/categories/update.html', context)
+
+def categories_show(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    categorie = Categorie.objects.get(id=id)
+    products = Produits.objects.filter(categorie=categorie)
+     
+
+    context = locals()
+    return render(request, 'admin/pages/categories/show.html', context)
+#!SECTION

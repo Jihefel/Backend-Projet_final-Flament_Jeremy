@@ -1,0 +1,33 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <dl>
+            <div>
+                <dt>Name</dt>
+                <dd>
+                    {{ categorie.nom }}
+                </dd>
+            </div>
+            {% if categorie.promo %}
+            <div>
+                <dt>Percent applied</dt>
+                <dd>
+                    {{ categorie.promo }}
+                </dd>
+            </div>
+            {% endif %}
+            {% if products %}
+                <div>
+                    <dt>Applied to product</dt>
+                    <dd>
+                        <ul>
+                            {% for product in products %}
+                            <li><a href="{% url 'custom_admin:products_show' product.id %}">#{{ product.id }} - {{ product.nom }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </div>
+            {% endif %}
+        </dl>
+    </div>
+{% endblock admincontent %}

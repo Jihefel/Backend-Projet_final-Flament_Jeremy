@@ -1,0 +1,79 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <dl>
+            <div>
+                <dt>Banner image</dt>
+                <dd>
+                    <img src="{% if 'https' in promo.image_illustration.url %}{{ promo.image_illustration }}{% else %}{{ promo.image_illustration.url }}{% endif %}"
+                         alt=""
+                         style="max-height: 200px">
+                </dd>
+            </div>
+            <div>
+                <dt>Name</dt>
+                <dd>
+                    {{ promo.nom }}
+                </dd>
+            </div>
+            <div>
+                <dt>Percent applied</dt>
+                <dd>
+                    {{ promo.pourcentage_promo }}%
+                </dd>
+            </div>
+            <div>
+                <dt>Slogan</dt>
+                <dd>
+                    {{ promo.slogan }}
+                </dd>
+            </div>
+            <div>
+                <dt>Description</dt>
+                <dd>
+                    {{ promo.description }}
+                </dd>
+            </div>
+            <div>
+                <dt>Start date</dt>
+                <dd>
+                    {{ promo.date_debut }}
+                </dd>
+            </div>
+            <div>
+                <dt>End date</dt>
+                <dd>
+                    {{ promo.date_fin }}
+                </dd>
+            </div>
+            {% if categories %}
+                <div>
+                    <dt>Applied to category</dt>
+                    <dd>
+                        <ul>
+                            {% for cat in categories %}
+                            <li>
+                                <a href="{% url 'custom_admin:categories_show' cat.id %}">
+                                    {{ cat.nom }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </div>
+            {% endif %}
+            {% if products %}
+                <div>
+                    <dt>Applied to product</dt>
+                    <dd>
+                        <ul>
+                            {% for product in products %}
+                            <li><a href="{% url 'custom_admin:products_show' product.id %}">#{{ product.id }} - {{ product.nom }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </div>
+            {% endif %}
+        </dl>
+    </div>
+{% endblock admincontent %}

@@ -66,11 +66,11 @@ def run():
 
     # Seed Categories
     categories = [
-        'Protéines',
-        'Acides Aminés',
-        'Vitamines',
-        'Compléments',
-        'Brûleurs de Graisses',
+        'Proteins',
+        'Amino acids',
+        'Vitamins',
+        'Supplements',
+        'Fat burners',
     ]
 
     seeder.add_entity(

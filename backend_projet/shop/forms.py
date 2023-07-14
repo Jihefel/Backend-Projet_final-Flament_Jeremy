@@ -33,8 +33,8 @@ class EditProfileForm(forms.ModelForm):
         model = User
         fields = ['image_banniere_profil', 'avatar', 'first_name', 'last_name', 'email', 'username', 'metiers_hobbies', 'bio' ]
         widgets = {
-            'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_banniere_profil': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -61,8 +61,8 @@ class UserCreationForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_banniere_profil': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -82,8 +82,8 @@ class UserUpdateForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'image_banniere_profil': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'avatar': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_banniere_profil': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -105,11 +105,24 @@ class CategorieForm(forms.ModelForm):
     class Meta:
         model = Categorie
         fields = ['nom', 'promo']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'promo': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 class PromotionsForm(forms.ModelForm):
     class Meta:
         model = Promotions
         fields = ['nom', 'pourcentage_promo', 'slogan', 'description', 'image_illustration', 'date_debut', 'date_fin']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'pourcentage_promo': forms.NumberInput(attrs={'class': 'form-control'}),
+            'slogan': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'image_illustration': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'date_debut': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
+            'date_fin': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
+        }
 
 class ProductVariantForm(forms.ModelForm):
     class Meta:
@@ -127,12 +140,12 @@ class ProduitsForm(forms.ModelForm):
         fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'promo']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
-            'image_1': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'image_2': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'image_3': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'image_4': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'image_5': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'image_6': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_1': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'image_2': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'image_3': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'image_4': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'image_5': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'image_6': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'marque_vendeur': forms.Select(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),
             'categorie': forms.Select(attrs={'class': 'form-control'}),

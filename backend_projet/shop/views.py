@@ -293,6 +293,33 @@ def all_products(request):
     today = date.today()
     variants_all = Variantes.objects.all()
     categories = Categorie.objects.all()
+    
+    type_param = request.GET.get('type')
+    if request.GET.get('category'):
+        # Récupérer les paramètres de filtrage de l'URL
+        category_id = int(request.GET.get('category'))
+
+        # Filtrer les catégories en fonction des paramètres
+        if category_id:
+            products = products.filter(categorie_id=category_id)
+
+    # Filtrer par type
+    if type_param:
+        products = products.filter(type=type_param)
+
+
+     # Pagination des produits
+    paginator = Paginator(products, 12)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    # Calculate the start and end indexes for the range of products to display
+    per_page = 12  # Number of products per page
+    start_index = (int(page_number) - 1) * per_page
+    if (int(page_number) * per_page) < products.count():
+        end_index = int(page_number) * per_page
+    else:
+        end_index = products.count()
+
     for product in products:
         variants = product.variations.filter(produits=product)
         first_variant = variants.first()
@@ -301,19 +328,9 @@ def all_products(request):
             if product.promo:
                 product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
             product.product_variant = product_variant  # Add the product_variant to the product object
-
-    paginator = Paginator(products, 12)  # Set the number of products per page
-
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
-    # Calculate the start and end indexes for the range of products to display
-    per_page = 12  # Number of products per page
-    start_index = (int(page_number) - 1) * per_page
-    end_index = int(page_number) * per_page
     
     # Slice the products based on the calculated indexes
     sliced_products = products[start_index:end_index]
-
 
     # Infos du site
     infos = InfosQDP.objects.first()
@@ -441,7 +458,6 @@ def signup(request):
     context = locals()
     return render(request, 'shop/signup.html', context)
 
-# ...
 
 def signup2(request):
     

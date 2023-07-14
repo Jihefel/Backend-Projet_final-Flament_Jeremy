@@ -48,26 +48,12 @@ class Promotions(models.Model):
         return f"{self.nom} - {self.pourcentage_promo}%"
 
 class Categorie(models.Model):
-    PROTEINES = 'proteines'
-    ACIDES_AMINES = 'acides_amines'
-    VITAMINES = 'vitamines'
-    COMPLEMENTS = 'complements'
-    BRULEURS_DE_GRAISSES = 'bruleurs_de_graisses'
-    
-    CATEGORIE_CHOICES = (
-        (PROTEINES, 'Protéines'),
-        (ACIDES_AMINES, 'Acides Aminés'),
-        (VITAMINES, 'Vitamines'),
-        (COMPLEMENTS, 'Compléments'),
-        (BRULEURS_DE_GRAISSES, 'Brûleurs de Graisses'),
-    )
-    
-    nom = models.CharField(max_length=255, choices=CATEGORIE_CHOICES)
+    nom = models.CharField(max_length=255)
     promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
         return self.nom
 
-class Variantes(models.Model):
+class Variantes(models.Model): 
     CONTENU_CHOICES = [
         ('250g', '250g'),
         ('500g', '500g'),

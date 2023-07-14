@@ -46,7 +46,8 @@
                             {% comment %} TODO - Changer url {% endcomment %}
                             <span class="sub-title">{{ promo.slogan }} </span>
                             <h1>{{ promo.nom }} </h1>
-                            <p>Take {{ promo.pourcentage_promo }}% Off ‘Sale Must-Haves'</p>
+                            <p>Take {{ promo.pourcentage_promo }}% Off</p>
+                            <p>{{ promo.description }}</p>
                             <div class="btn-box">
                                 {% for c in categories_in_promo %}
                                 {% if promo.id == c.promo_id %}

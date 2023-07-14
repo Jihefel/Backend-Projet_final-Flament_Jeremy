@@ -5,7 +5,7 @@
             {% csrf_token %}
             {{ form.as_p }}
             {% for f in variant_forms %}
-                <fieldset class="form-group border border-1 mt-4 p-2">
+                <fieldset class="form-group border border-1 my-4 p-2">
                     {{ f }}
                     {% for qte_form in qte_forms %}
                         {% if qte_form.prefix == f.prefix %}
