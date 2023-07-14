@@ -172,10 +172,25 @@ class VariantCreateForm(forms.ModelForm):
             'contenu': forms.Select(attrs={'class': 'col-form-label border-0'})
         } 
 
+class PriceFilterForm(forms.Form):
+    filter_by_price = forms.IntegerField(
+        label='Filter by Price',
+        widget=forms.NumberInput(attrs={
+            'type': 'range',
+            'min': 0,
+            'max': 100,
+            'step': 5,
+            'value': 100,
+            'list': 'values',
+            'style': "accent-color: #f53f85"
+        }),
+        required=False
+    )
+
 class CommentairesForm(forms.ModelForm):
     class Meta:
         model = Commentaires
-        fields = ['user', 'reponse_a', 'produit_associe', 'blog_post_associe']
+        fields = ['user', 'reponse_a']
 
 class WishlistForm(forms.ModelForm):
     class Meta:

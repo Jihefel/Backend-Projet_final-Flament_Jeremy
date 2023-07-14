@@ -125,7 +125,7 @@ class Produits(models.Model):
     macronutriments = models.TextField()
     variations = models.ManyToManyField(Variantes, through='ProductVariant', related_name='produit_variations', blank=True)
     promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
-    commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
+    commentaire = models.ManyToManyField('Commentaires', blank=True)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
     date_ajout_panier_user = models.DateField(null=True, blank=True)
     date_ajout_wishlist_user = models.DateField(null=True, blank=True)
@@ -147,8 +147,6 @@ class Commentaires(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     reponse_a = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
-    produit_associe = models.ForeignKey(Produits, null=True, blank=True, on_delete=models.CASCADE)
-    blog_post_associe = models.ForeignKey('BlogPost', null=True, blank=True, on_delete=models.CASCADE)
 
 class Tags(models.Model):
     nom = models.CharField(max_length=255)

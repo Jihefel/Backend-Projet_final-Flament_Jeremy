@@ -306,29 +306,61 @@ def all_products(request):
     # Filtrer par type
     if type_param:
         products = products.filter(type=type_param)
-
-
-     # Pagination des produits
-    paginator = Paginator(products, 12)
-    page_number = request.GET.get('page', 1)
-    page_obj = paginator.get_page(page_number)
-    # Calculate the start and end indexes for the range of products to display
-    per_page = 12  # Number of products per page
-    start_index = (int(page_number) - 1) * per_page
-    if (int(page_number) * per_page) < products.count():
-        end_index = int(page_number) * per_page
     else:
-        end_index = products.count()
+        type_param = ""
 
-    for product in products:
-        variants = product.variations.filter(produits=product)
-        first_variant = variants.first()
-        if first_variant:
-            product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
-            if product.promo:
-                product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
-            product.product_variant = product_variant  # Add the product_variant to the product object
+    if request.method == 'GET':
+        filter_form = PriceFilterForm(request.GET)
+        if filter_form.is_valid():
+            filter_by_price_max = filter_form.cleaned_data['filter_by_price']
+            
+            # Filtrer les produits en fonction du prix
+            if filter_by_price_max is not None:
+                filtered_products = []
+                for product in products:
+                    variants = product.variations.filter(produits=product)
+                    first_variant = variants.first()
+                    if first_variant:
+                        product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
+                        if product_variant.prix <= filter_by_price_max:
+                            filtered_products.append(product)
+                products = filtered_products
+            else:
+                filtered_products = products
     
+    products_length = len(products)
+
+    # Vérifier si la liste est vide avant de paginer les produits
+    if not filtered_products:
+        paginator = Paginator([], 12)
+        page_number = 1
+        page_obj = paginator.get_page(page_number)
+        start_index = 0
+        end_index = 0
+    else:
+        # Pagination des produits
+        paginator = Paginator(filtered_products, 12)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+        # Calculate the start and end indexes for the range of products to display
+        per_page = 12  # Number of products per page
+        start_index = (int(page_number) - 1) * per_page
+        end_index = int(page_number) * per_page
+
+        # Adjust end_index if it exceeds the length of the filtered_products list
+        end_index = min(end_index, len(filtered_products))
+
+        for product in products:
+            variants = product.variations.filter(produits=product)
+            first_variant = variants.first()
+            if first_variant:
+                product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
+                if product.promo:
+                    product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
+                product.product_variant = product_variant  # Add the product_variant to the product object
+    
+
     # Slice the products based on the calculated indexes
     sliced_products = products[start_index:end_index]
 
