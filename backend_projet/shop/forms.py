@@ -104,12 +104,12 @@ class UserRoleUpdateForm(forms.ModelForm):
 class CategorieForm(forms.ModelForm):
     class Meta:
         model = Categorie
-        fields = ['nom', 'promo', 'pourcentage_promo']
+        fields = ['nom', 'promo']
 
 class PromotionsForm(forms.ModelForm):
     class Meta:
         model = Promotions
-        fields = ['nom', 'pourcentage_promo', 'slogan', 'description', 'image_illustration', 'date_debut', 'date_fin', 'categorie_en_promo', 'produit_en_promo']
+        fields = ['nom', 'pourcentage_promo', 'slogan', 'description', 'image_illustration', 'date_debut', 'date_fin']
 
 class ProductVariantForm(forms.ModelForm):
     class Meta:
@@ -124,7 +124,7 @@ class ProductVariantForm(forms.ModelForm):
 class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
-        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'en_promo', 'nature_promo', 'pourcentage_promo']
+        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'promo']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'image_1': forms.FileInput(attrs={'class': 'form-control-file'}),
@@ -139,9 +139,7 @@ class ProduitsForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'ingredients': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'macronutriments': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'en_promo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'nature_promo': forms.Select(attrs={'class': 'form-control'}),
-            'pourcentage_promo': forms.NumberInput(attrs={'class': 'form-control'}),
+            'promo': forms.Select(attrs={'class': 'form-control'}),
         }
 
 

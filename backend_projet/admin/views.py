@@ -269,7 +269,7 @@ def products_show(request, id):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     product = Produits.objects.get(id=id)
-    variants = product.variations.all()
+    pv = ProductVariant.objects.filter(product=product)
 
     context = locals()
     return render(request, 'admin/pages/products/show.html', context)

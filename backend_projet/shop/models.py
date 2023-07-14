@@ -36,6 +36,17 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+class Promotions(models.Model):
+    nom = models.CharField(max_length=255)
+    pourcentage_promo = models.PositiveIntegerField()
+    slogan = models.CharField(max_length=255)
+    description = models.TextField()
+    image_illustration = models.ImageField(upload_to='promotions/')
+    date_debut = models.DateField()
+    date_fin = models.DateField()
+    def __str__(self):
+        return f"{self.nom} - {self.pourcentage_promo}%"
+
 class Categorie(models.Model):
     PROTEINES = 'proteines'
     ACIDES_AMINES = 'acides_amines'
@@ -52,23 +63,9 @@ class Categorie(models.Model):
     )
     
     nom = models.CharField(max_length=255, choices=CATEGORIE_CHOICES)
-    promo = models.BooleanField(default=False)
-    pourcentage_promo = models.PositiveIntegerField(null=True, blank=True)
+    promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
         return self.nom
-
-class Promotions(models.Model):
-    nom = models.CharField(max_length=255)
-    pourcentage_promo = models.PositiveIntegerField()
-    slogan = models.CharField(max_length=255)
-    description = models.TextField()
-    image_illustration = models.ImageField(upload_to='promotions/')
-    date_debut = models.DateField()
-    date_fin = models.DateField()
-    categorie_en_promo = models.ForeignKey(Categorie, on_delete=models.CASCADE, null=True, blank=True)
-    produit_en_promo = models.ForeignKey('Produits', on_delete=models.CASCADE, null=True, blank=True)
-
-
 
 class Variantes(models.Model):
     CONTENU_CHOICES = [
@@ -103,15 +100,6 @@ class Produits(models.Model):
     image_4 = models.ImageField(upload_to=upload_to_product)
     image_5 = models.ImageField(upload_to=upload_to_product)
     image_6 = models.ImageField(upload_to=upload_to_product)
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Call the parent's save method to save the instance
-        self.image_1.upload_to = upload_to_product(self, self.image_1.name)  # Update the upload path for each image field
-        self.image_2.upload_to = upload_to_product(self, self.image_2.name)
-        self.image_3.upload_to = upload_to_product(self, self.image_3.name)
-        self.image_4.upload_to = upload_to_product(self, self.image_4.name)
-        self.image_5.upload_to = upload_to_product(self, self.image_5.name)
-        self.image_6.upload_to = upload_to_product(self, self.image_6.name)
-        super().save(*args, **kwargs)  # Call the parent's save method again to save the updated fields
     def delete(self, *args, **kwargs):
         # Delete the associated image files
         image_files = [
@@ -150,9 +138,7 @@ class Produits(models.Model):
     ingredients = models.TextField()
     macronutriments = models.TextField()
     variations = models.ManyToManyField(Variantes, through='ProductVariant', related_name='produit_variations', blank=True)
-    en_promo = models.BooleanField(default=False)
-    nature_promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
-    pourcentage_promo = models.PositiveIntegerField(null=True, blank=True, default=0)
+    promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
     commentaire = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
     date_ajout_panier_user = models.DateField(null=True, blank=True)

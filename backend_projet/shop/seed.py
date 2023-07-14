@@ -2,10 +2,8 @@ from django_seed import Seed
 from shop.models import *
 import random
 from django.contrib.auth.hashers import make_password
-from faker import Faker
 import itertools
-
-import os
+from datetime import date
 
 def run():
     seeder = Seed.seeder()
@@ -43,6 +41,29 @@ def run():
     inserted_pks = seeder.execute()
     print(inserted_pks)
 
+
+    
+    # Configurer le seed pour le modèle Promotions
+    seeder.add_entity(
+        Promotions,
+        5,  # Nombre de promotions à générer
+        {
+            'nom': lambda x: seeder.faker.word(),
+            'pourcentage_promo': lambda x: random.randint(5, 90),
+            'slogan': lambda x: seeder.faker.sentence(),
+            'description': lambda x: seeder.faker.paragraph(),
+            'image_illustration': lambda x: seeder.faker.image_url(width=1920, height=1080),  # Chemin de l'image d'illustration
+            'date_debut': lambda x: random.choice([date.today(), seeder.faker.date()]),
+            'date_fin': lambda x: seeder.faker.future_date(),
+        }
+    )
+
+    # Exécuter le seed
+    inserted = seeder.execute()
+    print(inserted)
+
+
+
     # Seed Categories
     categories = [
         'Protéines',
@@ -57,8 +78,7 @@ def run():
         len(categories),
         {
             'nom': lambda x, categories_iter=itertools.cycle(categories): next(categories_iter),
-            'promo': lambda x: random.choice([True, False]),
-            'pourcentage_promo': lambda x: random.randint(5, 90) if random.choice([True, False]) else None,
+            'promo': lambda x: None if random.choice([True, False]) else random.choice(Promotions.objects.all()),
         },
     )
 
@@ -114,6 +134,7 @@ def run():
     inserted_pks = seeder.execute()
     print(inserted_pks)
 
+
     # Seed produits
     seeder.add_entity(Produits, 36, {
         'nom': lambda x: seeder.faker.word(),
@@ -129,9 +150,7 @@ def run():
         'description': lambda x: seeder.faker.paragraph(),
         'ingredients': lambda x: seeder.faker.text(),
         'macronutriments': lambda x: seeder.faker.text(),
-        'en_promo': lambda x: random.choice([True, False]),
-        'nature_promo': None,
-        'pourcentage_promo': lambda x: random.randint(5, 90) if random.choice([True, False]) else 0,
+        'promo' : lambda x: None if random.choice([True, False]) else random.choice(Promotions.objects.all()),
     })
 
     inserted_pks = seeder.execute()
@@ -142,8 +161,9 @@ def run():
         'logo': lambda x: seeder.faker.image_url(width=90, height=80)
     })
 
-    seeder.execute()
-    print(inserted_pks)
+    inserted = seeder.execute()
+    print(inserted)
+
 
    # Créer les variantes
     contenus = ['250g', '500g', '1kg', '2kg', '30 capsules', '60 capsules', '90 capsules', '120 capsules']
@@ -164,4 +184,3 @@ def run():
             for contenu in contenus_powder:
                 variant = Variantes.objects.get(contenu=contenu)
                 ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50), prix=random.uniform(10, 100))
-                

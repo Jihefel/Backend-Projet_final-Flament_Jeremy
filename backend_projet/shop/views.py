@@ -288,8 +288,8 @@ def all_products(request):
         first_variant = variants.first()
         if first_variant:
             product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
-            if not product.pourcentage_promo : product.pourcentage_promo = 0
-            product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.pourcentage_promo) / 100)) 
+            if product.promo:
+                product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
             product.product_variant = product_variant  # Add the product_variant to the product object
 
     paginator = Paginator(products, 12)  # Set the number of products per page

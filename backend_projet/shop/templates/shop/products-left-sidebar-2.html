@@ -191,7 +191,7 @@
                                     <h3><a href="#">{{ product.nom }}</a></h3>
                             
                                     <div class="price">
-                                        {% if product.pourcentage_promo != 0 %}
+                                        {% if product.promo %}
                                             <span class="old-price">{{ product.product_variant.prix }}€</span>
                                             <span class="new-price">{{ product.product_variant.prix_promo|floatformat:2 }}€</span>
                                         {% else %}
@@ -200,10 +200,10 @@
                                     </div>
                                     <a href="#" class="add-to-cart">Add to Cart</a>
                                 </div>
-                                {% if product.pourcentage_promo != 0 %}
+                                {% if product.promo %}
                                 <span class="products-discount">
                                     <span>
-                                        {{ product.pourcentage_promo }}% OFF
+                                        {{ product.promo.pourcentage_promo }}% OFF
                                     </span>
                                 </span>
                                 {% endif %}
@@ -229,7 +229,7 @@
                                                 <h3><a href="#">{{ product.nom }}</a></h3>
 
                                                 <div class="price">
-                                                    {% if product.pourcentage_promo != 0 %}
+                                                    {% if product.promo %}
                                                         <span class="old-price">{{ product.product_variant.prix }}€</span>
                                                         <span class="new-price">{{ product.product_variant.prix_promo|floatformat:2 }}€</span>
                                                     {% else %}
@@ -239,7 +239,7 @@
 
                                                 <ul class="products-info">
                                                     <li><span>Vendor:</span> <a href="#">{{ product.marque_vendeur }}</a></li>
-                                                    <li><span>Availability:</span> <a href="#">{% if product.product_variant.quantite_stock != 0 %}In stock ({{ product.product_variant.quantite_stock }} items){% else %}Sold out{% endif %}</a></li>
+                                                    <li><span>Availability:</span> <a href="#">{% if product.product_variant.quantite_stock != 0 %}In stock ({{ product.product_variant.quantite_stock }} items){% else %}<span class="text-danger">Sold out</span>{% endif %}</a></li>
                                                     <li><span>Products Type:</span> <a href="#">{{ product.categorie }}</a></li>
                                                 </ul>
 
@@ -250,11 +250,11 @@
                                                     <p>{{ product.product_variant.variant.contenu }}</p>
                                                 </div>
 
-                                                <form class="products-add-to-cart">
+                                                <form class="products-add-to-cart" method="post">
                                                     {% csrf_token %}
                                                     <div class="input-counter">
                                                         <span class="minus-btn"><i class='bx bx-minus'></i></span>
-                                                        <input type="text" value="1" min="1" max="{{ product.product_variant.quantite_stock }}">
+                                                        <input readonly type="text" value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}" min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}" max="{{ product.product_variant.quantite_stock }}" {% if product.product_variant.quantite_stock != 0 %}{% else %}disabled{% endif %}>
                                                         <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                                     </div>
 

@@ -31,11 +31,14 @@
             <div>
                 <dt>Variants</dt>
                 <dl class="ms-2">
-                    {% for variant in variants %}
-                            <dt>{{ variant.contenu }}</dt>
-                            <dd><u>Stock:</u> {{ variant.productvariant_set.first.quantite_stock }}</dd>
-                            <dd><u>Price:</u> {{ variant.productvariant_set.first.prix }}</dd>
-                            
+                    {% for v in pv %}
+                        <dt>{{ v.variant }}</dt>
+                        <dd>
+                            <u>Stock:</u> {{ v.quantite_stock }}
+                        </dd>
+                        <dd>
+                            <u>Price:</u> {{ v.prix }}
+                        </dd>
                     {% endfor %}
                 </dl>
             </div>
@@ -76,22 +79,26 @@
                 </dd>
             </div>
             <div>
-                <dt>In sale</dt>
+                <dt>On sale</dt>
                 <dd>
-                    {{ product.en_promo }}
+                    {% if product.promo %}
+                        True
+                    {% else %}
+                        False
+                    {% endif %}
                 </dd>
             </div>
-            {% if product.en_promo %}
+            {% if product.promo %}
                 <div>
                     <dt>Sale name</dt>
                     <dd>
-                        {{ product.nature_promo }}
+                        {{ product.promo.nom }}
                     </dd>
                 </div>
                 <div>
-                    <dt>% sale</dt>
+                    <dt>Discount applied</dt>
                     <dd>
-                        {{ product.pourcentage_promo }}
+                        {{ product.promo.pourcentage_promo }}%
                     </dd>
                 </div>
             {% endif %}
