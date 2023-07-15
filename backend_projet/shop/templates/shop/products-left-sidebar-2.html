@@ -60,12 +60,12 @@
                             <h3 class="woocommerce-widget-title">Category</h3>
                             <ul class="collections-list-row">
                                 <li>
-                                    <a href="?category={% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}"
+                                    <a href="?category={% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}"
                                        class="{% if not request.GET.category %}active{% endif %}">All products</a>
                                 </li>
                                 {% for cat in categories %}
                                     <li>
-                                        <a href="?category={{ cat.id }}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}"
+                                        <a href="?category={{ cat.id }}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}"
                                            class="{% if category_id == cat.id %}active{% endif %}">{{ cat }}</a>
                                     </li>
                                 {% endfor %}
@@ -88,22 +88,23 @@
                                         <option value="75" label="75"></option>
                                         <option value="100" label="100"></option>
                                     </datalist>
+                                    <input type="hidden" name="promotion" value="{{ promo_param }}">
                                     <button type="submit" class="default-btn mt-3">Apply</button>
-                                    {% if filter_by_price_max %} <a href="?category={{ category_id }}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}{% endif %}"><span class="optional-btn mt-3">Reset</span></a> {% endif %}
+                                    {% if filter_by_price_max %} <a href="?category={{ category_id }}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}"><span class="optional-btn mt-3">Reset</span></a> {% endif %}
                                 </form>
                             </form>
                         </div>
                         <div class="woocommerce-widget size-list-widget">
                             <h3 class="woocommerce-widget-title">Type</h3>
                             <ul class="size-list-row">
-                                <a href="?category={{ category_id }}&type={% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}">
+                                <a href="?category={{ category_id }}&type={% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}">
                                     <button class="{% if not type_param %}default-btn {% else %}optional-btn{% endif %}">All Types</button>
                                 </a>
-                                <a href="?category={{ category_id }}&type=capsules{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}">
+                                <a href="?category={{ category_id }}&type=capsules{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}">
                                     <button class="{% if type_param == 'capsules' %}default-btn {% else %}optional-btn{% endif %}">Capsules</button>
                                 </a>
                             </li>
-                            <a href="?category={{ category_id }}&type=powder{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}">
+                            <a href="?category={{ category_id }}&type=powder{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}">
                                 <button class="{% if type_param == 'powder' %}default-btn {% else %}optional-btn{% endif %}">Powder</button>
                             </a>
                         </li>
@@ -254,7 +255,7 @@
                             <div class="col-lg-6 col-md-6">
                                 <div class="products-content">
                                     <h3>
-                                        <a href="#">{{ product.nom }}</a>
+                                        <a href="{% url 'product' product.id %}">{{ product.nom }}</a>
                                     </h3>
                                     <div class="price">
                                         {% if product.promo %}
@@ -266,10 +267,10 @@
                                     </div>
                                     <ul class="products-info">
                                         <li>
-                                            <span>Vendor:</span> <a href="#">{{ product.marque_vendeur }}</a>
+                                            <span>Vendor:</span> <a>{{ product.marque_vendeur }}</a>
                                         </li>
                                         <li>
-                                            <span>Availability:</span> <a href="#">
+                                            <span>Availability:</span> <a>
                                                 {% if product.product_variant.quantite_stock != 0 %}
                                                     In stock ({{ product.product_variant.quantite_stock }} items)
                                                 {% else %}
@@ -278,7 +279,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <span>Products Type:</span> <a href="#">{{ product.categorie }}</a>
+                                            <span>Products Type:</span> <a href="?category={{ product.categorie.id }}">{{ product.categorie }}</a>
                                         </li>
                                     </ul>
                                     <div class="products-size-wrapper">
@@ -294,10 +295,10 @@
                                                    value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
                                                    min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
                                                    max="{{ product.product_variant.quantite_stock }}"
-                                                   {% if product.product_variant.quantite_stock != 0 %}{% else %}disabled{% endif %}>
+                                                   {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
                                             <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                         </div>
-                                        <button type="submit" class="default-btn">Add to Cart</button>
+                                        <button type="submit" class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}" {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>Add to Cart</button>
                                     </form>
                                     <a href="{% url 'product' product.id %}" class="view-full-info">View Full Info</a>
                                 </div>
@@ -311,19 +312,19 @@
     </div>
     <div class="pagination-area text-center">
         {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if category_id %}&category={{ category_id }}{% endif %}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}"
+            <a href="?page={{ page_obj.previous_page_number }}{% if category_id %}&category={{ category_id }}{% endif %}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}"
                class="prev page-numbers"><i class='bx bx-chevron-left'></i></a>
         {% endif %}
         {% for num in page_obj.paginator.page_range %}
             {% if page_obj.number == num %}
                 <span class="page-numbers current" aria-current="page">{{ num }}</span>
             {% else %}
-                <a href="?page={{ num }}{% if category_id %}&category={{ category_id }}{% endif %}{% if type_param %}&type={% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}"
+                <a href="?page={{ num }}{% if category_id %}&category={{ category_id }}{% endif %}{% if type_param %}&type={% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}"
                    class="page-numbers">{{ num }}</a>
             {% endif %}
         {% endfor %}
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if category_id %}&category={{ category_id }}{% endif %}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}"
+            <a href="?page={{ page_obj.next_page_number }}{% if category_id %}&category={{ category_id }}{% endif %}{% if type_param %}&type={{ type_param }}{% endif %}{% if filter_by_price_max %}&filter_by_price={{ filter_by_price_max }}{% endif %}{% if promo_param %}&promotion={{ promo_param }}{% endif %}"
                class="next page-numbers"><i class='bx bx-chevron-right'></i></a>
         {% endif %}
     </div>

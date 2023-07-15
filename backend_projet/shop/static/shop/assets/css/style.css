@@ -2605,7 +2605,7 @@ Products CSS
 .single-products-box .products-image .new-tag {
   position: absolute;
   left: 20px;
-  top: 20px;
+  bottom: 20px;
   background-color: green;
   color: #ffffff;
   text-align: center;

@@ -14,6 +14,9 @@ from django.core.paginator import Paginator
 
 
 def index(request):
+    
+    today = date.today()
+
     role_id_admin = 1
     role_id_membre = 2
     
@@ -37,6 +40,19 @@ def index(request):
     for category in categories:
         if category.promo:
             categories_in_promo.append(category)
+
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products = products_sorted[:6]
+
+    for product in recent_products:
+            variants = product.variations.filter(produits=product)
+            first_variant = variants.first()
+            if first_variant:
+                product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
+                if product.promo:
+                    product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
+                product.product_variant = product_variant  # Add the product_variant to the product object
 
     # Form newsletter
     if request.method == 'POST':
@@ -294,6 +310,11 @@ def all_products(request):
     variants_all = Variantes.objects.all()
     categories = Categorie.objects.all()
     
+    if request.GET.get('promotion'):
+        promo_param = request.GET.get('promotion')
+        if promo_param:
+            products = products.filter(promo_id=promo_param)
+    
     type_param = request.GET.get('type')
     if request.GET.get('category'):
         # Récupérer les paramètres de filtrage de l'URL
@@ -303,6 +324,7 @@ def all_products(request):
         if category_id:
             products = products.filter(categorie_id=category_id)
 
+    
     # Filtrer par type
     if type_param:
         products = products.filter(type=type_param)
