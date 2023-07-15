@@ -394,6 +394,14 @@ def categories_create(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
 
+    if request.method == 'POST':
+        form = CategorieForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Categorie successfully created.")
+            return redirect('custom_admin:categories_all')
+    else:
+        form = CategorieForm()
     
     
     context = locals()
