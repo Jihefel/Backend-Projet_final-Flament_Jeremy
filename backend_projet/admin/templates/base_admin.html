@@ -3,8 +3,6 @@
 <html lang="en">
     <head>
         {% load bootstrap5 %}
-        {% bootstrap_css %}
-        {% bootstrap_javascript %}
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -39,6 +37,7 @@
                 {% include "admin/components/lateral_nav.html" %}
                 {% block admincontent %}
                 {% endblock admincontent %}
+                {% include "shop/components/scripts_js.html" %}
             </div>
         </div>
     </body>

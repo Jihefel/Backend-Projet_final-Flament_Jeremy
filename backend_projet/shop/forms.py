@@ -104,24 +104,33 @@ class UserRoleUpdateForm(forms.ModelForm):
 class CategorieForm(forms.ModelForm):
     class Meta:
         model = Categorie
-        fields = ['nom', 'promo']
+        fields = ['nom', 'promo', 'slogan', 'description', 'image_illustration']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'promo': forms.Select(attrs={'class': 'form-control'}),
+            'slogan': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'image_illustration': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
 class PromotionsForm(forms.ModelForm):
     class Meta:
         model = Promotions
-        fields = ['nom', 'pourcentage_promo', 'slogan', 'description', 'image_illustration', 'date_debut', 'date_fin']
+        fields = ['nom', 'pourcentage_promo', 'date_debut', 'date_fin']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'pourcentage_promo': forms.NumberInput(attrs={'class': 'form-control'}),
-            'slogan': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
             'image_illustration': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'date_debut': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
             'date_fin': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD'}),
+        }
+
+class ExtraPromotionForm(forms.ModelForm):
+    class Meta:
+        model = ExtraPromo
+        fields = ['extra_promo']
+        widgets = {
+            'extra_promo': forms.Select(attrs={'class': 'form-control'})
         }
 
 class ProductVariantForm(forms.ModelForm):
@@ -137,7 +146,7 @@ class ProductVariantForm(forms.ModelForm):
 class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
-        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'image_6', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'promo']
+        fields = ['nom', 'image_1', 'image_2', 'image_3', 'image_4', 'image_5', 'marque_vendeur', 'type', 'categorie', 'description', 'ingredients', 'macronutriments', 'promo']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'image_1': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
@@ -145,7 +154,6 @@ class ProduitsForm(forms.ModelForm):
             'image_3': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'image_4': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'image_5': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
-            'image_6': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'marque_vendeur': forms.Select(attrs={'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-control'}),
             'categorie': forms.Select(attrs={'class': 'form-control'}),
@@ -157,14 +165,6 @@ class ProduitsForm(forms.ModelForm):
 
 
 class VariantForm(forms.ModelForm):
-    class Meta:
-        model = Variantes
-        fields = ['contenu']
-        widgets = {
-            'contenu': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'col-form-label border-0'})
-        } 
-
-class VariantCreateForm(forms.ModelForm):
     class Meta:
         model = Variantes
         fields = ['contenu']
@@ -182,20 +182,27 @@ class PriceFilterForm(forms.Form):
             'step': 5,
             'value': 100,
             'list': 'values',
-            'style': "accent-color: #f53f85"
+            'style': "accent-color: #f53f85",
+            'class': "w-100"
         }),
         required=False
+    )
+
+class NameFilterForm(forms.Form):
+    filter_by_name = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Search by name',
+            'autocomplete': 'off',
+        })
     )
 
 class CommentairesForm(forms.ModelForm):
     class Meta:
         model = Commentaires
         fields = ['user', 'reponse_a']
-
-class WishlistForm(forms.ModelForm):
-    class Meta:
-        model = Wishlist
-        fields = ['user', 'produits_ajoutes']
 
 class TagsForm(forms.ModelForm):
     class Meta:
@@ -251,6 +258,10 @@ class PartenairesForm(forms.ModelForm):
     class Meta:
         model = Partenaires
         fields = ['nom', 'logo']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'logo': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        }
 
 class NewsletterForm(forms.ModelForm):
     email = forms.EmailField(label='Your E-mail Address:', widget=forms.EmailInput(attrs={'class': 'input-newsletter', 'placeholder': 'Enter your email', 'required': True, 'autocomplete': 'off'}))
@@ -260,7 +271,6 @@ class NewsletterForm(forms.ModelForm):
         fields = ['email']
 
 class SignupForm2(forms.ModelForm):
-    
     class Meta:
         model = User
         fields = ['avatar', 'metiers_hobbies', 'bio', 'image_banniere_profil', 'abonne_newsletter']

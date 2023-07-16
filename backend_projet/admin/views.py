@@ -39,6 +39,80 @@ def infos_site(request):
     return render(request, 'admin/pages/infos-site/update.html', context)
 #!SECTION
 
+#SECTION - Partenaires
+def partners_all(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    partners = Partenaires.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/partners/all.html', context)
+
+def partners_delete(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    partner = Partenaires.objects.get(id=id)
+    messages.success(request, f"Partner {partner.nom} successfully deleted.")
+    partner.delete()
+    
+    context = locals()
+    return redirect('custom_admin:partners_all')
+
+
+def partners_create(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    partners = Partenaires.objects.all()
+    if request.method == 'POST':
+        form = PartenairesForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Partner successfully created.")
+            return redirect('custom_admin:partners_all')
+    else:
+        form = PartenairesForm()
+    
+    context = locals()
+    return render(request, 'admin/pages/partners/create.html', context)
+
+def partners_update(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    partner = Partenaires.objects.get(id=id)
+
+    if request.method == 'POST':
+        form = PartenairesForm(request.POST, request.FILES, instance=partner)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Partner {partner.nom} successfully updated.")
+            return redirect('custom_admin:partners_all')
+    else:
+        form = PartenairesForm(instance=partner)
+    
+    context = locals()
+    return render(request, 'admin/pages/infos-site/update.html', context)
+#!SECTION
+
 #SECTION - MEMBRES
 # MEMBERS
 def members_all(request):
@@ -154,7 +228,7 @@ def products_create(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     products = Produits.objects.all()
-    variants = Variantes.objects.all()
+    variants = Variantes.objects.all()[:4]
 
     if request.method == 'POST':
         form = ProduitsForm(request.POST, request.FILES)
@@ -163,7 +237,7 @@ def products_create(request):
     
         for variant in variants:
             prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
-            variant_form = VariantForm(request.POST, instance=variant, prefix=prefix)
+            variant_form = VariantForm(request.POST, prefix=prefix)
             qte_form = ProductVariantForm(request.POST, prefix=prefix)
             variant_forms.append(variant_form)
             qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
@@ -201,7 +275,7 @@ def products_create(request):
         qte_forms = []  # Nouvelle liste pour les formulaires de quantité
         for variant in variants:
             prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
-            variant_form = VariantForm(instance=variant, prefix=prefix)
+            variant_form = VariantForm(prefix=prefix)
             qte_form = ProductVariantForm(prefix=prefix)
             variant_forms.append(variant_form)
             qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
@@ -293,6 +367,7 @@ def promos_all(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     promos = Promotions.objects.all()
+    extra_promo = ExtraPromo.objects.first()
 
     categories = Categorie.objects.all()
     
@@ -368,6 +443,28 @@ def promos_show(request, id):
 
     context = locals()
     return render(request, 'admin/pages/promos/show.html', context)
+
+def extra_promo(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    extra_promo = ExtraPromo.objects.first()
+
+    if request.method == 'POST':
+        form = ExtraPromotionForm(request.POST, request.FILES, instance=extra_promo)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Extra promotion successfully updated.")
+            return redirect('custom_admin:promos_all')
+    else:
+        form = ExtraPromotionForm(instance=extra_promo)
+
+    context = locals()
+    return render(request, 'admin/pages/promos/extra-promo.html', context)
 #!SECTION
 
 

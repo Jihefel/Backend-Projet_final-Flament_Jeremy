@@ -29,90 +29,60 @@
 {% endblock head %}
 
     {% block content %}
+        
+        <!-- Start Search Overlay -->
+        <div class="search-overlay">
+            <div class="d-table">
+                <div class="d-table-cell">
+                    <div class="search-overlay-layer"></div>
+                    <div class="search-overlay-layer"></div>
+                    <div class="search-overlay-layer"></div>
+                    
+                    <div class="search-overlay-close">
+                        <span class="search-overlay-close-line"></span>
+                        <span class="search-overlay-close-line"></span>
+                    </div>
+
+                    <div class="search-overlay-form">
+                        <form>
+                            <input type="text" class="input-search" placeholder="Search here...">
+                            <button type="submit"><i class='bx bx-search-alt'></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Search Overlay -->
 
         <!-- Start Page Title -->
         <div class="page-title-area">
             <div class="container">
                 <div class="page-title-content">
-                    <h2>My Account</h2>
+                    <h2>404 Not Found</h2>
                     <ul>
                         <li><a href="{% url 'home' %}">Home</a></li>
-                        <li>My Account</li>
+                        <li>404 Not Found</li>
                     </ul>
                 </div>
             </div>
         </div>
         <!-- End Page Title -->
 
-        <!-- Start Contact Area -->
-        <section class="contact-area ptb-100">
+        <!-- Start Error Area -->
+		<section class="error-area ptb-100">
             <div class="container">
-                <div class="row">
-                        <div class="contact-info">
-                            <h3>My Account</h3>
-                            <p>{{ user.username }}, here are your informations of your account.</p>
-
-                            <div class="row mt-5">
-                                <div class="col-8 ps-5">
-                                    <dl>
-                                        <div>
-                                            <dt>Banner image</dt>
-                                            <dd><img src="{% if user.image_banniere_profil %}{{ user.image_banniere_profil.url }}{% endif %}" alt="" style="max-height: 200px"></dd>
-                                        </div>
-                                        <div>
-                                            <dt>Avatar</dt>
-                                            <dd><img src="{% if user.avatar %}{{ user.avatar.url }} {% endif %}" alt="" class="img-thumbnail" style="max-height: 200px"></dd>
-                                        </div>
-                                        <div>
-                                            <dt>First name</dt>
-                                            <dd>{{ user.first_name }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Last name</dt>
-                                            <dd>{{ user.last_name }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Email address</dt>
-                                            <dd>{{ user.email }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Username</dt>
-                                            <dd>{{ user.username }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Subscribed to newsletter</dt>
-                                            <dd>{% if user.abonne_newsletter %}<input type="checkbox" class="form-check-input" checked disabled>{% else %}<input type="checkbox" class="form-check-input" disabled>{% endif %}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Jobs or hobbies</dt>
-                                            <dd>{{ user.metiers_hobbies }} </dd>
-                                        </div>
-                                        <div>
-                                            <dt>Bio</dt>
-                                            <dd>{{ user.bio }} </dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="col-4 d-flex flex-column align-items-end gap-3">
-                                    
-                                        <a class="default-btn" href="{% url 'edit_account' %}">Change infos</a>
-                                    
-                                        <a href="{% url 'change_password' %}" class="optional-btn">Change your password</a>
-                                    
-                                        {% if not user.abonne_newsletter %}<a href="{% url 'direct_newsletter_subscription' %}" class="optional-btn">Subscribe to newsletter</a>{% endif %}
-
-                                        <a class="default-btn" href="">My orders</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="error-content">
+                    <img src="https://us.123rf.com/450wm/popaukropa/popaukropa1703/popaukropa170300146/73470724-error-404.-retro-athlete-surprise.-page-not-found-template-for-web-site.-vintage-sportsman-does-not-know-and-is-surprised.-page-lost-and-found-message.-problem-disconnect.jpg" alt="error">
+                    <h3>Page Not Found</h3>
+                    <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
+                    <a href="{% url 'home' %}" class="default-btn">Go to Home</a>
                 </div>
-            </section>
-
-        <!-- End Contact Area -->
+            </div>
+        </section>
+		<!-- End Error Area -->
 
         <!-- Start Facility Area -->
-        <section class="facility-area pt-100 pb-70">
+        <section class="facility-area pb-70">
             <div class="container">
                 <div class="facility-slides owl-carousel owl-theme">
                     <div class="single-facility-box">
@@ -167,6 +137,7 @@
             </div>
         </section>
         <!-- End Facility Area -->
+
 
         <!-- Start Sidebar Modal -->
         <div class="modal right fade sidebarModal" id="sidebarModal" tabindex="-1" role="dialog">

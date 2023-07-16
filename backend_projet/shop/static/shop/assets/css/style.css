@@ -2585,6 +2585,23 @@ Products CSS
           transition-delay: 0.3s;
 }
 
+.d-table .sale-tag {
+  position: absolute;
+  left: 0.5rem;
+  top: -75px;
+  background-color: red;
+  color: #ffffff;
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  text-align: center;
+  border-radius: 50%;
+  z-index: 2;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 14px;
+}
+
 .single-products-box .products-image .sale-tag {
   position: absolute;
   left: 20px;

@@ -3,9 +3,15 @@ from . import views
 
 app_name = 'custom_admin'
 urlpatterns = [
+    
     path('admin/', views.admin_home, name='admin_home'),
     # Infos
     path('infos-site/update/', views.infos_site, name='infos_site'),
+    # Partners
+    path('partners/', views.partners_all, name='partners_all'),
+    path('partners/create', views.partners_create, name='partners_create'),
+    path('partners/update/<int:id>', views.partners_update, name='partners_update'),
+    path('partners/delete/<int:id>', views.partners_delete, name='partners_delete'),
     # Members
     path('members/', views.members_all, name='members_all'),
     path('members/create', views.members_create, name='members_create'),
@@ -21,6 +27,7 @@ urlpatterns = [
     # Promotions
     path('promos/', views.promos_all, name='promos_all'),
     path('promos/create', views.promos_create, name='promos_create'),
+    path('promos/extra/', views.extra_promo, name='extra_promo'),
     path('promos/show/<int:id>', views.promos_show, name='promos_show'),
     path('promos/update/<int:id>', views.promos_update, name='promos_update'),
     path('promos/delete/<int:id>', views.promos_delete, name='promos_delete'),

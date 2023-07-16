@@ -1,0 +1,10 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <form method="post" enctype="multipart/form-data" autocomplete="off">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="default-btn">Confirm</button>
+        </form>
+    </div>
+{% endblock admincontent %}

@@ -1,9 +1,16 @@
 {% extends "base_admin.html" %}
 {% block admincontent %}
     <div class="col-lg-9 px-5">
+        <ul class="list-group list-group-horizontal mb-4">
+            <a href="{% url 'custom_admin:extra_promo' %}">
+                <li class="list-group-item list-group-item-primary">
+                    <small>Extra promo</small>
+                </li>
+            </a>
+        </ul>
         <ul class="list-group">
             {% for promo in promos %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item d-flex justify-content-between align-items-center {% if extra_promo.extra_promo_id == promo.id %}list-group-item-primary{% endif %}">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">{{ promo }}</div>
                         <u>Currently applied to category:</u> 

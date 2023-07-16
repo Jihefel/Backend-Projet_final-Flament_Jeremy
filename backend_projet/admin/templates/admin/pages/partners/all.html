@@ -1,0 +1,28 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-xxl-6 g-3">
+            {% for partner in partners %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{% if 'https' in partner.logo.url %}{{ partner.logo }}{% else %}{{ partner.logo.url }}{% endif %}"
+                             alt=""
+                             class="card-img-top">
+                        <div class="card-body">
+                            #{{ partner.id }}
+                            <h5 class="card-title">{{ partner.nom }}</h5>
+                        </div>
+                            <div class="card-footer">
+                                <div class="input-group justify-content-center align-self-center">
+                                    <a class="optional-btn"
+                                       href="{% url 'custom_admin:partners_update' partner.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <a class="default-btn"
+                                       href="{% url 'custom_admin:partners_delete' partner.id %}"><i class="fa-solid fa-trash"></i></a>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock admincontent %}

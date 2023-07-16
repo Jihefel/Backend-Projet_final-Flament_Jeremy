@@ -3,6 +3,7 @@ from . import views
 from admin import views as admin_views
 
 urlpatterns = [
+    path('404/', views.handler404, name='error_404'),
     path('', views.index, name='home'),
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),
@@ -20,4 +21,5 @@ urlpatterns = [
     path('blogs/', views.article, name='article'),
     path('blog/', views.blog, name='blog'),
     path('admin/', admin_views.admin_home, name='admin_home'),
+    path('wishlist/<int:id>', views.wishlist, name='wishlist'),
 ]

@@ -122,6 +122,30 @@ Default CSS
   border: 1px solid #ffffff;
 }
 
+.theme-dark .dropend .dropdown-toggle::after {
+  color: white;
+}
+
+.theme-dark .dropdown-menu {
+  background-color: #333131;
+  color: white;
+}
+
+.theme-dark .card {
+  background-color: #333131;
+  color: white;
+}
+
+.theme-dark .list-group-item:not(.list-group-item-danger, .list-group-item-secondary, .list-group-item-info, .list-group-item-primary){
+  background-color: #333131;
+  color: white;
+}
+
+.theme-dark .list-group-item:is(.list-group-item-danger, .list-group-item-secondary, .list-group-item-info), .theme-dark .list-group-item:is(.list-group-item-primary) .optional-btn{
+  border-color: #000000;
+  color: #000000;
+}
+
 .theme-dark .top-header {
   background-color: #333131;
 }

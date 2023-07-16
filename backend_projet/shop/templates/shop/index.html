@@ -32,32 +32,27 @@
           type="image/png"
           href="{% static 'shop/assets/img/favicon.png' %}">
     {% load bootstrap5 %}
-    {% bootstrap_javascript %}
 {% endblock head %}
 {% block content %}
     <!-- Start Main Banner Area -->
     <div class="home-slides owl-carousel owl-theme">
-        {% for promo in promos %}
-            <div class="main-banner banner-bg{{ promo.id }}"
-                 style="background-image: url({% if 'https' in promo.image_illustration.url %}{{ promo.image_illustration }}{% else %}{{ promo.image_illustration.url }}{% endif %})">
+        {% for categorie in categories %}
+            <div class="main-banner banner-bg{{ categorie.id }}"
+                 style="background-image: url({% if 'https' in categorie.image_illustration.url %}{{ categorie.image_illustration }}{% else %}{{ categorie.image_illustration.url }}{% endif %})">
                 <div class="d-table">
                     <div class="d-table-cell">
-                        <div class="container">
-                            <div class="main-banner-content {% if promo.id == 3 %}text-center{% endif %}">
-                                {% comment %} TODO - Changer url {% endcomment %}
-                                <span class="sub-title">{{ promo.slogan }}</span>
-                                <h1>{{ promo.nom }}</h1>
-                                <p>Take {{ promo.pourcentage_promo }}% Off</p>
-                                <p>{{ promo.description }}</p>
+                        <div class="container position-relative">
+                            {% if categorie.promo %}<div class="sale-tag">Sale!</div>{% endif %}
+                            <div class="main-banner-content {% if categorie.id == 3 %}text-center{% endif %}">
+                                <span class="sub-title">{{ categorie.slogan }}</span>
+                                <h1>{{ categorie.nom }}</h1>
+                                {% if categorie.promo %}<p>Take <span class="text-danger fs-3 fw-bold">{{ categorie.promo.pourcentage_promo }}</span>% Off</p>{% endif %}
+                                <p>{{ categorie.description }}</p>
                                 <div class="btn-box">
-                                    {% for c in categories_in_promo %}
-                                        {% if promo.id == c.promo_id %}
-                                            <a href="{% url 'all_products' %}?category={{ c.id }}"
-                                               class="default-btn">{{ c.nom }}</a>
-                                        {% endif %}
-                                    {% endfor %}
-                                    <a href="{% url 'all_products' %}?promotion={{ promo.id }}"
-                                       class="optional-btn">See products</a>
+                                    <a href="{% url 'all_products' %}?category={{ categorie.id }}"
+                                               class="default-btn">Go to {{ categorie.nom }}</a>
+                                    <a href="{% url 'all_products' %}"
+                                       class="optional-btn">All products</a>
                                 </div>
                             </div>
                         </div>
@@ -71,50 +66,20 @@
     <section class="categories-banner-area pt-100 pb-70">
         <div class="container-fluid">
             <div class="row">
+                {% for promo in promos %}
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="single-categories-box">
-                        <img src="{% static 'shop/assets/img/categories/img1.jpg' %}" alt="image">
-                        <div class="content text-white">
-                            <span>Don’t Miss Today</span>
-                            <h3>50% OFF</h3>
-                            <a href="products-right-sidebar.html" class="default-btn">Discover Now</a>
+                        <img src="{% if 'https' in promo.image_illustration.url %}{{ promo.image_illustration }}{% else %}{{ promo.image_illustration.url }}{% endif %}" alt="image">
+                        <div class="content {% if promo.id == 1 or promo.id == 4 %}text-white{% endif %}">
+                            <span>{{ promo.nom }}</span>
+                            <h3>{{ promo.pourcentage_promo }}% OFF</h3>
+                            {% if promo.slogan %}<span>{{ promo.slogan }}</span>{% endif %}
+                            <a href="{% url 'all_products' %}?promotion={{ promo.id }}" class="default-btn">Discover Now</a>
                         </div>
-                        <a href="products-right-sidebar.html" class="link-btn"></a>
+                        <a href="{% url 'all_products' %}?promotion={{ promo.id }}" class="link-btn"></a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="single-categories-box">
-                        <img src="{% static 'shop/assets/img/categories/img2.jpg' %}" alt="image">
-                        <div class="content">
-                            <span>New Collection</span>
-                            <h3>Need Now</h3>
-                            <a href="products-right-sidebar.html" class="default-btn">Discover Now</a>
-                        </div>
-                        <a href="products-right-sidebar.html" class="link-btn"></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="single-categories-box">
-                        <img src="{% static 'shop/assets/img/categories/img3.jpg' %}" alt="image">
-                        <div class="content">
-                            <span>Your Looks</span>
-                            <h3>Must Haves</h3>
-                            <a href="products-right-sidebar.html" class="default-btn">Discover Now</a>
-                        </div>
-                        <a href="products-right-sidebar.html" class="link-btn"></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="single-categories-box">
-                        <img src="{% static 'shop/assets/img/categories/img4.jpg' %}" alt="image">
-                        <div class="content text-white">
-                            <span>Take 20% OFF</span>
-                            <h3>Winter Spring!</h3>
-                            <a href="products-right-sidebar.html" class="default-btn">Discover Now</a>
-                        </div>
-                        <a href="products-right-sidebar.html" class="link-btn"></a>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -143,7 +108,7 @@
                                     <ul>
                                         <li>
                                             <div class="wishlist-btn">
-                                                <a href="#">
+                                                <a href="{% url 'wishlist' product.id %}">
                                                     <i class='bx bx-heart'></i>
                                                     <span class="tooltip-label">Add to Wishlist</span>
                                                 </a>
@@ -268,15 +233,15 @@
     <!-- End Products Area -->
     <!-- Start Offer Area -->
     <section class="offer-area bg-image1 ptb-100 jarallax"
-             data-jarallax='{"speed": 0.3}'>
+             data-jarallax='{"speed": 0.3}' style="background-image: url({% if 'https' in extra_promo.image_illustration.url %}{{ extra_promo.image_illustration }}{% else %}{{ extra_promo.image_illustration.url }}{% endif %})">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-5 col-md-6">
                     <div class="offer-content">
-                        <span class="sub-title">Limited Time Offer!</span>
-                        <h2>-40% OFF</h2>
-                        <p>Get The Best Deals Now</p>
-                        <a href="products-one-row.html" class="default-btn">Discover Now</a>
+                        <span class="sub-title">{{ extra_promo.nom }}</span>
+                        <h2>-{{ extra_promo.pourcentage_promo }}% OFF</h2>
+                        <p>{{ extra_promo.slogan }}</p>
+                        <a href="{% url 'all_products' %}?promotion={{ extra_promo.id }}" class="default-btn">Discover Now</a>
                     </div>
                 </div>
             </div>
@@ -780,88 +745,7 @@
         </div>
     </section>
     <!-- End Blog Area -->
-    <!-- Start Sidebar Modal -->
-    <div class="modal right fade sidebarModal"
-         id="sidebarModal"
-         tabindex="-1"
-         role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <button type="button"
-                        class="close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                    <span aria-hidden="true"><i class='bx bx-x'></i></span>
-                </button>
-                <div class="modal-body">
-                    <div class="sidebar-about-content">
-                        <h3>About The Store</h3>
-                        <div class="about-the-store">
-                            <p>One of the most popular on the web is shopping. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                            <ul class="sidebar-contact-info">
-                                <li>
-                                    <i class='bx bx-map'></i> <a href="#" target="_blank">Wonder Street, USA, New York</a>
-                                </li>
-                                <li>
-                                    <i class='bx bx-phone-call'></i> <a href="tel:+01321654214">+01 321 654 214</a>
-                                </li>
-                                <li>
-                                    <i class='bx bx-envelope'></i> <a href="mailto:hello@xton.com">hello@xton.com</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <ul class="social-link">
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-facebook'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-twitter'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-instagram'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-linkedin'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-pinterest-alt'></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-new-in-store">
-                        <h3>New In Store</h3>
-                        <ul class="products-list">
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img1.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img2.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img3.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img4.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                        </ul>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-                        <a href="#" class="shop-now-btn">Shop Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Sidebar Modal -->
+    
     <!-- Start Shopping Cart Modal -->
     <div class="modal right fade shoppingCartModal"
          id="shoppingCartModal"
@@ -949,88 +833,7 @@
         </div>
     </div>
     <!-- End Shopping Cart Modal -->
-    <!-- Start Wishlist Modal -->
-    <div class="modal right fade shoppingWishlistModal"
-         id="shoppingWishlistModal"
-         tabindex="-1"
-         role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <button type="button"
-                        class="close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                    <span aria-hidden="true"><i class='bx bx-x'></i></span>
-                </button>
-                <div class="modal-body">
-                    <h3>My Wish List (3)</h3>
-                    <div class="products-cart-content">
-                        <div class="products-cart">
-                            <div class="products-image">
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img1.jpg' %}" alt="image">
-                                </a>
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="#">Long Sleeve Leopard T-Shirt</a>
-                                </h3>
-                                <span>Blue / XS</span>
-                                <div class="products-price">
-                                    <span>1</span>
-                                    <span>x</span>
-                                    <span class="price">$250.00</span>
-                                </div>
-                                <a href="#" class="remove-btn"><i class='bx bx-trash'></i></a>
-                            </div>
-                        </div>
-                        <div class="products-cart">
-                            <div class="products-image">
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img2.jpg' %}" alt="image">
-                                </a>
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="#">Causal V-Neck Soft Raglan</a>
-                                </h3>
-                                <span>Blue / XS</span>
-                                <div class="products-price">
-                                    <span>1</span>
-                                    <span>x</span>
-                                    <span class="price">$200.00</span>
-                                </div>
-                                <a href="#" class="remove-btn"><i class='bx bx-trash'></i></a>
-                            </div>
-                        </div>
-                        <div class="products-cart">
-                            <div class="products-image">
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img3.jpg' %}" alt="image">
-                                </a>
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="#">Hanes Men's Pullover</a>
-                                </h3>
-                                <span>Blue / XS</span>
-                                <div class="products-price">
-                                    <span>1</span>
-                                    <span>x</span>
-                                    <span class="price">$200.00</span>
-                                </div>
-                                <a href="#" class="remove-btn"><i class='bx bx-trash'></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="products-cart-btn">
-                        <a href="#" class="optional-btn">View Shopping Cart</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Wishlist Modal -->
+    
     <div class="go-top">
         <i class='bx bx-up-arrow-alt'></i>
     </div>

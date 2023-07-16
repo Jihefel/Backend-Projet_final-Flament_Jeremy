@@ -26,7 +26,6 @@
     <link rel="icon" type="image/png" href="{% static 'shop/assets/img/favicon.png' %}">
 
     {% load bootstrap5 %}
-    {% bootstrap_javascript %}
 {% endblock head %}
 
     {% block content %}
@@ -35,9 +34,10 @@
         <div class="page-title-area">
             <div class="container">
                 <div class="page-title-content">
-                    <h2>Long Sleeve Leopard T-Shirt</h2>
+                    <h2>{{ product.nom }}</h2>
                     <ul>
                         <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'all_products' %}">Products</a></li>
                         <li>Products Details</li>
                     </ul>
                 </div>
@@ -52,20 +52,20 @@
                     <div class="col-lg-5 col-md-12">
                         <div class="products-details-image">
                             <ul class="products-details-image-slides">
-                                <li><img src="{% static 'shop/assets/img/products/img3.jpg' %}" alt="image"></li>
-                                <li><img src="{% static 'shop/assets/img/products/img4.jpg' %}" alt="image"></li>
-                                <li><img src="{% static 'shop/assets/img/products/img-hover3.jpg' %}" alt="image"></li>
-                                <li><img src="{% static 'shop/assets/img/products/img-hover4.jpg' %}" alt="image"></li>
-                                <li><img src="{% static 'shop/assets/img/products/img7.jpg' %}" alt="image"></li>
+                                <li><img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}" alt="image"></li>
+                                <li><img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}" alt="image"></li>
+                                <li><img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}" alt="image"></li>
+                                <li><img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}" alt="image"></li>
+                                <li><img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}" alt="image"></li>
                             </ul>
 
                             <div class="slick-thumbs">
                                 <ul>
-                                    <li><img src="{% static 'shop/assets/img/products/img3.jpg' %}" alt="image"></li>
-                                    <li><img src="{% static 'shop/assets/img/products/img4.jpg' %}" alt="image"></li>
-                                    <li><img src="{% static 'shop/assets/img/products/img-hover3.jpg' %}" alt="image"></li>
-                                    <li><img src="{% static 'shop/assets/img/products/img-hover4.jpg' %}" alt="image"></li>
-                                    <li><img src="{% static 'shop/assets/img/products/img7.jpg' %}" alt="image"></li>
+                                    <li><img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}" alt="image"></li>
+                                    <li><img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}" alt="image"></li>
+                                    <li><img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}" alt="image"></li>
+                                    <li><img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}" alt="image"></li>
+                                    <li><img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}" alt="image"></li>
                                 </ul>
                             </div>
                         </div>
@@ -73,14 +73,18 @@
 
                     <div class="col-lg-7 col-md-12">
                         <div class="products-details-desc">
-                            <h3>Long Sleeve Leopard T-Shirt</h3>
+                            <h3>{{ product.nom }}</h3>
 
                             <div class="price">
-                                <span class="new-price">$250.00</span>
-                                <span class="old-price">$321.00</span>
+                                {% if product.promo %}
+                                <span class="new-price">{{ product.product_variant.prix_promo|floatformat:2 }}€</span>
+                                <span class="old-price">{{ product.product_variant.prix }}€</span>
+                            {% else %}
+                                <span class="new-price">{{ product.product_variant.prix }}€</span>
+                            {% endif %}
                             </div>
 
-                            <div class="products-review">
+                            {% comment %} <div class="products-review">
                                 <div class="rating">
                                     <i class="bx bx-star"></i>
                                     <i class="bx bx-star"></i>
@@ -89,55 +93,55 @@
                                     <i class="bx bx-star"></i>
                                 </div>
                                 <a href="#" class="rating-count">3 reviews</a>
-                            </div>
+                            </div> {% endcomment %}
 
                             <ul class="products-info">
-                                <li><span>Availability:</span> <a href="#">In stock (7 items)</a></li>
-                                <li><span>Products Type:</span> <a href="#">T-Shirt</a></li>
+                                <li><span>Availability:</span> <a>{% if product.product_variant.quantite_stock != 0 %}
+                                    In stock ({{ product.product_variant.quantite_stock }} items)
+                                {% else %}
+                                    <span class="text-danger">Sold out</span>
+                                {% endif %}</a></li>
+                                <li>
+                                    <span>Product Category:</span> <a href="{% url 'all_products' %}?category={{ product.categorie.id }}">{{ product.categorie }}</a>
+                                </li>
+                                <li>
+                                    <span>Product Type:</span> <a href="{% url 'all_products' %}?type={{ product.type }}">{{ product.type }}</a>
+                                </li>
                             </ul>
 
                             <div class="products-size-wrapper">
                                 <span>Size:</span>
 
-                                <ul>
-                                    <li><a href="#">XS</a></li>
-                                    <li class="active"><a href="#">S</a></li>
-                                    <li><a href="#">M</a></li>
-                                    <li><a href="#">XL</a></li>
-                                    <li><a href="#">XXL</a></li>
-                                </ul>
+                                {% for var in variants %}
+                                    <a href="?variant={{ var.id }}"><button class="{% if var.id == variant_param %}default-btn{% else %}optional-btn{% endif %}">{{ var }}</button></a>
+                                {% endfor %}
                             </div>
 
                             <div class="products-info-btn">
                                 <a href="{% url 'contact' %}"><i class="bx bx-envelope"></i> Ask about this products</a>
                             </div>
 
-                            <div class="products-add-to-cart">
+                            <form class="products-add-to-cart" method="post">
+                                {% csrf_token %}
                                 <div class="input-counter">
-                                    <span class="minus-btn"><i class="bx bx-minus"></i></span>
-                                    <input type="text" value="1" min="1">
-                                    <span class="plus-btn"><i class="bx bx-plus"></i></span>
+                                    <span class="minus-btn"><i class='bx bx-minus'></i></span>
+                                    <input readonly
+                                           type="text"
+                                           value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                           min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                           max="{{ product.product_variant.quantite_stock }}"
+                                           {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
+                                    <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                 </div>
-
-                                <button type="submit" class="default-btn"><i class="fas fa-cart-plus"></i> Add to Cart</button>
-                            </div>
+                                <button type="submit" class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}" {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>Add to Cart</button>
+                            </form>
 
                             <div class="wishlist-compare-btn">
                                 <a href="#" class="optional-btn"><i class="bx bx-heart"></i> Add to Wishlist</a>
                             </div>
 
                             <div class="buy-checkbox-btn">
-                                <div class="item">
-                                    <input class="inp-cbx" id="cbx" type="checkbox">
-                                    <label class="cbx" for="cbx">
-                                        <span>
-                                            <svg width="12px" height="10px" viewbox="0 0 12 10">
-                                                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                                            </svg>
-                                        </span>
-                                        <span>I agree with the terms and conditions</span>
-                                    </label>
-                                </div>
+            
 
                                 <div class="item">
                                     <a href="#" class="default-btn">Buy it now!</a>
@@ -154,30 +158,39 @@
                         </a></li>
 
                         <li><a href="#">
-                            <div class="dot"></div> Reviews
+                            <div class="dot"></div> Comments
                         </a></li>
                     </ul>
 
                     <div class="tab-content">
                         <div class="tabs-item">
                             <div class="products-details-tab-content">
-                                <p>Design inspiration lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum.  Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Nulla libero. Vivamus pharetra posuere sapien.</p>
+                                <p>{{ product.description }} </p>
 
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6">
-                                        <ul>
-                                            <li>Fabric 1: 100% Polyester</li>
-                                            <li>Fabric 2: 100% Polyester, Lining: 100% Polyester</li>
-                                            <li>Fabric 3: 75% Polyester, 20% Viscose, 5% Elastane</li>
-                                        </ul>
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    <div class="accordion-item">
+                                      <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                          Ingredients
+                                        </button>
+                                      </h2>
+                                      <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                        <div class="accordion-body">
+                                          {{ product.ingredients }}
+                                        </div>
+                                      </div>
                                     </div>
-
-                                    <div class="col-lg-6 col-md-6">
-                                        <ol>
-                                            <li>Fabric 3: 75% Polyester, 20% Viscose, 5% Elastane</li>
-                                            <li>Fabric 2: 100% Polyester, Lining: 100% Polyester</li>
-                                            <li>Fabric 1: 100% Polyester</li>
-                                        </ol>
+                                    <div class="accordion-item">
+                                      <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            Macronutrients
+                                        </button>
+                                      </h2>
+                                      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                        <div class="accordion-body">
+                                          {{ product.macronutriments }}
+                                        </div>
+                                      </div>
                                     </div>
                                 </div>
                             </div>
@@ -185,178 +198,184 @@
 
                         <div class="tabs-item">
                             <div class="products-details-tab-content">
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <tbody>
-                                            <tr>
-                                                <td>Color:</td>
-                                                <td>Blue, Purple, White</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Size:</td>
-                                                <td>20, 24</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Material:</td>
-                                                <td>100% Polyester</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Height:</td>
-                                                <td>180 cm - 5' 11”</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Bust:</td>
-                                                <td>83 cm - 32”</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Waist:</td>
-                                                <td>57 cm - 22”</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Hips:</td>
-                                                <td>88 cm - 35</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Shipping:</td>
-                                                <td>Free</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tabs-item">
-                            <div class="products-details-tab-content">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <tbody>
-                                            <tr>
-                                                <td>Shipping</td>
-                                                <td>This item Ship to USA</td>
-                                            </tr>
-
-                                            <tr>
-                                                <td>Delivery</td>
-                                                <td>
-                                                    Estimated between Wednesday 07/31/2021 and Monday 08/05/2021 <br>
-                                                    Will usually ship within 1 bussiness day.
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tabs-item">
-                            <div class="products-details-tab-content">
-                                <p>Here are 5 more great reasons to buy from us:</p>
-
-                                <ol>
-                                    <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</li>
-                                    <li> Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</li>
-                                    <li>When an unknown printer took a galley of type and scrambled it to make a type specimen book.</li>
-                                    <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</li>
-                                    <li>When an unknown printer took a galley of type and scrambled it to make a type specimen book.</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="tabs-item">
-                            <div class="products-details-tab-content">
-                                <div class="products-review-form">
-                                    <h3>Customer Reviews</h3>
-
-                                    <div class="review-title">
-                                        <div class="rating">
-                                            <i class="bx bxs-star"></i>
-                                            <i class="bx bxs-star"></i>
-                                            <i class="bx bxs-star"></i>
-                                            <i class="bx bxs-star"></i>
-                                            <i class="bx bx-star"></i>
-                                        </div>
-                                        <p>Based on 3 reviews</p>
-                                        <a href="#" class="default-btn">Write a Review</a>
-                                    </div>
-
-                                    <div class="review-comments">
-                                        <div class="review-item">
-                                            <div class="rating">
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bx-star"></i>
-                                            </div>
-                                            <h3>Good</h3>
-                                            <span><strong>Admin</strong> on <strong>Sep 21, 2021</strong></span>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                        </div>
-
-                                        <div class="review-item">
-                                            <div class="rating">
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bx-star"></i>
-                                            </div>
-                                            <h3>Good</h3>
-                                            <span><strong>Admin</strong> on <strong>Sep 21, 2021</strong></span>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                        </div>
-
-                                        <div class="review-item">
-                                            <div class="rating">
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bxs-star"></i>
-                                                <i class="bx bx-star"></i>
-                                            </div>
-                                            <h3>Good</h3>
-                                            <span><strong>Admin</strong> on <strong>Sep 21, 2021</strong></span>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="review-form">
-                                        <h3>Write a Review</h3>
-
-                                        <form>
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <input type="text" id="name" name="name" placeholder="Enter your name" class="form-control">
+                                <div class="comments-area">
+                                    <h3 class="comments-title">2 Comments:</h3>
+    
+                                    <ol class="comment-list">
+                                        <li class="comment">
+                                            <article class="comment-body">
+                                                <footer class="comment-meta">
+                                                    <div class="comment-author vcard">
+                                                        <img src="{% static 'shop/assets/img/user1.jpg' %}" class="avatar" alt="image">
+                                                        <b class="fn">John Jones</b>
+                                                        <span class="says">says:</span>
                                                     </div>
-                                                </div>
-
-                                                <div class="col-lg-6 col-md-6">
-                                                    <div class="form-group">
-                                                        <input type="email" id="email" name="email" placeholder="Enter your email" class="form-control">
+    
+                                                    <div class="comment-metadata">
+                                                        <a>
+                                                            <span>April 24, 2021 at 10:59 am</span>
+                                                        </a>
                                                     </div>
+                                                </footer>
+    
+                                                <div class="comment-content">
+                                                    <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
                                                 </div>
-
-                                                <div class="col-lg-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <input type="text" id="review-title" name="review-title" placeholder="Enter your review a title" class="form-control">
+    
+                                                <div class="reply">
+                                                    <a href="#" class="comment-reply-link">Reply</a>
+                                                </div>
+                                            </article>
+    
+                                            <ol class="children">
+                                                <li class="comment">
+                                                    <article class="comment-body">
+                                                        <footer class="comment-meta">
+                                                            <div class="comment-author vcard">
+                                                                <img src="{% static 'shop/assets/img/user2.jpg' %}" class="avatar" alt="image">
+                                                                <b class="fn">Steven Smith</b>
+                                                                <span class="says">says:</span>
+                                                            </div>
+                
+                                                            <div class="comment-metadata">
+                                                                <a href="#">
+                                                                    <span>April 24, 2021 at 10:59 am</span>
+                                                                </a>
+                                                            </div>
+                                                        </footer>
+                
+                                                        <div class="comment-content">
+                                                            <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
+                                                        </div>
+                
+                                                        <div class="reply">
+                                                            <a href="#" class="comment-reply-link">Reply</a>
+                                                        </div>
+                                                    </article>
+    
+                                                    <ol class="children">
+                                                        <li class="comment">
+                                                            <article class="comment-body">
+                                                                <footer class="comment-meta">
+                                                                    <div class="comment-author vcard">
+                                                                        <img src="{% static 'shop/assets/img/user3.jpg' %}" class="avatar" alt="image">
+                                                                        <b class="fn">Sarah Taylor</b>
+                                                                        <span class="says">says:</span>
+                                                                    </div>
+                        
+                                                                    <div class="comment-metadata">
+                                                                        <a href="#">
+                                                                            <span>April 24, 2021 at 10:59 am</span>
+                                                                        </a>
+                                                                    </div>
+                                                                </footer>
+                        
+                                                                <div class="comment-content">
+                                                                    <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
+                                                                </div>
+                        
+                                                                <div class="reply">
+                                                                    <a href="#" class="comment-reply-link">Reply</a>
+                                                                </div>
+                                                            </article>
+                                                        </li>
+                                                    </ol>
+                                                </li>
+                                            </ol>
+                                        </li>
+    
+                                        <li class="comment">
+                                            <article class="comment-body">
+                                                <footer class="comment-meta">
+                                                    <div class="comment-author vcard">
+                                                        <img src="{% static 'shop/assets/img/user4.jpg' %}" class="avatar" alt="image">
+                                                        <b class="fn">John Doe</b>
+                                                        <span class="says">says:</span>
                                                     </div>
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12">
-                                                    <div class="form-group">
-                                                        <textarea name="review-body" id="review-body" cols="30" rows="6" placeholder="Write your comments here" class="form-control"></textarea>
+    
+                                                    <div class="comment-metadata">
+                                                        <a href="#">
+                                                            <span>April 24, 2021 at 10:59 am</span>
+                                                        </a>
                                                     </div>
+                                                </footer>
+    
+                                                <div class="comment-content">
+                                                    <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
                                                 </div>
-
-                                                <div class="col-lg-12 col-md-12">
-                                                    <button type="submit" class="default-btn">Submit Review</button>
+    
+                                                <div class="reply">
+                                                    <a href="#" class="comment-reply-link">Reply</a>
                                                 </div>
-                                            </div>
+                                            </article>
+    
+                                            <ol class="children">
+                                                <li class="comment">
+                                                    <article class="comment-body">
+                                                        <footer class="comment-meta">
+                                                            <div class="comment-author vcard">
+                                                                <img src="{% static 'shop/assets/img/user1.jpg' %}" class="avatar" alt="image">
+                                                                <b class="fn">James Anderson</b>
+                                                                <span class="says">says:</span>
+                                                            </div>
+                
+                                                            <div class="comment-metadata">
+                                                                <a href="#">
+                                                                    <span>April 24, 2021 at 10:59 am</span>
+                                                                </a>
+                                                            </div>
+                                                        </footer>
+                
+                                                        <div class="comment-content">
+                                                            <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
+                                                        </div>
+                
+                                                        <div class="reply">
+                                                            <a href="#" class="comment-reply-link">Reply</a>
+                                                        </div>
+                                                    </article>
+                                                </li>
+                                            </ol>
+                                        </li>
+                                    </ol>
+    
+                                    <div class="comment-respond">
+                                        <h3 class="comment-reply-title">Leave a Reply</h3>
+    
+                                        <form class="comment-form">
+                                            <p class="comment-notes">
+                                                <span id="email-notes">Your email address will not be published.</span>
+                                                Required fields are marked 
+                                                <span class="required">*</span>
+                                            </p>
+                                            <p class="comment-form-author">
+                                                <label>Name <span class="required">*</span></label>
+                                                <input type="text" id="author" placeholder="Your Name*" name="author" required="required">
+                                            </p>
+                                            <p class="comment-form-email">
+                                                <label>Email <span class="required">*</span></label>
+                                                <input type="email" id="email" placeholder="Your Email*" name="email" required="required">
+                                            </p>
+                                            <p class="comment-form-url">
+                                                <label>Website</label>
+                                                <input type="url" id="url" placeholder="Website" name="url">
+                                            </p>
+                                            <p class="comment-form-comment">
+                                                <label>Comment</label>
+                                                <textarea name="comment" id="comment" cols="45" placeholder="Your Comment..." rows="5" maxlength="65525" required="required"></textarea>
+                                            </p>
+                                            <p class="comment-form-cookies-consent">
+                                                <input type="checkbox" value="yes" name="wp-comment-cookies-consent" id="wp-comment-cookies-consent">
+                                                <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label>
+                                            </p>
+                                            <p class="form-submit">
+                                                <input type="submit" name="submit" id="submit" class="submit" value="Post A Comment">
+                                            </p>
                                         </form>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
                             </div>
                         </div>
                     </div>

@@ -27,7 +27,7 @@ class User(AbstractUser):
     metiers_hobbies = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     image_banniere_profil = models.ImageField(upload_to='bannieres/', null=True, blank=True)
-    produits_panier = models.ManyToManyField('Produits', related_name='paniers', blank=True)
+    produits_panier = models.ManyToManyField('ProductVariant', related_name='paniers', blank=True)
     produits_wishlist = models.ManyToManyField('Produits', related_name='wishlists', blank=True)
     commandes_passees = models.ManyToManyField('Commandes',related_name='commandes', blank=True)
     contacts_echanges = models.ManyToManyField('Contacts', related_name='contacts', blank=True)
@@ -39,8 +39,7 @@ class User(AbstractUser):
 class Promotions(models.Model):
     nom = models.CharField(max_length=255)
     pourcentage_promo = models.PositiveIntegerField()
-    slogan = models.CharField(max_length=255)
-    description = models.TextField()
+    slogan = models.CharField(max_length=255, null=True, blank=True)
     image_illustration = models.ImageField(upload_to='promotions/')
     date_debut = models.DateField()
     date_fin = models.DateField()
@@ -50,6 +49,9 @@ class Promotions(models.Model):
 class Categorie(models.Model):
     nom = models.CharField(max_length=255)
     promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.SET_NULL)
+    slogan = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    image_illustration = models.ImageField(upload_to='categories/')
     def __str__(self):
         return self.nom
 
@@ -85,7 +87,6 @@ class Produits(models.Model):
     image_3 = models.ImageField(upload_to=upload_to_product)
     image_4 = models.ImageField(upload_to=upload_to_product)
     image_5 = models.ImageField(upload_to=upload_to_product)
-    image_6 = models.ImageField(upload_to=upload_to_product)
     def delete(self, *args, **kwargs):
         # Delete the associated image files
         image_files = [
@@ -94,7 +95,6 @@ class Produits(models.Model):
             self.image_3.path,
             self.image_4.path,
             self.image_5.path,
-            self.image_6.path,
         ]
         for file_path in image_files:
             if os.path.exists(file_path):
@@ -127,8 +127,6 @@ class Produits(models.Model):
     promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
     commentaire = models.ManyToManyField('Commentaires', blank=True)
     date_ajout_produit_db = models.DateField(auto_now_add=True)
-    date_ajout_panier_user = models.DateField(null=True, blank=True)
-    date_ajout_wishlist_user = models.DateField(null=True, blank=True)
     def __str__(self):
         return f"{self.id} - {self.nom} "
 
@@ -151,14 +149,11 @@ class Commentaires(models.Model):
 class Tags(models.Model):
     nom = models.CharField(max_length=255)
     blog_posts_lies = models.ManyToManyField('BlogPost')
-    
-class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    produits_ajoutes = models.ManyToManyField(Produits)
+
 
 class Panier(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    produit_inclus = models.ForeignKey(Produits, on_delete=models.CASCADE)
+    produit_inclus = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
     quantite_ajoutee = models.PositiveIntegerField()
 
 class Commandes(models.Model):
@@ -200,5 +195,7 @@ class Partenaires(models.Model):
 
 class Newsletter(models.Model):
     email = models.EmailField(unique=True)
-    user_associated = models.ManyToManyField(User, blank=True)
+
+class ExtraPromo(models.Model):
+    extra_promo = models.ForeignKey(Promotions, blank=True, on_delete=models.CASCADE)
 

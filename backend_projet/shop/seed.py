@@ -50,9 +50,8 @@ def run():
         {
             'nom': lambda x: seeder.faker.word(),
             'pourcentage_promo': lambda x: random.randint(5, 90),
-            'slogan': lambda x: seeder.faker.sentence(),
-            'description': lambda x: seeder.faker.paragraph(),
-            'image_illustration': lambda x: seeder.faker.image_url(width=1920, height=1080),  # Chemin de l'image d'illustration
+            'image_illustration': lambda x: seeder.faker.image_url(width=1920, height=1080),
+            'slogan': lambda x: seeder.faker.catch_phrase(),
             'date_debut': lambda x: random.choice([date.today(), seeder.faker.date()]),
             'date_fin': lambda x: seeder.faker.future_date(),
         }
@@ -61,7 +60,6 @@ def run():
     # Exécuter le seed
     inserted = seeder.execute()
     print(inserted)
-
 
 
     # Seed Categories
@@ -79,6 +77,9 @@ def run():
         {
             'nom': lambda x, categories_iter=itertools.cycle(categories): next(categories_iter),
             'promo': lambda x: None if random.choice([True, False]) else random.choice(Promotions.objects.all()),
+            'slogan': lambda x: seeder.faker.catch_phrase(),
+            'description': lambda x: seeder.faker.paragraph(),
+            'image_illustration': lambda x: seeder.faker.image_url(width=1920, height=1080),
         },
     )
 
@@ -143,7 +144,6 @@ def run():
         'image_3': lambda x: seeder.faker.image_url(width=670, height=800),
         'image_4': lambda x: seeder.faker.image_url(width=670, height=800),
         'image_5': lambda x: seeder.faker.image_url(width=670, height=800),
-        'image_6': lambda x: seeder.faker.image_url(width=670, height=800),
         'marque_vendeur': lambda x: random.choice(['MyProtein', 'Prozis', 'HSN', 'Optimum Nutrition', 'MuscleTech', 'Dymatize', 'Cellucor', 'MusclePharm', 'Universal Nutrition']),
         'type': lambda x: random.choice(['capsules', 'powder']),
         'categorie': lambda x: random.choice(Categorie.objects.all()),
@@ -154,6 +154,7 @@ def run():
     })
 
     inserted_pks = seeder.execute()
+
 
     # Seed partenaires
     seeder.add_entity(Partenaires, 6, {
@@ -184,3 +185,16 @@ def run():
             for contenu in contenus_powder:
                 variant = Variantes.objects.get(contenu=contenu)
                 ProductVariant.objects.create(product=produit, variant=variant, quantite_stock=random.randint(0, 50), prix=random.uniform(10, 100))
+    
+    categories_en_promo = Categorie.objects.filter(promo__isnull=False)
+    for categorie in categories_en_promo:
+        produits = categorie.produits_set.all()
+        for produit in produits:
+            produit.promo = categorie.promo
+            produit.save()
+
+    produits_sans_promo = Produits.objects.filter(categorie__promo__isnull=True)
+    for produit in produits_sans_promo:
+        if random.random() < 0.1:
+            produit.promo = random.choice(Promotions.objects.all())
+            produit.save()

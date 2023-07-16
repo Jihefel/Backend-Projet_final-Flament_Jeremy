@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from .forms import *
@@ -9,6 +8,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
 
 
 
@@ -31,18 +31,16 @@ def index(request):
     # Partenaires
     partners = Partenaires.objects.all()
     
-    # Promotions
-    promos = Promotions.objects.all()
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
 
     # Categories
     categories = Categorie.objects.all()
-    categories_in_promo = []
-    for category in categories:
-        if category.promo:
-            categories_in_promo.append(category)
 
     # Produits
     products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
     recent_products = products_sorted[:6]
 
     for product in recent_products:
@@ -53,6 +51,14 @@ def index(request):
                 if product.promo:
                     product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
                 product.product_variant = product_variant  # Add the product_variant to the product object
+
+    # Section promo
+    promos = Promotions.objects.all()[:4]
+    all_promos = Promotions.objects.all()
+    # Section extra promo
+    extra_promo = ExtraPromo.objects.first()
+    extra_promo = Promotions.objects.get(extrapromo=extra_promo)
+
 
     # Form newsletter
     if request.method == 'POST':
@@ -79,7 +85,33 @@ def index(request):
     context = locals()
     return render(request, 'shop/index.html', context)
 
-@login_required(login_url = 'connexion')
+def handler404(request, exception=None):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Infos du site
+    infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4] 
+
+    context = locals()
+
+    response = render(request, 'shop/404.html', context)
+    response.status_code = 404
+    return response
+
+
+@login_required(login_url = 'login')
 def account(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -89,12 +121,19 @@ def account(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Infos du site
-    infos = InfosQDP.objects.first()
+    infos = InfosQDP.objects.first() 
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
     
     context = locals()
     return render(request, 'shop/my_account.html', context)
 
-@login_required(login_url = 'connexion')
+@login_required(login_url = 'login')
 def edit_account(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -104,7 +143,14 @@ def edit_account(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
     
     # Infos du site
-    infos = InfosQDP.objects.first()
+    infos = InfosQDP.objects.first() 
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
 
     if request.method == "POST":
@@ -119,7 +165,7 @@ def edit_account(request):
     return render(request, 'shop/edit_account.html', context)
 
 
-@login_required(login_url='connexion')
+@login_required(login_url='login')
 def direct_newsletter_subscription(request):
     user = User.objects.get(id=request.user.id)
     user.abonne_newsletter = True
@@ -139,7 +185,14 @@ def direct_newsletter_subscription(request):
 def cart(request):
 
     # Infos du site
-    infos = InfosQDP.objects.first()
+    infos = InfosQDP.objects.first() 
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     # Form newsletter
     if request.method == 'POST':
@@ -170,6 +223,14 @@ def checkout(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     # Form newsletter
     if request.method == 'POST':
@@ -200,6 +261,14 @@ def contact(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -237,6 +306,14 @@ def connection(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -264,17 +341,25 @@ def connection(request):
     context = locals()
     return render(request, 'shop/login.html', context)
 
-@login_required(login_url='connexion')
+@login_required(login_url='login')
 def deconnection(request):
     logout(request)
     return redirect('home')
 
 
-@login_required(login_url = 'connexion')
+@login_required(login_url = 'login')
 def change_password(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -333,6 +418,7 @@ def all_products(request):
 
     if request.method == 'GET':
         filter_form = PriceFilterForm(request.GET)
+        name_filter = NameFilterForm(request.GET)
         if filter_form.is_valid():
             filter_by_price_max = filter_form.cleaned_data['filter_by_price']
             
@@ -347,6 +433,14 @@ def all_products(request):
                         if product_variant.prix <= filter_by_price_max:
                             filtered_products.append(product)
                 products = filtered_products
+            else:
+                filtered_products = products
+        if name_filter.is_valid():
+            filter_by_name = name_filter.cleaned_data['filter_by_name']
+    
+            if filter_by_name:
+                products = products.filter(nom__icontains=filter_by_name)
+                filtered_products = products
             else:
                 filtered_products = products
     
@@ -388,6 +482,14 @@ def all_products(request):
 
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -423,9 +525,39 @@ def all_products(request):
 
 def product(request, id):
     
+    product = Produits.objects.get(id=id)
+
+    variants = product.variations.filter(produits=product)
+
+    if request.GET.get('variant'):
+        variant_param = int(request.GET.get('variant'))
+        if not variants.filter(id=variant_param).exists():
+            return redirect('error_404')
+    else:
+        if variants.filter(id=1).exists():
+            variant_param = 1
+        else:
+            variant_param = 5
+
+    variant = variants.filter(id=variant_param).first()
+
+    if variant:
+        product_variant = ProductVariant.objects.get(product=product, variant=variant)
+        if product.promo:
+            product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
+        product.product_variant = product_variant  # Add the product_variant to the product object
+
 
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -463,6 +595,14 @@ def signup(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -517,6 +657,14 @@ def signup2(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -552,6 +700,14 @@ def article(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -589,6 +745,14 @@ def blog(request):
     
     # Infos du site
     infos = InfosQDP.objects.first()
+     
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
 
     role_id_admin = 1
     role_id_membre = 2
@@ -621,6 +785,24 @@ def blog(request):
     
     context = locals()
     return render(request, 'shop/blog-5.html', context)
+
+
+@login_required(login_url = 'login')
+def wishlist(request, id):
+    product = Produits.objects.get(id=id)
+    user = request.user
+
+    # Vérifier si le produit est déjà dans la wishlist de l'utilisateur
+    if product in user.produits_wishlist.all():
+        # Le produit existe déjà, le supprimer de la wishlist
+        user.produits_wishlist.remove(product)
+        messages.warning(request, f"{product.nom} removed from your wishlist")
+    else:
+        # Le produit n'existe pas dans la wishlist, l'ajouter
+        user.produits_wishlist.add(product)
+        messages.success(request, f"{product.nom} added to your wishlist")
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
     
