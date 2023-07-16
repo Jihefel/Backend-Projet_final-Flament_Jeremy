@@ -3,6 +3,8 @@ from shop.models import *
 from shop.forms import *
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 def admin_home(request):
@@ -12,6 +14,10 @@ def admin_home(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     context = locals()
     return render(request, 'admin/home.html', context)
@@ -24,6 +30,10 @@ def infos_site(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     infos = InfosQDP.objects.first()
     if request.method == 'POST':
@@ -39,6 +49,67 @@ def infos_site(request):
     return render(request, 'admin/pages/infos-site/update.html', context)
 #!SECTION
 
+
+#SECTION - MAILBOX
+def contacts_all(request):
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
+
+    context = locals()
+    return render(request, 'admin/pages/mailbox/all.html', context)
+
+def set_read(request, id):
+    contact = Contacts.objects.get(id=id)
+    contact.lu_par_admin = False
+    contact.save()
+    return redirect('custom_admin:contacts_all')
+
+def contacts_reply(request, id):
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
+
+    contact = Contacts.objects.get(id=id)
+    if not contact.lu_par_admin:
+        contact.lu_par_admin = True
+        contact.save()
+    
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
+    
+    if contact.user_auteur:
+        email = contact.user_auteur.email
+        name = contact.user_auteur.username
+    else:
+        email = contact.email
+        name = contact.name
+
+    if request.method == 'POST':
+        form = AdminResponseForm(request.POST)
+        if form.is_valid():
+            reponse = form.cleaned_data["reponse"]
+            # Envoyer un e-mail de réponse
+            send_mail(
+                "An admin replied to your message",
+                "",
+                "jfl.jflament@gmail.com",
+                [email],
+                html_message=render_to_string('mails/admin_response.html', {'name': name, 'first_msg': contact.texte, 'reponse': reponse}),
+            )
+            messages.success(request, f"Response successfully sent to {email}")
+            return redirect('custom_admin:contacts_all')
+    else:
+        form = AdminResponseForm()        
+    
+
+    context = locals()
+    return render(request, 'admin/pages/mailbox/reply.html', context)
+
+
+#!SECTION
+
+
 #SECTION - Partenaires
 def partners_all(request):
     role_id_admin = 1
@@ -47,6 +118,10 @@ def partners_all(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     partners = Partenaires.objects.all()
     
@@ -60,6 +135,10 @@ def partners_delete(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     partner = Partenaires.objects.get(id=id)
     messages.success(request, f"Partner {partner.nom} successfully deleted.")
@@ -76,6 +155,10 @@ def partners_create(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     partners = Partenaires.objects.all()
     if request.method == 'POST':
@@ -97,6 +180,10 @@ def partners_update(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     partner = Partenaires.objects.get(id=id)
 
@@ -122,6 +209,10 @@ def members_all(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     members = User.objects.all()
     
@@ -135,6 +226,10 @@ def members_create(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     members = User.objects.all()
     
@@ -167,6 +262,10 @@ def members_update(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     member = User.objects.get(id=id)
     if request.method == 'POST':
@@ -196,6 +295,10 @@ def members_show(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     member = User.objects.get(id=id)
 
@@ -213,6 +316,10 @@ def products_all(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     products = Produits.objects.prefetch_related('productvariant_set__variant').all()
     
@@ -226,6 +333,10 @@ def products_create(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     products = Produits.objects.all()
     variants = Variantes.objects.all()[:4]
@@ -299,6 +410,10 @@ def products_update(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     product = Produits.objects.get(id=id)
     variants = product.variations.filter(produits=product)
@@ -347,6 +462,10 @@ def products_show(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     product = Produits.objects.get(id=id)
     pv = ProductVariant.objects.filter(product=product)
@@ -365,6 +484,10 @@ def promos_all(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     promos = Promotions.objects.all()
     extra_promo = ExtraPromo.objects.first()
@@ -381,6 +504,10 @@ def promos_create(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
 
     if request.method == 'POST':
@@ -412,6 +539,10 @@ def promos_update(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     promo = Promotions.objects.get(id=id)
 
@@ -436,6 +567,10 @@ def promos_show(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     promo = Promotions.objects.get(id=id)
     categories = Categorie.objects.filter(promo=promo)
@@ -451,6 +586,10 @@ def extra_promo(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     extra_promo = ExtraPromo.objects.first()
 
@@ -476,6 +615,10 @@ def categories_all(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     categories = Categorie.objects.all()
     
@@ -489,6 +632,10 @@ def categories_create(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
 
     if request.method == 'POST':
@@ -519,6 +666,10 @@ def categories_update(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     categorie = Categorie.objects.get(id=id)
 
@@ -543,6 +694,10 @@ def categories_show(request, id):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
 
     categorie = Categorie.objects.get(id=id)
     products = Produits.objects.filter(categorie=categorie)

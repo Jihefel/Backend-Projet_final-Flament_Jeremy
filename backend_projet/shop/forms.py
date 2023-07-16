@@ -235,10 +235,36 @@ class BlogPostForm(forms.ModelForm):
         fields = ['titre', 'texte', 'categorie', 'image_illustration', 'date_post', 'date_modification', 'commentaires_lies', 'user_auteur']
         exclude = ['date_post', 'date_modification']
 
-class ContactsForm(forms.ModelForm):
-    class Meta:
-        model = Contacts
-        fields = ['user_auteur', 'name', 'email', 'texte']
+class ContactForm(forms.Form):
+    name = forms.CharField(label='Name', max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label='Email', max_length=255, required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    text = forms.CharField(label='Message', widget=forms.Textarea(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        is_user_authenticated = kwargs.pop('is_user_authenticated', False)
+        user_auteur = kwargs.pop('user_auteur', None)
+        super(ContactForm, self).__init__(*args, **kwargs)
+
+        if is_user_authenticated:
+            # Cas où l'utilisateur est connecté, masquer les champs 'name' et 'email'
+            self.fields['name'].widget = forms.HiddenInput()
+            self.fields['email'].widget = forms.HiddenInput()
+            if user_auteur:
+                self.fields['user_auteur'] = forms.CharField(
+                    label='User',
+                    initial=user_auteur,
+                    widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
+                )
+
+class AdminResponseForm(forms.Form):
+    reponse = forms.CharField(
+        label='Response',
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 5,
+            'placeholder': 'Write your response here',
+        })
+    )
 
 class InfosQDPForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

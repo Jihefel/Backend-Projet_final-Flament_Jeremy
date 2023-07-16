@@ -46,6 +46,9 @@ class Promotions(models.Model):
     def __str__(self):
         return f"{self.nom} - {self.pourcentage_promo}%"
 
+class ExtraPromo(models.Model):
+    extra_promo = models.ForeignKey(Promotions, blank=True, on_delete=models.CASCADE)
+
 class Categorie(models.Model):
     nom = models.CharField(max_length=255)
     promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.SET_NULL)
@@ -177,10 +180,11 @@ class BlogPost(models.Model):
     user_auteur = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Contacts(models.Model):
-    user_auteur = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    email = models.EmailField()
-    texte = models.TextField()
+    user_auteur = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, related_name="auteur")
+    name = models.CharField(max_length=255, null=True)
+    email = models.EmailField(null=True)
+    texte = models.TextField(null=True)
+    lu_par_admin = models.BooleanField(default=False)
 
 class InfosQDP(models.Model):
     adresse = models.CharField(max_length=255)
@@ -196,6 +200,4 @@ class Partenaires(models.Model):
 class Newsletter(models.Model):
     email = models.EmailField(unique=True)
 
-class ExtraPromo(models.Model):
-    extra_promo = models.ForeignKey(Promotions, blank=True, on_delete=models.CASCADE)
 

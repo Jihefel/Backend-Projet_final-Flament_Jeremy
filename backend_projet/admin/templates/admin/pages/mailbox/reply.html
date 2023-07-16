@@ -1,0 +1,18 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <blockquote style="background-color: #eee">
+            <div class="text-start">
+                <span><i class="fa-solid fa-user me-1"></i> {% if contact.user_auteur %}{{ contact.user_auteur }}{% else %}{{ contact.name }}{% endif %}</span>
+                <span class="mx-2">·</span>
+                <span><i class="fa-solid fa-at me-1"></i> {% if contact.user_auteur %}{{ contact.user_auteur.email }}{% else %}{{ contact.email }}{% endif %}</span>
+            </div>
+            <p>{{ contact.texte }} </p>
+        </blockquote>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="default-btn"><i class="fa-solid fa-paper-plane me-2"></i>Send</button>
+        </form>
+    </div>
+{% endblock admincontent %}

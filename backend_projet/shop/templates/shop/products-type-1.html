@@ -112,8 +112,12 @@
                             <div class="products-size-wrapper">
                                 <span>Size:</span>
 
-                                {% for var in variants %}
-                                    <a href="?variant={{ var.id }}"><button class="{% if var.id == variant_param %}default-btn{% else %}optional-btn{% endif %}">{{ var }}</button></a>
+                                {% for variant_with_stock in variants_with_stock %}
+                                    {% with variant_with_stock.variant as var %}
+                                        <a {% if variant_with_stock.has_stock %}href="?variant={{ var.id }}"{% endif %}>
+                                            <button class="{% if not variant_with_stock.has_stock %}btn btn-disabled{% else %}{% if var.id == variant_param %}default-btn{% else %}optional-btn{% endif %}{% endif %}" {% if not variant_with_stock.has_stock %}disabled{% endif %}>{{ var }}</button>
+                                        </a>
+                                    {% endwith %}
                                 {% endfor %}
                             </div>
 
@@ -133,18 +137,18 @@
                                            {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
                                     <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                 </div>
-                                <button type="submit" class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}" {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>Add to Cart</button>
+                                <button type="submit" class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}" {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>{% if product.product_variant.quantite_stock == 0 %}SOLD OUT{% else %}Add to Cart {% endif %}</button>
                             </form>
 
                             <div class="wishlist-compare-btn">
-                                <a href="#" class="optional-btn"><i class="bx bx-heart"></i> Add to Wishlist</a>
+                                <a href="{% url 'wishlist' product.id %}" class="{% if wp %}default-btn{% else %}optional-btn{% endif %}"><i class="bx bx{% if wp %}s{% endif %}-heart"></i> {% if wp %}  Remove from Wishlist {% else %}  Add to Wishlist{% endif %} </a>
                             </div>
 
                             <div class="buy-checkbox-btn">
             
 
                                 <div class="item">
-                                    <a href="#" class="default-btn">Buy it now!</a>
+                                    <a {% if product.product_variant.quantite_stock == 0 %}{% else %}href="#"{% endif %} class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}">{% if product.product_variant.quantite_stock == 0 %}Sold Out! {% else %}Buy it now!{% endif %}</a>
                                 </div>
                             </div>
                         </div>

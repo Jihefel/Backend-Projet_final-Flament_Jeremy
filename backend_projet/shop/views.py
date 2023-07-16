@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
+from django.conf import settings
+
 
 
 
@@ -541,6 +543,16 @@ def product(request, id):
 
     variant = variants.filter(id=variant_param).first()
 
+    variants_with_stock = []
+    for vari in variants:
+        product_vari = ProductVariant.objects.get(product=product, variant=vari)
+        variant_has_stock = product_vari.quantite_stock > 0
+        variant_with_stock = {
+            'variant': vari,
+            'has_stock': variant_has_stock
+        }
+        variants_with_stock.append(variant_with_stock)
+
     if variant:
         product_variant = ProductVariant.objects.get(product=product, variant=variant)
         if product.promo:
@@ -554,6 +566,7 @@ def product(request, id):
     # Wishlist
     if request.user.is_authenticated:
         wishlist_products = request.user.produits_wishlist.all()
+        wp = wishlist_products.filter(id=product.id)
     
     # Produits
     products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
@@ -804,5 +817,65 @@ def wishlist(request, id):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+def contact(request):
+    is_user_authenticated = request.user.is_authenticated
+    admins = User.objects.filter(role=1)
+    admins_emails = []
+    for admin in admins:
+        admins_emails.append(admin.email)
+    print (admins_emails)
 
+
+    if is_user_authenticated:
+        user_auteur = User.objects.get(username=request.user.username)
+        initial_values = {'user_auteur': user_auteur}
+    else:
+        user_auteur = None
+        initial_values = {}
+
+    if request.method == 'POST':
+        form = ContactForm(request.POST, is_user_authenticated=is_user_authenticated, initial=initial_values)
+
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            text = form.cleaned_data['text']
+
+            # Logique pour envoyer le message par email ou effectuer d'autres actions
+            if is_user_authenticated:
+                # Utilisateur connecté, envoyer un message à l'admin
+                messages.success(request, "Message successfully sent to admins")
+                contacts = Contacts.objects.create(user_auteur=user_auteur, texte=text)
+
+                # Envoyer un e-mail de confirmation ou effectuer d'autres actions
+                send_mail(
+                    f"Admins, someone contacted you",
+                    "",
+                    "jfl.jflament@gmail.com",
+                    admins_emails,
+                    html_message=render_to_string('mails/contact.html', {'user_auteur': user_auteur, 'text': text}),
+                )
+                
+            else:
+                # Utilisateur anonyme, envoyer un message à l'admin par email
+                # avec l'adresse email fournie
+                messages.success(request, "Message successfully sent to admins")
+                contacts = Contacts.objects.create(name=name, email=email, texte=text)
+
+                # Envoyer un e-mail de confirmation ou effectuer d'autres actions
+                send_mail(
+                    f"Admins, someone contacted you",
+                    "",
+                    "jfl.jflament@gmail.com",
+                    admins_emails,
+                    html_message=render_to_string('mails/contact.html', {'name': name, 'email': email, 'text': text}),
+                )
+
+            # Redirection vers une page de succès ou une autre action
+            return redirect('contact')
+    else:
+        form = ContactForm(is_user_authenticated=is_user_authenticated, initial=initial_values)
+
+    context = locals()
+    return render(request, 'shop/contact.html', context)
     

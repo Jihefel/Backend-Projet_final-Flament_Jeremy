@@ -7,6 +7,9 @@ urlpatterns = [
     path('admin/', views.admin_home, name='admin_home'),
     # Infos
     path('infos-site/update/', views.infos_site, name='infos_site'),
+    # Mailbox
+    path('contacts/', views.contacts_all, name='contacts_all'),
+    path('contacts/reply/<int:id>', views.contacts_reply, name='reply_msg'),
     # Partners
     path('partners/', views.partners_all, name='partners_all'),
     path('partners/create', views.partners_create, name='partners_create'),
