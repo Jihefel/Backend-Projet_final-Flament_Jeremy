@@ -529,7 +529,10 @@ def product(request, id):
     
     product = Produits.objects.get(id=id)
 
-    variants = product.variations.filter(produits=product)
+    related_products = Produits.objects.all().order_by('?')[:6]
+
+   
+    variants = product.variations.filter(produits=product) 
 
     if request.GET.get('variant'):
         variant_param = int(request.GET.get('variant'))
@@ -558,6 +561,16 @@ def product(request, id):
         if product.promo:
             product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
         product.product_variant = product_variant  # Add the product_variant to the product object
+
+
+    for rp in related_products:
+        rv = rp.variations.filter(produits=rp).first()
+        print(rv)
+        if rv:
+            related_product_variant = ProductVariant.objects.get(product=rp, variant=rv)
+            if rp.promo:
+                related_product_variant.prix_promo =  float(related_product_variant.prix) - (float(related_product_variant.prix) * (float(rp.promo.pourcentage_promo) / 100))
+            rp.related_product_variant = related_product_variant
 
 
     # Infos du site
