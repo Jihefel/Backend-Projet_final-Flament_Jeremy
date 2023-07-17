@@ -32,6 +32,7 @@ class User(AbstractUser):
     commandes_passees = models.ManyToManyField('Commandes',related_name='commandes', blank=True)
     contacts_echanges = models.ManyToManyField('Contacts', related_name='contacts', blank=True)
     abonne_newsletter = models.BooleanField(default=False)
+    promo_code_used = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
@@ -183,15 +184,20 @@ class Panier(models.Model):
         return total
     
     @staticmethod
-    def apply_promo_code(total, promo_code_name):
+    def calculate_total_final(total_panier, user):
         promo_code_name = "kadri"  # Code promo à appliquer
         promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
+        shipping_fee = 4.50
 
-        if promo_code_name == promo_code_name:
-            reduction_amount = (total * promo_code_percentage) / 100
-            return reduction_amount
+        total_final = total_panier + shipping_fee
+
+        if user.promo_code_used:
+                reduction_amount = (promo_code_percentage / 100) * total_panier
+                total_final += reduction_amount
         else:
-            return 0
+            total_final = total_panier + shipping_fee
+
+        return total_final
     
     def update_quantity_stock(self, new_quantity):
         old_quantity = self.quantite_ajoutee

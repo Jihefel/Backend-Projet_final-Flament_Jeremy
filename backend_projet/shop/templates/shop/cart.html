@@ -114,6 +114,7 @@
                                                 value="{{ product.quantite_ajoutee }}"
                                                 min="0"
                                                 max="{{ product.produit_inclus.quantite_stock }}">
+                                            {% if promo_code_param %}<input type="hidden" name="promo_code" value={{ promo_code_param }}>{% endif %}
                                             <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                         </div>
                                     </td>
@@ -144,28 +145,28 @@
                 </form>
                 
                 <div class="container w-50 my-4">
-                    <form action="{% url 'cart' %}" method="get" class="d-flex">
-                        <input type="text" name="promo_code" placeholder="Enter promo code" class="form-control">
+                    <form action="{% url 'cart' %}" method="get" class="d-flex" novalidate>
+                        <input type="text" name="promo_code" placeholder="Enter promo code" class="form-control {% if promo_code_param and promo_code_param != promo_code_name %}is-invalid{% endif %}" {% if promo_code_param %}value={{ promo_code_param }}{% endif %} >
                         <button type="submit" class="default-btn">Apply</button>
-                        {% if promo_code_param %}<button type="submit" class="optional-btn">Reset</button>{% endif %}
+                        {% if promo_code_param %}<a href="{% url 'cart' %}" class="d-flex"><span class="optional-btn d-flex align-items-center justify-content-center">Reset</span></a>{% endif %}
                     </form>
                 </div>
 
 
-                    <div class="cart-totals">
-                        <h3>Cart Totals</h3>
+                <div class="cart-totals">
+                    <h3>Cart Totals</h3>
 
-                        <ul>
-                            <li>Subtotal <span>{{ total_panier|floatformat:2 }} €</span></li>
-                            <li>Shipping <span>{{ shipping_fee|floatformat:2 }} €</span></li>
-                            {% if promo_code_name %}
-                                <li>Promo code <span>{{ promo_code_name }} (+{{ promo_code_percentage }}%)</span></li>
-                            {% endif %}
-                            <li>Total <span>{{ total_final|floatformat:2 }} €</span></li>
-                        </ul>
-                        
-                        <a href="{% url 'checkout' %}" class="default-btn">Proceed to Checkout</a>
-                    </div>
+                    <ul>
+                        <li>Subtotal <span>{{ total_panier|floatformat:2 }} €</span></li>
+                        <li>Shipping <span>{{ shipping_fee|floatformat:2 }} €</span></li>
+                        {% if promo_code_param == promo_code_name %}
+                            <li>Promo code <span>{{ promo_code_name }} (+{{ promo_code_percentage }}%)</span></li>
+                        {% endif %}
+                        <li>Total <span>{{ total_final|floatformat:2 }} €</span></li>
+                    </ul>
+                    
+                    <a href="{% url 'checkout' %}" class="default-btn">Proceed to Checkout</a>
+                </div>
             </div>
         </section>
         <!-- End Cart Area -->

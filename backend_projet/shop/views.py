@@ -9,9 +9,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
-from django.conf import settings
-
-
+from django.urls import reverse
 
 
 
@@ -236,12 +234,26 @@ def cart(request):
     promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
     shipping_fee = 4.50
     promo_code_param = request.GET.get('promo_code')  # Récupérer la valeur du champ du code promo depuis la requête
-    total_final = total_panier + shipping_fee
 
-    if promo_code_param == promo_code_name:
-        print('ok')
-        reduction_amount = (promo_code_percentage / 100) * total_panier
-        total_final += reduction_amount
+    promo_code_used = request.user.promo_code_used
+
+    user = request.user
+
+    if promo_code_param:
+        if promo_code_param == promo_code_name:
+            user.promo_code_used = True
+            user.save()
+            messages.success(request, f"Promo code '{promo_code_name}' successfully applied")
+        else:
+            if user.promo_code_used:
+                user.promo_code_used = False
+                user.save()
+            messages.error(request, "Unknown promo code")
+    else:
+        if user.promo_code_used:
+            user.promo_code_used = False
+            user.save()
+    total_final = Panier.calculate_total_final(total_panier, user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -268,6 +280,7 @@ def cart(request):
     context = locals()
     return render(request, 'shop/cart.html', context)
 
+@login_required(login_url='login')
 def checkout(request):
     
     # Infos du site
@@ -1038,6 +1051,8 @@ def add_to_cart(request, id):
 
 def update_cart(request):
     all_products_in_cart = Panier.objects.all()
+    promo_code_param = request.POST.get('promo_code')
+    
     if request.method == 'POST':
         for product in all_products_in_cart:
             quantity = int(request.POST.get('quantity_' + str(product.id)))
@@ -1046,7 +1061,14 @@ def update_cart(request):
                     product.delete_from_cart()
                 else:
                     product.update_quantity_stock(quantity)
-    return redirect('cart')
+
+    url = reverse('cart')  # Générer l'URL de la vue 'cart'
+    if promo_code_param == None:
+        url = url
+    else:
+        url += f'?promo_code={promo_code_param}'  # Ajouter le paramètre promo_code_param à l'URL
+
+    return redirect(url)
 
 
 def delete_from_cart(request,id):
