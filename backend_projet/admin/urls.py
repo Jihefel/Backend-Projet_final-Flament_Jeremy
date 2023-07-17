@@ -10,6 +10,7 @@ urlpatterns = [
     # Mailbox
     path('contacts/', views.contacts_all, name='contacts_all'),
     path('contacts/reply/<int:id>', views.contacts_reply, name='reply_msg'),
+    path('contacts/delete/<int:id>', views.contacts_delete, name='contacts_delete'),
     # Partners
     path('partners/', views.partners_all, name='partners_all'),
     path('partners/create', views.partners_create, name='partners_create'),

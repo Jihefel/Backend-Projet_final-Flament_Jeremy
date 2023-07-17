@@ -9,7 +9,7 @@
             </button>
 
             <div class="modal-body">
-                <h3>My Cart ({{ nb_products_in_cart }})</h3>
+                <h3>My Cart {% if nb_products_in_cart %}({{ nb_products_in_cart }}){% endif %}</h3>
 
                 <div class="products-cart-content">
                     {% for product in products_in_cart %}

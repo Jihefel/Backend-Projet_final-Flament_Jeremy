@@ -173,31 +173,33 @@ class Panier(models.Model):
     
     @staticmethod
     def get_total_panier(user):
-        panier_items = Panier.objects.filter(user=user)
-        total = 0.0  # Initialisez le total en tant que float
-        for item in panier_items:
-            if item.produit_inclus.product.promo:
-                prix_promo = float(item.produit_inclus.prix) - (float(item.produit_inclus.prix) * (float(item.produit_inclus.product.promo.pourcentage_promo) / 100))
-                total += float(prix_promo) * item.quantite_ajoutee  # Convertissez le prix promo en float
-            else:
-                total += float(item.produit_inclus.prix) * item.quantite_ajoutee  # Convertissez le prix en float
-        return total
+        if user:
+            panier_items = Panier.objects.filter(user=user)
+            total = 0.0  # Initialisez le total en tant que float
+            for item in panier_items:
+                if item.produit_inclus.product.promo:
+                    prix_promo = float(item.produit_inclus.prix) - (float(item.produit_inclus.prix) * (float(item.produit_inclus.product.promo.pourcentage_promo) / 100))
+                    total += float(prix_promo) * item.quantite_ajoutee  # Convertissez le prix promo en float
+                else:
+                    total += float(item.produit_inclus.prix) * item.quantite_ajoutee  # Convertissez le prix en float
+            return total
     
     @staticmethod
     def calculate_total_final(total_panier, user):
-        promo_code_name = "kadri"  # Code promo à appliquer
-        promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
-        shipping_fee = 4.50
+        if user:
+            promo_code_name = "kadri"  # Code promo à appliquer
+            promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
+            shipping_fee = 4.50
 
-        total_final = total_panier + shipping_fee
-
-        if user.promo_code_used:
-                reduction_amount = (promo_code_percentage / 100) * total_panier
-                total_final += reduction_amount
-        else:
             total_final = total_panier + shipping_fee
 
-        return total_final
+            if user.promo_code_used:
+                    reduction_amount = (promo_code_percentage / 100) * total_panier
+                    total_final += reduction_amount
+            else:
+                total_final = total_panier + shipping_fee
+
+            return total_final
     
     def update_quantity_stock(self, new_quantity):
         old_quantity = self.quantite_ajoutee
@@ -220,12 +222,12 @@ class Panier(models.Model):
 class Commandes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_commande = models.DateField()
-    produits_commandes = models.ManyToManyField(Produits, through='ProduitsCommandes')
+    produits_commandes = models.ManyToManyField(ProductVariant, through='ProduitsCommandes')
     statut_commande = models.BooleanField(default=False)
 
 class ProduitsCommandes(models.Model):
     commande = models.ForeignKey(Commandes, on_delete=models.CASCADE)
-    produit = models.ForeignKey(Produits, on_delete=models.CASCADE)
+    product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
 
 class BlogPost(models.Model):
     titre = models.CharField(max_length=255)

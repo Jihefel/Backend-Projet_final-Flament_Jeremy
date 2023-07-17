@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
 from .forms import *
 from django.contrib import messages
@@ -25,10 +25,11 @@ def index(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     
     # Infos du site
@@ -100,10 +101,11 @@ def handler404(request, exception=None):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Infos du site
     infos = InfosQDP.objects.first()
@@ -133,10 +135,11 @@ def account(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Infos du site
     infos = InfosQDP.objects.first() 
@@ -161,10 +164,11 @@ def edit_account(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
     
     # Infos du site
     infos = InfosQDP.objects.first() 
@@ -205,7 +209,7 @@ def direct_newsletter_subscription(request):
     messages.success(request, "Successfully subscribed to the newsletter.")
     return redirect('account')
 
-
+@login_required(login_url='login')
 def cart(request):
 
     # Infos du site
@@ -226,16 +230,20 @@ def cart(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all().order_by('-id')[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
+    products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+    all_products_in_cart = Panier.objects.filter(user=request.user)
+    nb_products_in_cart = Panier.objects.filter(user=request.user).count()
     total_panier = Panier.get_total_panier(request.user)
+
     promo_code_name = "kadri"  # Code promo à appliquer
     promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
     shipping_fee = 4.50
     promo_code_param = request.GET.get('promo_code')  # Récupérer la valeur du champ du code promo depuis la requête
 
     promo_code_used = request.user.promo_code_used
+
+    if promo_code_used:
+        promo_code_param = promo_code_name
 
     user = request.user
 
@@ -280,6 +288,14 @@ def cart(request):
     context = locals()
     return render(request, 'shop/cart.html', context)
 
+
+@login_required(login_url='login')
+def remove_promo_code(request):
+    user = request.user
+    user.promo_code_used = False
+    user.save()
+    return redirect('cart')
+
 @login_required(login_url='login')
 def checkout(request):
     
@@ -302,32 +318,72 @@ def checkout(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
+        promo_code_name = "kadri"  # Code promo à appliquer
+        promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
+        shipping_fee = 4.50
+        total_final = Panier.calculate_total_final(total_panier, request.user)
 
-    # Form newsletter
-    if request.method == 'POST':
-        newsletter_form = NewsletterForm(request.POST)
-        if newsletter_form.is_valid():
-            email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
-            else:
-                newsletter_form.save()
-                # Envoyer un e-mail de confirmation ou effectuer d'autres actions
-                send_mail(
-                    "Thanks for subscribing to our newsletter",
-                    "",
-                    "jfl.jflament@gmail.com",
-                    [email],
-                    html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
-                )
-                messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
-    else:
-        newsletter_form = NewsletterForm()
+    if request.method == "POST":
+        commande = Commandes(user=request.user, date_commande=date.today(), statut_commande=False)
+        commande.save()
+
+        for product in all_products_in_cart:
+            produit = get_object_or_404(ProductVariant, id=product.produit_inclus.id)
+            produits_commandes = ProduitsCommandes(commande=commande, product_variant=produit)
+            produits_commandes.save()
+
+
+        user = request.user
+        user.promo_code_used = False
+        user.save()
+
+        # Ajouter la commande à l'historique de l'user
+        request.user.commandes_passees.add(commande)
+
+        # Envoyer un e-mail de confirmation
+        send_mail(
+            "Confirmation order : pending",
+            "",
+            "jfl.jflament@gmail.com",
+            [request.user.email],
+            html_message=render_to_string('mails/order_confirmation.html', {'user': request.user, 'all_products_in_cart': all_products_in_cart, 'total_panier': total_panier, 'promo_code_name': promo_code_name, 'promo_code_percentage': promo_code_percentage, 'shipping_fee': shipping_fee, 'total_final': total_final}),
+        )
+
+
+        # Vider le panier de l'utilisateur
+        all_products_in_cart.delete()
+
+        messages.success(request, "Your order has been  successfully submitted and is now pending confirmation. An admin will confirm it when it will be ready. Thank you!")
+        return redirect('home')
+
+
+    # # Form newsletter
+    # if request.method == 'POST':
+    #     newsletter_form = NewsletterForm(request.POST)
+    #     if newsletter_form.is_valid():
+    #         email = newsletter_form.cleaned_data['email']
+    #         if Newsletter.objects.filter(email=email).exists():
+    #             messages.error(request, "Email already subscribed.")
+    #         else:
+    #             newsletter_form.save()
+    #             # Envoyer un e-mail de confirmation ou effectuer d'autres actions
+    #             send_mail(
+    #                 "Thanks for subscribing to our newsletter",
+    #                 "",
+    #                 "jfl.jflament@gmail.com",
+    #                 [email],
+    #                 html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
+    #             )
+    #             messages.success(request, "Successfully subscribed to the newsletter.")
+    #         return redirect('home')
+
+    # else:
+    #     newsletter_form = NewsletterForm()
     
     context = locals()
     return render(request, 'shop/checkout.html', context)
@@ -353,10 +409,11 @@ def contact(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -404,10 +461,11 @@ def connection(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     if request.method == "POST":
             username = request.POST['username']
@@ -456,10 +514,11 @@ def change_password(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     user = User.objects.get(id=request.user.id)
     if request.method == 'POST':
@@ -536,6 +595,7 @@ def all_products(request):
                 filtered_products = products
             else:
                 filtered_products = products
+        
     
     products_length = len(products)
 
@@ -592,10 +652,11 @@ def all_products(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -682,10 +743,11 @@ def product(request, id):
     recent_products_sidebar = products_sorted[:4]
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
 
     role_id_admin = 1
@@ -741,10 +803,11 @@ def signup(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     if request.method == 'POST':
         form = BootstrapUserCreationForm(request.POST)
@@ -809,10 +872,11 @@ def signup2(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Form signup 2
     last_user = User.objects.last()
@@ -858,10 +922,11 @@ def article(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -909,10 +974,11 @@ def blog(request):
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
     # Cart Modal
-    products_in_cart = Panier.objects.all()[:4]
-    all_products_in_cart = Panier.objects.all()
-    nb_products_in_cart = Panier.objects.all().count()
-    total_panier = Panier.get_total_panier(request.user)
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -956,6 +1022,7 @@ def wishlist(request, id):
         messages.success(request, f"{product.nom} added to your wishlist")
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def contact(request):
 
@@ -1025,6 +1092,7 @@ def contact(request):
 
 
 # Ajout au panier
+@login_required(login_url = 'login')
 def add_to_cart(request, id):
     product_variant = ProductVariant.objects.get(id=id)
     product = Produits.objects.get(productvariant=product_variant)
@@ -1038,7 +1106,6 @@ def add_to_cart(request, id):
         product_in_cart.save()
         product_variant.quantite_stock -= int(quantity)
         product_variant.save()
-        messages.success(request, f"You added {quantity} x {product_variant.variant.contenu} of {product.nom} to your cart")
     else:
         # Si le produit_variant n'existe pas encore, créer une nouvelle entrée dans le panier
         product_in_cart = Panier.objects.create(produit_inclus=product_variant, user=user, quantite_ajoutee=quantity)
@@ -1048,9 +1115,9 @@ def add_to_cart(request, id):
     
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@login_required(login_url = 'login')
 def update_cart(request):
-    all_products_in_cart = Panier.objects.all()
+    all_products_in_cart = Panier.objects.filter(user=request.user)
     promo_code_param = request.POST.get('promo_code')
     
     if request.method == 'POST':
@@ -1063,6 +1130,10 @@ def update_cart(request):
                     product.update_quantity_stock(quantity)
 
     url = reverse('cart')  # Générer l'URL de la vue 'cart'
+
+    if request.user.promo_code_used:
+        promo_code_param = 'kadri'
+
     if promo_code_param == None:
         url = url
     else:
@@ -1070,7 +1141,7 @@ def update_cart(request):
 
     return redirect(url)
 
-
+@login_required(login_url = 'login')
 def delete_from_cart(request,id):
     product_in_cart = Panier.objects.get(produit_inclus_id=id)
     messages.success(request, f"You successfully deleted the product from your cart")

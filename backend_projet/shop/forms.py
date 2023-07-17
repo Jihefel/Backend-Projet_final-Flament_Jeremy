@@ -214,21 +214,6 @@ class RolesForm(forms.ModelForm):
         model = Roles
         fields = ['role']
 
-class PanierForm(forms.ModelForm):
-    class Meta:
-        model = Panier
-        fields = ['user', 'produit_inclus', 'quantite_ajoutee']
-
-class CommandesForm(forms.ModelForm):
-    class Meta:
-        model = Commandes
-        fields = ['user', 'date_commande', 'produits_commandes', 'statut_commande']
-
-class ProduitsCommandesForm(forms.ModelForm):
-    class Meta:
-        model = ProduitsCommandes
-        fields = ['commande', 'produit']
-
 class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
@@ -255,6 +240,10 @@ class ContactForm(forms.Form):
                     initial=user_auteur,
                     widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'})
                 )
+        else:
+            # Cas où l'utilisateur n'est pas connecté, rendre les champs 'name' et 'email' requis
+            self.fields['name'].required = True
+            self.fields['email'].required = True
 
 class AdminResponseForm(forms.Form):
     reponse = forms.CharField(

@@ -59,12 +59,6 @@ def contacts_all(request):
     context = locals()
     return render(request, 'admin/pages/mailbox/all.html', context)
 
-def set_read(request, id):
-    contact = Contacts.objects.get(id=id)
-    contact.lu_par_admin = False
-    contact.save()
-    return redirect('custom_admin:contacts_all')
-
 def contacts_reply(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
@@ -106,6 +100,12 @@ def contacts_reply(request, id):
     context = locals()
     return render(request, 'admin/pages/mailbox/reply.html', context)
 
+
+def contacts_delete(request, id):
+    contact = Contacts.objects.get(id=id)
+    messages.success(request, f"Message successfully deleted.")
+    contact.delete()
+    return redirect('custom_admin:contacts_all')
 
 #!SECTION
 

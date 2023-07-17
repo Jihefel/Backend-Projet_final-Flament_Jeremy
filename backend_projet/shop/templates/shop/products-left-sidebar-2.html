@@ -306,16 +306,19 @@
                                     <h4>Variation :</h4>
                                     <p>{{ product.product_variant.variant.contenu }}</p>
                                 </div>
-                                <form class="products-add-to-cart" method="post">
-                                    {% csrf_token %}
+                                <form class="products-add-to-cart" action="{% url 'add_to_cart' product.product_variant.id %}?quantity={{ quantity }}" method="get">
                                     <div class="input-counter">
                                         <span class="minus-btn"><i class='bx bx-minus'></i></span>
+                                        <input type="hidden" name="category" value="{{ category_id }}">
+                                        <input type="hidden" name="type" value="{{ type_param }}">
                                         <input readonly
                                                type="text"
+                                               name='quantity'
                                                value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
                                                min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
                                                max="{{ product.product_variant.quantite_stock }}"
                                                {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
+                                        <input type="hidden" name="promotion" value="{{ promo_param }}">
                                         <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                     </div>
                                     <button type="submit"

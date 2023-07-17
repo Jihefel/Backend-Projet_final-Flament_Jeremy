@@ -126,6 +126,14 @@
                                     </td>
                                 </tr>
                                 {% endwith %}
+                                {% empty %}
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -148,7 +156,7 @@
                     <form action="{% url 'cart' %}" method="get" class="d-flex" novalidate>
                         <input type="text" name="promo_code" placeholder="Enter promo code" class="form-control {% if promo_code_param and promo_code_param != promo_code_name %}is-invalid{% endif %}" {% if promo_code_param %}value={{ promo_code_param }}{% endif %} >
                         <button type="submit" class="default-btn">Apply</button>
-                        {% if promo_code_param %}<a href="{% url 'cart' %}" class="d-flex"><span class="optional-btn d-flex align-items-center justify-content-center">Reset</span></a>{% endif %}
+                        {% if promo_code_param %}<a href="{% url 'remove_code' %}" class="d-flex"><span class="optional-btn d-flex align-items-center justify-content-center">Reset</span></a>{% endif %}
                     </form>
                 </div>
 
@@ -165,7 +173,7 @@
                         <li>Total <span>{{ total_final|floatformat:2 }} €</span></li>
                     </ul>
                     
-                    <a href="{% url 'checkout' %}" class="default-btn">Proceed to Checkout</a>
+                    <a {% if nb_products_in_cart != 0 %}href="{% url 'checkout' %}"{% endif %} class="default-btn">Proceed to Checkout</a>
                 </div>
             </div>
         </section>

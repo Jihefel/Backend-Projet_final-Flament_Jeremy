@@ -61,6 +61,10 @@ def run():
     inserted = seeder.execute()
     print(inserted)
 
+    seeder.add_entity(ExtraPromo, 1, {
+        'extra_promo': Promotions.objects.get(id=5)
+    })
+
 
     # Seed Categories
     categories = [
@@ -100,6 +104,7 @@ def run():
             'metiers_hobbies': 'Admin',
             'bio': 'Lorem ipsum dolor sit amet',
             'abonne_newsletter': False,
+            'promo_code_used': False,
         },
         {
             'username': 'webmaster',
@@ -113,6 +118,7 @@ def run():
             'metiers_hobbies': 'Web development',
             'bio': 'Lorem ipsum dolor sit amet',
             'abonne_newsletter': False,
+            'promo_code_used': False,
         },
         {
             'username': 'stock',
@@ -126,6 +132,7 @@ def run():
             'metiers_hobbies': 'Inventory management',
             'bio': 'Lorem ipsum dolor sit amet',
             'abonne_newsletter': False,
+            'promo_code_used': False,
         },
     ]
 
