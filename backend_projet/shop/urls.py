@@ -23,4 +23,7 @@ urlpatterns = [
     path('admin/', admin_views.admin_home, name='admin_home'),
     path('wishlist/<int:id>', views.wishlist, name='wishlist'),
     path('add_to_cart/<int:id>', views.add_to_cart, name='add_to_cart'),
+    path('delete_from_cart/<int:id>', views.delete_from_cart, name='delete_from_cart'),
+    path('update_cart/', views.update_cart, name='update_cart'),
+
 ]

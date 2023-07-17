@@ -16,31 +16,34 @@
                         {% with product.produit_inclus.product as produit %}
                         <div class="products-cart">
                             <div class="products-image">
-                                <a href="{% url 'product' produit.id %}"><img src="{% if 'https' in produit.image_1.url %}{{ produit.image_1 }}{% else %}{{ produit.image_1.url }}{% endif %}" alt="image"></a>
+                                <a href="{% url 'product' produit.id %}?variant={{ product.produit_inclus.variant.id }}"><img src="{% if 'https' in produit.image_1.url %}{{ produit.image_1 }}{% else %}{{ produit.image_1.url }}{% endif %}" alt="image"></a>
                             </div>
                             
                             <div class="products-content">
-                                <h3><a href="{% url 'product' produit.id %}">{{ produit.nom }}</a></h3>
+                                <h3><a href="{% url 'product' produit.id %}?variant={{ product.produit_inclus.variant.id }}">{{ produit.nom }}</a></h3>
                                 <span>{{ product.produit_inclus.variant.contenu }}</span>
                                 <div class="products-price">
                                     <span>{{ product.quantite_ajoutee }}</span>
                                     <span>x</span>
                                     <span class="new-price">{{ product.prix_unitaire|floatformat:2 }}€</span>
                                 </div>
-                                <a href="#" class="remove-btn"><i class="bx bx-trash"></i></a>
+                                <a href="{% url 'delete_from_cart' product.produit_inclus.id %}" class="remove-btn"><i class="bx bx-trash"></i></a>
                             </div>
                         </div>
                         {% endwith %}
+                        {% empty %}
+                        <p class="text-tertiary mb-4">You have no product in your cart</p>
                     {% endfor %}
 
                 
                 </div>
-
+                {% if nb_products_in_cart != 0 %}
                 <div class="products-cart-subtotal">
                     <span>Subtotal</span>
-
+                    
                     <span class="subtotal">{{ total_panier|floatformat:2 }}€</span>
                 </div>
+                {% endif %}
 
                 <div class="products-cart-btn">
                     <a href="{% url 'checkout' %}" class="default-btn">Proceed to Checkout</a>

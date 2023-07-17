@@ -141,7 +141,7 @@
                                         <span class="new-price">{{ product.product_variant.prix }}€</span>
                                     {% endif %}
                                 </div>
-                                <a href="#" class="add-to-cart">Add to Cart</a>
+                                <a href="{% url 'add_to_cart' product.product_variant.id %}?quantity=1" class="add-to-cart">Add to Cart</a>
                             </div>
                         </div>
                     </div>
@@ -200,16 +200,17 @@
                                                 <h4>Variation :</h4>
                                                 <p>{{ product.product_variant.variant.contenu }}</p>
                                             </div>
-                                            <form class="products-add-to-cart" method="post">
+                                            <form class="products-add-to-cart"  action="{% url 'add_to_cart' product.product_variant.id %}?quantity={{ quantity }}" method="get">
                                                 {% csrf_token %}
                                                 <div class="input-counter">
                                                     <span class="minus-btn"><i class='bx bx-minus'></i></span>
                                                     <input readonly
-                                                           type="text"
-                                                           value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
-                                                           min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
-                                                           max="{{ product.product_variant.quantite_stock }}"
-                                                           {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
+                                                        type="text"
+                                                        name="quantity"
+                                                        value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                                        min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                                        max="{{ product.product_variant.quantite_stock }}"
+                                                        {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
                                                     <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                                 </div>
                                                 <button type="submit"

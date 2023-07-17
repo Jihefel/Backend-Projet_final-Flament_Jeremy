@@ -158,6 +158,7 @@ class Panier(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     produit_inclus = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
     quantite_ajoutee = models.PositiveIntegerField()
+
     @property
     def prix_unitaire(self):
         if self.produit_inclus.product.promo:
@@ -165,6 +166,10 @@ class Panier(models.Model):
             return prix_promo
         else:
             return self.produit_inclus.prix
+    @property
+    def total_individuel(self):
+        return self.prix_unitaire * self.quantite_ajoutee
+    
     @staticmethod
     def get_total_panier(user):
         panier_items = Panier.objects.filter(user=user)
@@ -176,6 +181,35 @@ class Panier(models.Model):
             else:
                 total += float(item.produit_inclus.prix) * item.quantite_ajoutee  # Convertissez le prix en float
         return total
+    
+    @staticmethod
+    def apply_promo_code(total, promo_code_name):
+        promo_code_name = "kadri"  # Code promo à appliquer
+        promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
+
+        if promo_code_name == promo_code_name:
+            reduction_amount = (total * promo_code_percentage) / 100
+            return reduction_amount
+        else:
+            return 0
+    
+    def update_quantity_stock(self, new_quantity):
+        old_quantity = self.quantite_ajoutee
+        self.quantite_ajoutee = new_quantity
+        self.save()
+
+        # Mettre à jour le stock du produit
+        diff_quantity = new_quantity - old_quantity
+        self.produit_inclus.quantite_stock -= diff_quantity
+        self.produit_inclus.save()
+
+
+    def delete_from_cart(self):
+        # Mettre à jour le stock du produit en ajoutant la quantité retirée
+        self.produit_inclus.quantite_stock += self.quantite_ajoutee
+        self.produit_inclus.save()
+
+        self.delete()
 
 class Commandes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -26,6 +26,12 @@ def index(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
     
     # Infos du site
     infos = InfosQDP.objects.first()
@@ -95,6 +101,12 @@ def handler404(request, exception=None):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
     # Infos du site
     infos = InfosQDP.objects.first()
      
@@ -122,6 +134,12 @@ def account(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
     # Infos du site
     infos = InfosQDP.objects.first() 
     # Wishlist
@@ -143,6 +161,12 @@ def edit_account(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
     
     # Infos du site
     infos = InfosQDP.objects.first() 
@@ -196,6 +220,29 @@ def cart(request):
     products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
     recent_products_sidebar = products_sorted[:4]
 
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all().order_by('-id')[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+    promo_code_name = "kadri"  # Code promo à appliquer
+    promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
+    shipping_fee = 4.50
+    promo_code_param = request.GET.get('promo_code')  # Récupérer la valeur du champ du code promo depuis la requête
+    total_final = total_panier + shipping_fee
+
+    if promo_code_param == promo_code_name:
+        print('ok')
+        reduction_amount = (promo_code_percentage / 100) * total_panier
+        total_final += reduction_amount
+
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
@@ -233,6 +280,19 @@ def checkout(request):
     # Produits
     products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
     recent_products_sidebar = products_sorted[:4]
+
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -279,6 +339,12 @@ def contact(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
@@ -323,6 +389,12 @@ def connection(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
 
     if request.method == "POST":
             username = request.POST['username']
@@ -369,6 +441,12 @@ def change_password(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
 
     user = User.objects.get(id=request.user.id)
     if request.method == 'POST':
@@ -499,6 +577,12 @@ def all_products(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -643,6 +727,12 @@ def signup(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
     if request.method == 'POST':
         form = BootstrapUserCreationForm(request.POST)
 
@@ -705,6 +795,12 @@ def signup2(request):
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
 
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
     # Form signup 2
     last_user = User.objects.last()
     if request.method == 'POST':
@@ -747,6 +843,12 @@ def article(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -792,6 +894,12 @@ def blog(request):
     if request.user.id is not None:
         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
@@ -917,6 +1025,7 @@ def add_to_cart(request, id):
         product_in_cart.save()
         product_variant.quantite_stock -= int(quantity)
         product_variant.save()
+        messages.success(request, f"You added {quantity} x {product_variant.variant.contenu} of {product.nom} to your cart")
     else:
         # Si le produit_variant n'existe pas encore, créer une nouvelle entrée dans le panier
         product_in_cart = Panier.objects.create(produit_inclus=product_variant, user=user, quantite_ajoutee=quantity)
@@ -924,4 +1033,25 @@ def add_to_cart(request, id):
         product_variant.save()
     messages.success(request, f"You added {quantity} x {product_variant.variant.contenu} of {product.nom} to your cart")
     
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def update_cart(request):
+    all_products_in_cart = Panier.objects.all()
+    if request.method == 'POST':
+        for product in all_products_in_cart:
+            quantity = int(request.POST.get('quantity_' + str(product.id)))
+            if quantity <= product.produit_inclus.quantite_stock:
+                if quantity == 0:
+                    product.delete_from_cart()
+                else:
+                    product.update_quantity_stock(quantity)
+    return redirect('cart')
+
+
+def delete_from_cart(request,id):
+    product_in_cart = Panier.objects.get(produit_inclus_id=id)
+    messages.success(request, f"You successfully deleted the product from your cart")
+    product_in_cart.delete_from_cart()
+
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -239,7 +239,7 @@
                             <span class="new-price">{{ product.product_variant.prix }}€</span>
                         {% endif %}
                     </div>
-                    <a href="#" class="add-to-cart">Add to Cart</a>
+                    <a href="{% url 'add_to_cart' product.product_variant.id %}?quantity=1" class="add-to-cart">Add to Cart</a>
                 </div>
                 {% if product.promo %}
                     <span class="products-discount">
