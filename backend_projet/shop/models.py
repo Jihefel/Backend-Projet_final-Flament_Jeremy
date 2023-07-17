@@ -158,6 +158,24 @@ class Panier(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     produit_inclus = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
     quantite_ajoutee = models.PositiveIntegerField()
+    @property
+    def prix_unitaire(self):
+        if self.produit_inclus.product.promo:
+            prix_promo = float(self.produit_inclus.prix) - (float(self.produit_inclus.prix) * (float(self.produit_inclus.product.promo.pourcentage_promo) / 100))
+            return prix_promo
+        else:
+            return self.produit_inclus.prix
+    @staticmethod
+    def get_total_panier(user):
+        panier_items = Panier.objects.filter(user=user)
+        total = 0.0  # Initialisez le total en tant que float
+        for item in panier_items:
+            if item.produit_inclus.product.promo:
+                prix_promo = float(item.produit_inclus.prix) - (float(item.produit_inclus.prix) * (float(item.produit_inclus.product.promo.pourcentage_promo) / 100))
+                total += float(prix_promo) * item.quantite_ajoutee  # Convertissez le prix promo en float
+            else:
+                total += float(item.produit_inclus.prix) * item.quantite_ajoutee  # Convertissez le prix en float
+        return total
 
 class Commandes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

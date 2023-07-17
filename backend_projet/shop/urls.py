@@ -22,4 +22,5 @@ urlpatterns = [
     path('blog/', views.blog, name='blog'),
     path('admin/', admin_views.admin_home, name='admin_home'),
     path('wishlist/<int:id>', views.wishlist, name='wishlist'),
+    path('add_to_cart/<int:id>', views.add_to_cart, name='add_to_cart'),
 ]

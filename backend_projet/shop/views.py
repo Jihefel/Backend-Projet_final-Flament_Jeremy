@@ -565,7 +565,6 @@ def product(request, id):
 
     for rp in related_products:
         rv = rp.variations.filter(produits=rp).first()
-        print(rv)
         if rv:
             related_product_variant = ProductVariant.objects.get(product=rp, variant=rv)
             if rp.promo:
@@ -581,9 +580,16 @@ def product(request, id):
         wishlist_products = request.user.produits_wishlist.all()
         wp = wishlist_products.filter(id=product.id)
     
-    # Produits
+    # Sidebar
     products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
     recent_products_sidebar = products_sorted[:4]
+
+    # Cart Modal
+    products_in_cart = Panier.objects.all()[:4]
+    all_products_in_cart = Panier.objects.all()
+    nb_products_in_cart = Panier.objects.all().count()
+    total_panier = Panier.get_total_panier(request.user)
+
 
     role_id_admin = 1
     role_id_membre = 2
@@ -831,12 +837,15 @@ def wishlist(request, id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def contact(request):
+
+    # Infos du site
+    infos = InfosQDP.objects.first()
+
     is_user_authenticated = request.user.is_authenticated
     admins = User.objects.filter(role=1)
     admins_emails = []
     for admin in admins:
         admins_emails.append(admin.email)
-    print (admins_emails)
 
 
     if is_user_authenticated:
@@ -891,4 +900,28 @@ def contact(request):
 
     context = locals()
     return render(request, 'shop/contact.html', context)
+
+
+
+# Ajout au panier
+def add_to_cart(request, id):
+    product_variant = ProductVariant.objects.get(id=id)
+    product = Produits.objects.get(productvariant=product_variant)
+    user = request.user
+    quantity = int(request.GET.get('quantity'))
+    # Vérifier si le produit_variant est déjà présent dans le panier de l'utilisateur
+    if Panier.objects.filter(produit_inclus_id=product_variant).exists():
+        # Si le produit_variant existe déjà, mettre à jour la quantité
+        product_in_cart = Panier.objects.get(produit_inclus_id=product_variant)
+        product_in_cart.quantite_ajoutee += int(quantity)
+        product_in_cart.save()
+        product_variant.quantite_stock -= int(quantity)
+        product_variant.save()
+    else:
+        # Si le produit_variant n'existe pas encore, créer une nouvelle entrée dans le panier
+        product_in_cart = Panier.objects.create(produit_inclus=product_variant, user=user, quantite_ajoutee=quantity)
+        product_variant.quantite_stock -= int(quantity)
+        product_variant.save()
+    messages.success(request, f"You added {quantity} x {product_variant.variant.contenu} of {product.nom} to your cart")
     
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

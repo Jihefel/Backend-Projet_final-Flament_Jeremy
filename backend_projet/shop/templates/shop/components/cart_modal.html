@@ -1,0 +1,53 @@
+{% load static %}
+
+<!-- Start Shopping Cart Modal -->
+<div class="modal right fade shoppingCartModal" id="shoppingCartModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true"><i class="bx bx-x"></i></span>
+            </button>
+
+            <div class="modal-body">
+                <h3>My Cart ({{ nb_products_in_cart }})</h3>
+
+                <div class="products-cart-content">
+                    {% for product in products_in_cart %}
+                        {% with product.produit_inclus.product as produit %}
+                        <div class="products-cart">
+                            <div class="products-image">
+                                <a href="{% url 'product' produit.id %}"><img src="{% if 'https' in produit.image_1.url %}{{ produit.image_1 }}{% else %}{{ produit.image_1.url }}{% endif %}" alt="image"></a>
+                            </div>
+                            
+                            <div class="products-content">
+                                <h3><a href="{% url 'product' produit.id %}">{{ produit.nom }}</a></h3>
+                                <span>{{ product.produit_inclus.variant.contenu }}</span>
+                                <div class="products-price">
+                                    <span>{{ product.quantite_ajoutee }}</span>
+                                    <span>x</span>
+                                    <span class="new-price">{{ product.prix_unitaire|floatformat:2 }}€</span>
+                                </div>
+                                <a href="#" class="remove-btn"><i class="bx bx-trash"></i></a>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+
+                
+                </div>
+
+                <div class="products-cart-subtotal">
+                    <span>Subtotal</span>
+
+                    <span class="subtotal">{{ total_panier|floatformat:2 }}€</span>
+                </div>
+
+                <div class="products-cart-btn">
+                    <a href="#" class="default-btn">Proceed to Checkout</a>
+                    <a href="#" class="optional-btn">View Shopping Cart</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Shopping Cart Modal -->

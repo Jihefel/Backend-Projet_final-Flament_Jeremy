@@ -193,7 +193,7 @@ class NameFilterForm(forms.Form):
         max_length=255,
         required=False,
         widget=forms.TextInput(attrs={
-            'class': 'form-control',
+            'class': 'form-control w-75',
             'placeholder': 'Search by name',
             'autocomplete': 'off',
         })

@@ -15,7 +15,6 @@ role="dialog">
        <div class="modal-body">
            <h3>My Wish List ({{ wishlist_products.count }})</h3>
            <div class="products-cart-content">
-            {% if wishlist_products %}
             {% for product in wishlist_products %}
             <div class="products-cart">
                 <div class="products-image">
@@ -32,8 +31,9 @@ role="dialog">
                     <a href="{% url 'wishlist' product.id %}" class="remove-btn"><i class='bx bx-trash'></i></a>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-tertiary">Seulope c'est vide</p>
             {% endfor %}
-            {% endif %}
            </div>
            <div class="products-cart-btn">
                <a href="{% url 'cart' %}" class="optional-btn">View Shopping Cart</a>
