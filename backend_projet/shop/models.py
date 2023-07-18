@@ -146,6 +146,7 @@ class ProductVariant(models.Model):
 class Commentaires(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+    texte = models.TextField(blank=True, null=True)
     reponse_a = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
 
 class Tags(models.Model):
