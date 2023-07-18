@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from .decorators import admin_required, user_or_admin_required, admin_or_web_required, admin_or_stock_required
+from django.contrib.auth.decorators import login_required
+
 
 
 def admin_home(request):
@@ -27,6 +30,7 @@ def admin_home(request):
     return render(request, 'admin/home.html', context)
 
 #SECTION - INFOS
+@admin_required
 def infos_site(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -59,6 +63,7 @@ def infos_site(request):
 
 
 #SECTION - MAILBOX
+@admin_required
 def contacts_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
@@ -71,6 +76,7 @@ def contacts_all(request):
     context = locals()
     return render(request, 'admin/pages/mailbox/all.html', context)
 
+@admin_required
 def contacts_reply(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
@@ -120,7 +126,7 @@ def contacts_reply(request, id):
     context = locals()
     return render(request, 'admin/pages/mailbox/reply.html', context)
 
-
+@admin_required
 def contacts_delete(request, id):
     contact = Contacts.objects.get(id=id)
     messages.success(request, f"Message successfully deleted.")
@@ -131,6 +137,7 @@ def contacts_delete(request, id):
 
 
 #SECTION - Partenaires
+@admin_required
 def partners_all(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -152,6 +159,7 @@ def partners_all(request):
     context = locals()
     return render(request, 'admin/pages/partners/all.html', context)
 
+@admin_required
 def partners_delete(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -175,7 +183,7 @@ def partners_delete(request, id):
     context = locals()
     return redirect('custom_admin:partners_all')
 
-
+@admin_required
 def partners_create(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -205,6 +213,7 @@ def partners_create(request):
     context = locals()
     return render(request, 'admin/pages/partners/create.html', context)
 
+@admin_required
 def partners_update(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -238,6 +247,7 @@ def partners_update(request, id):
 
 #SECTION - MEMBRES
 # MEMBERS
+@login_required
 def members_all(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -259,6 +269,7 @@ def members_all(request):
     context = locals()
     return render(request, 'admin/pages/members/all.html', context)
 
+@admin_required
 def members_create(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -299,6 +310,7 @@ def members_delete(request, id):
     
     return redirect('custom_admin:members_all')
 
+@user_or_admin_required
 def members_update(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -361,6 +373,7 @@ def members_show(request, id):
 
 #SECTION - PRODUITS
 # Produits
+@admin_or_stock_required
 def products_all(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -382,6 +395,7 @@ def products_all(request):
     context = locals()
     return render(request, 'admin/pages/products/all.html', context)
 
+@admin_required
 def products_create(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -455,7 +469,7 @@ def products_create(request):
     return render(request, 'admin/pages/products/create.html', context)
 
 
-
+@admin_required
 def products_delete(request, id):
     product = Produits.objects.get(id=id)
     messages.success(request, f"Product {product.nom} successfully deleted.")
@@ -463,6 +477,7 @@ def products_delete(request, id):
     
     return redirect('custom_admin:products_all')
 
+@admin_or_stock_required
 def products_update(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -519,6 +534,7 @@ def products_update(request, id):
     context = locals()
     return render(request, 'admin/pages/products/update.html', context)
 
+@admin_or_stock_required
 def products_show(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -545,6 +561,7 @@ def products_show(request, id):
 
 # SECTION - PROMOS
 # Promotions
+@admin_required
 def promos_all(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -569,6 +586,7 @@ def promos_all(request):
     context = locals()
     return render(request, 'admin/pages/promos/all.html', context)
 
+@admin_required
 def promos_create(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -600,7 +618,7 @@ def promos_create(request):
     return render(request, 'admin/pages/promos/create.html', context)
 
 
-
+@admin_required
 def promos_delete(request, id):
     promo = Promotions.objects.get(id=id)
     messages.success(request, f"Promotion {promo.nom} successfully deleted.")
@@ -608,6 +626,7 @@ def promos_delete(request, id):
     
     return redirect('custom_admin:promos_all')
 
+@admin_required
 def promos_update(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -640,6 +659,7 @@ def promos_update(request, id):
     context = locals()
     return render(request, 'admin/pages/promos/update.html', context)
 
+@admin_required
 def promos_show(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -663,6 +683,7 @@ def promos_show(request, id):
     context = locals()
     return render(request, 'admin/pages/promos/show.html', context)
 
+@admin_required
 def extra_promo(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -696,6 +717,7 @@ def extra_promo(request):
 
 
 # SECTION - CATEGORIES
+@admin_required
 def categories_all(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -717,6 +739,7 @@ def categories_all(request):
     context = locals()
     return render(request, 'admin/pages/categories/all.html', context)
 
+@admin_required
 def categories_create(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -747,7 +770,7 @@ def categories_create(request):
     context = locals()
     return render(request, 'admin/pages/categories/create.html', context)
 
-
+@admin_required
 def categories_delete(request, id):
     categorie = Categorie.objects.get(id=id)
     messages.success(request, f"Promotion {categorie.nom} successfully deleted.")
@@ -755,6 +778,7 @@ def categories_delete(request, id):
     
     return redirect('custom_admin:categories_all')
 
+@admin_required
 def categories_update(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -787,6 +811,7 @@ def categories_update(request, id):
     context = locals()
     return render(request, 'admin/pages/categories/update.html', context)
 
+@admin_required
 def categories_show(request, id):
     role_id_admin = 1
     role_id_membre = 2
@@ -813,6 +838,7 @@ def categories_show(request, id):
 
 
 #SECTION - COMMANDES
+@admin_required
 def orders_all(request):
     role_id_admin = 1
     role_id_membre = 2
@@ -854,6 +880,7 @@ def orders_all(request):
 #     context = locals()
 #     return render(request, 'admin/pages/orders/all.html', context)
 
+@admin_required
 def orders_confirm(request, id):
     role_id_admin = 1
     role_id_membre = 2

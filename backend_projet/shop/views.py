@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, resolve_url
 from django.core.mail import send_mail
 from .forms import *
 from django.contrib import messages
@@ -209,6 +209,46 @@ def direct_newsletter_subscription(request):
     messages.success(request, "Successfully subscribed to the newsletter.")
     return redirect('account')
 
+
+@login_required(login_url='login')
+def my_orders(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+
+    # Cart Modal
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
+    
+    # Infos du site
+    infos = InfosQDP.objects.first() 
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+    
+    # Produits
+    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
+    recent_products_sidebar = products_sorted[:4]
+
+    # Commandes
+    commandes = Commandes.objects.filter(user=request.user).order_by('-id')
+
+    prod_commandes = ProduitsCommandes.objects.all()
+
+
+
+
+    context = locals()
+    return render(request, 'shop/my_orders.html', context)
+
+
+
 @login_required(login_url='login')
 def cart(request):
 
@@ -298,7 +338,15 @@ def remove_promo_code(request):
 
 @login_required(login_url='login')
 def checkout(request):
-    
+    # Cart Modal
+    if request.user.is_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+
+    if nb_products_in_cart == 0:
+        return redirect('all_products')
+
     # Infos du site
     infos = InfosQDP.objects.first()
      
@@ -535,11 +583,41 @@ def change_password(request):
             [user.email],
             html_message=render_to_string('mails/confirm_password.html', {'user': user}),
             )
-            return redirect('home')
+            return redirect('login')
     else:
         form = CustomPasswordChangeForm(user=request.user)
 
     context = locals()  
+    return render(request, 'shop/change_password.html', context)
+
+def customPasswordReset(request):
+    if request.method == 'POST':
+        form = CustomResetPasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+            if not User.objects.filter(email=email).exists():
+                messages.error(request, 'Email does not match any known user')
+            elif password1 != password2:
+                messages.error(request, "Passwords do not match")
+            else:
+                user = User.objects.get(email=email)
+                user.password = make_password(password1)
+                user.save()
+                messages.success(request, 'Your password has been reset successfully.')
+                send_mail(
+                    f"{user.username}, your password has been reset and changed",
+                    "",
+                    "jfl.jflament@gmail.com",
+                    [user.email],
+                    html_message=render_to_string('mails/confirm_password.html', {'user': user}),
+                    )
+                return redirect('login')  # Redirection vers la page de connexion après la modification du mot de passe
+    else:
+        form = CustomResetPasswordForm()
+
+    context = locals()
     return render(request, 'shop/change_password.html', context)
 
 def all_products(request):
@@ -1036,6 +1114,16 @@ def contact(request):
     for admin in admins:
         admins_emails.append(admin.email)
 
+    # Cart Modal
+    if is_user_authenticated:
+        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
+        all_products_in_cart = Panier.objects.filter(user=request.user)
+        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+        total_panier = Panier.get_total_panier(request.user)
+
+    # Wishlist
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
 
     if is_user_authenticated:
         user_auteur = User.objects.get(username=request.user.username)

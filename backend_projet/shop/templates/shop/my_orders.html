@@ -37,71 +37,50 @@
                     <h2>My Account</h2>
                     <ul>
                         <li><a href="{% url 'home' %}">Home</a></li>
-                        <li>My Account</li>
+                        <li>My orders</li>
                     </ul>
                 </div>
             </div>
         </div>
         <!-- End Page Title -->
 
-        <!-- Start Contact Area -->
+        <!-- Start Orders Area -->
         <section class="contact-area ptb-100">
             <div class="container">
                 <div class="row">
                         <div class="contact-info">
-                            <h3>My Account</h3>
-                            <p>{{ user.username }}, here are your informations of your account.</p>
+                            <h3>My orders</h3>
+                            <p>{{ user.username }}, here are your previous orders.</p>
 
                             <div class="row mt-5">
-                                <div class="col-8 ps-5">
-                                    <dl>
-                                        <div>
-                                            <dt>Banner image</dt>
-                                            <dd><img src="{% if user.image_banniere_profil %}{{ user.image_banniere_profil.url }}{% endif %}" alt="" style="max-height: 200px"></dd>
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    {% for order in commandes %}
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed d-flex gap-3" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ order.id }}" aria-expanded="false" aria-controls="flush-collapseOne">
+                                                <span class="text-secondary">{{ order.date_commande|date:"d/m/Y" }}</span> - <span>Order #{{ order.id }}</span>
+                                            </button>
+                                        </h2>
+                                        <div id="flush-collapse{{ order.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+                                                <ul>
+                                                    {% for prod in prod_commandes %}
+                                                    {% if prod.commande_id == order.id %}
+                                                        <li class="my-1"> 
+                                                            <img src="{% if 'https' in prod.product_variant.product.image_1.url %}{{ prod.product_variant.product.image_1 }}{% else %}{{ prod.product_variant.product.image_1.url }}{% endif %}" alt="{{ prod.product_variant.product.nom }} image" width="100px">
+                                                            {{ prod.quantite }} 
+                                                            &times; 
+                                                            {{ prod.product_variant.product.nom }} 
+                                                            - 
+                                                            {{ prod.product_variant.variant }}
+                                                        </li>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <dt>Avatar</dt>
-                                            <dd><img src="{% if user.avatar %}{{ user.avatar.url }} {% endif %}" alt="" class="img-thumbnail" style="max-height: 200px"></dd>
-                                        </div>
-                                        <div>
-                                            <dt>First name</dt>
-                                            <dd>{{ user.first_name }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Last name</dt>
-                                            <dd>{{ user.last_name }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Email address</dt>
-                                            <dd>{{ user.email }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Username</dt>
-                                            <dd>{{ user.username }}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Subscribed to newsletter</dt>
-                                            <dd>{% if user.abonne_newsletter %}<input type="checkbox" class="form-check-input" checked disabled>{% else %}<input type="checkbox" class="form-check-input" disabled>{% endif %}</dd>
-                                        </div>
-                                        <div>
-                                            <dt>Jobs or hobbies</dt>
-                                            <dd>{{ user.metiers_hobbies }} </dd>
-                                        </div>
-                                        <div>
-                                            <dt>Bio</dt>
-                                            <dd>{{ user.bio }} </dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="col-4 d-flex flex-column align-items-end gap-3">
-                                    
-                                        <a class="default-btn" href="{% url 'edit_account' %}">Change infos</a>
-                                    
-                                        <a href="{% url 'change_password' %}" class="optional-btn">Change your password</a>
-                                    
-                                        {% if not user.abonne_newsletter %}<a href="{% url 'direct_newsletter_subscription' %}" class="optional-btn">Subscribe to newsletter</a>{% endif %}
-
-                                        <a class="default-btn" href="{% url 'my_orders' %}">My orders</a>
+                                    </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>

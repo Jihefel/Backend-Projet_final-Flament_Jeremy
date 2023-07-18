@@ -81,7 +81,7 @@
 
                                 <div class="option-item">
                                     <div class="cart-btn">
-                                        <a href="{% url 'cart' %}" data-bs-toggle="modal" data-bs-target="#shoppingCartModal"><i class='bx bx-shopping-bag'></i>{% if nb_products_in_cart != 0 %}<span>{{ nb_products_in_cart }}</span>{% endif %}</a>
+                                        <a href="{% url 'cart' %}" data-bs-toggle="modal" data-bs-target="#shoppingCartModal"><i class='bx bx-shopping-bag'></i>{% if nb_products_in_cart != 0 and user.is_authenticated %}<span>{{ nb_products_in_cart }}</span>{% endif %}</a>
                                     </div>
                                 </div>
 

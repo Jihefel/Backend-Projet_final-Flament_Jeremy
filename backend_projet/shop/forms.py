@@ -12,6 +12,11 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ['username', 'password1', 'password2', 'email', 'first_name', 'last_name']
 
+class CustomResetPasswordForm(forms.Form):
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='New password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm new password')
+
 class BootstrapUserCreationForm(RegistrationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

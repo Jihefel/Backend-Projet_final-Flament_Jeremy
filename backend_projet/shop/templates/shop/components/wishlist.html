@@ -13,7 +13,7 @@ role="dialog">
            <span aria-hidden="true"><i class='bx bx-x'></i></span>
        </button>
        <div class="modal-body">
-           <h3>My Wish List ({{ wishlist_products.count }})</h3>
+           <h3>My Wish List {% if wishlist_products.count != 0 %}({{ wishlist_products.count }}){% endif %}</h3>
            <div class="products-cart-content">
             {% for product in wishlist_products %}
             <div class="products-cart">
