@@ -31,7 +31,9 @@
                                         <ul>
                                             {% for prod in prod_commandes %}
                                             {% if prod.commande_id == commande.id %}
-                                                <li>{{ prod.quantite }} &times; {{ prod.product_variant.product.nom }} - {{ prod.product_variant.variant }}</li>
+                                                <a href="{% url 'custom_admin:products_show' prod.product_variant.product.id %}">
+                                                    <li>{{ prod.quantite }} &times; {{ prod.product_variant.product.nom }} - {{ prod.product_variant.variant }}</li>
+                                                </a>
                                             {% endif %}
                                             {% endfor %}
                                         </ul>

@@ -1,153 +1,170 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block head %}
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Links of CSS files -->
-    <link rel="stylesheet" href="{% static 'shop/assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/animate.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/boxicons.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/animate.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/boxicons.min.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/flaticon.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/magnific-popup.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/nice-select.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/magnific-popup.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/nice-select.min.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/slick.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/meanmenu.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/rangeSlider.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/meanmenu.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/rangeSlider.min.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/dark.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/responsive.css' %}">
-
     <title>QDP - Que d'la poudre</title>
-
-    <link rel="icon" type="image/png" href="{% static 'shop/assets/img/favicon.png' %}">
-
+    <link rel="icon"
+          type="image/png"
+          href="{% static 'shop/assets/img/favicon.png' %}">
     {% load bootstrap5 %}
 {% endblock head %}
-
-    {% block content %}
-
-        <!-- Start Page Title -->
-        <div class="page-title-area">
-            <div class="container">
-                <div class="page-title-content">
-                    <h2>My Account</h2>
-                    <ul>
-                        <li><a href="{% url 'home' %}">Home</a></li>
-                        <li>My orders</li>
-                    </ul>
+{% block content %}
+    <!-- Start Page Title -->
+    <div class="page-title-area">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>My Orders</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li>My Orders</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- End Page Title -->
+    <!-- Start Orders Area -->
+    <section class="contact-area ptb-100">
+        <div class="container">
+            <div class="row">
+                <div class="contact-info">
+                    <h3>My Orders</h3>
+                    <p>{{ user.username }}, here are your previous orders.</p>
+                    <div class="row mt-5">
+                        <ul class="list-group list-group-horizontal mb-4 ps-1">
+                            <li class="list-group-item list-group-item-success">
+                                <small>Confirmed</small>
+                            </li>
+                            <li class="list-group-item list-group-item-danger">
+                                <small>Unconfirmed</small>
+                            </li>
+                        </ul>
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            {% for order in commandes %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed d-flex gap-3 {% if order.statut_commande == 0 %}list-group-item-danger {% else %}list-group-item-success{% endif %}"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#flush-collapse{{ order.id }}"
+                                                aria-expanded="false"
+                                                aria-controls="flush-collapseOne">
+                                            <span class="text-secondary">{{ order.date_commande|date:"d/m/Y" }}</span> - <span>Order #{{ order.id }}</span>
+                                        </button>
+                                    </h2>
+                                    <div id="flush-collapse{{ order.id }}"
+                                         class="accordion-collapse collapse"
+                                         data-bs-parent="#accordionFlushExample">
+                                        <div class="accordion-body">
+                                            <ul class="list-group-flush ps-0">
+                                                {% for prod in prod_commandes %}
+                                                    {% if prod.commande_id == order.id %}
+                                                        <a href="{% url 'product' prod.product_variant.product.id %}?variant={{ prod.product_variant.variant.id }}" class="list-group-item list-group-item-action py-3">
+                                                            
+                                                                <img src="{% if 'https' in prod.product_variant.product.image_1.url %}{{ prod.product_variant.product.image_1 }}{% else %}{{ prod.product_variant.product.image_1.url }}{% endif %}"
+                                                                     alt="{{ prod.product_variant.product.nom }} image"
+                                                                     width="100px"
+                                                                     class="me-2 img-thumbnail">
+                                                                {{ prod.quantite }}
+                                                                &times;
+                                                                <span class="fw-bold">{{ prod.product_variant.product.nom }}</span>
+                                                                -
+                                                                {{ prod.product_variant.variant }}
+                                                        </a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <li class="list-group-item list-group-item-secondary">
+                                                    <span class="fw-bold">Total <small>(without shipping fee)</small> : {{ order.prix_total }} €</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- End Page Title -->
-
-        <!-- Start Orders Area -->
-        <section class="contact-area ptb-100">
-            <div class="container">
-                <div class="row">
-                        <div class="contact-info">
-                            <h3>My orders</h3>
-                            <p>{{ user.username }}, here are your previous orders.</p>
-
-                            <div class="row mt-5">
-                                <div class="accordion accordion-flush" id="accordionFlushExample">
-                                    {% for order in commandes %}
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed d-flex gap-3" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ order.id }}" aria-expanded="false" aria-controls="flush-collapseOne">
-                                                <span class="text-secondary">{{ order.date_commande|date:"d/m/Y" }}</span> - <span>Order #{{ order.id }}</span>
-                                            </button>
-                                        </h2>
-                                        <div id="flush-collapse{{ order.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                                            <div class="accordion-body">
-                                                <ul>
-                                                    {% for prod in prod_commandes %}
-                                                    {% if prod.commande_id == order.id %}
-                                                        <li class="my-1"> 
-                                                            <img src="{% if 'https' in prod.product_variant.product.image_1.url %}{{ prod.product_variant.product.image_1 }}{% else %}{{ prod.product_variant.product.image_1.url }}{% endif %}" alt="{{ prod.product_variant.product.nom }} image" width="100px">
-                                                            {{ prod.quantite }} 
-                                                            &times; 
-                                                            {{ prod.product_variant.product.nom }} 
-                                                            - 
-                                                            {{ prod.product_variant.variant }}
-                                                        </li>
-                                                    {% endif %}
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
+    </section>
+    <!-- End Contact Area -->
+    <!-- Start Facility Area -->
+    <section class="facility-area pt-100 pb-70">
+        <div class="container">
+            <div class="facility-slides owl-carousel owl-theme">
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-tracking'></i>
                     </div>
+                    <h3>Free Shipping Worldwide</h3>
                 </div>
-            </section>
-
-        <!-- End Contact Area -->
-
-        <!-- Start Facility Area -->
-        <section class="facility-area pt-100 pb-70">
-            <div class="container">
-                <div class="facility-slides owl-carousel owl-theme">
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-tracking'></i>
-                        </div>
-                        <h3>Free Shipping Worldwide</h3>
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-return'></i>
                     </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-return'></i>
-                        </div>
-                        <h3>Easy Return Policy</h3>
+                    <h3>Easy Return Policy</h3>
+                </div>
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-shuffle'></i>
                     </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-shuffle'></i>
-                        </div>
-                        <h3>7 Day Exchange Policy</h3>
+                    <h3>7 Day Exchange Policy</h3>
+                </div>
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-sale'></i>
                     </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-sale'></i>
-                        </div>
-                        <h3>Weekend Discount Coupon</h3>
+                    <h3>Weekend Discount Coupon</h3>
+                </div>
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-credit-card'></i>
                     </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-credit-card'></i>
-                        </div>
-                        <h3>Secure Payment Methods</h3>
+                    <h3>Secure Payment Methods</h3>
+                </div>
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-location'></i>
                     </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-location'></i>
-                        </div>
-                        <h3>Track Your Package</h3>
+                    <h3>Track Your Package</h3>
+                </div>
+                <div class="single-facility-box">
+                    <div class="icon">
+                        <i class='flaticon-customer-service'></i>
                     </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class='flaticon-customer-service'></i>
-                        </div>
-                        <h3>24/7 Customer Support</h3>
-                    </div>
+                    <h3>24/7 Customer Support</h3>
                 </div>
             </div>
-        </section>
-        <!-- End Facility Area -->
-
-        <div class="go-top"><i class='bx bx-up-arrow-alt'></i></div>
-
-
+        </div>
+    </section>
+    <!-- End Facility Area -->
+    <div class="go-top">
+        <i class='bx bx-up-arrow-alt'></i>
+    </div>
 {% endblock content %}
