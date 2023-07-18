@@ -1,7 +1,7 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-50">
   <div class="container-fluid">
-    <a class="navbar-brand" href={% url 'admin_home' %}>
+    <a class="navbar-brand " href={% url 'admin_home' %}>
       <img src="{% static 'shop/assets/img/logo.png' %}" alt="" class="me-3">
       <i class="fa-solid fa-screwdriver-wrench me-1"></i>
       Admin Dashboard
@@ -20,7 +20,7 @@
         <div class="d-lg-flex gap-4 "></div>
         <div class="unsign">
           <li class="nav-item">
-            <a class="" href={% url 'home' %}><i class="fa-solid fa-circle-xmark"></i></i> Back to the site</a>
+            <a class="link-light" href={% url 'home' %}><i class="fa-solid fa-circle-xmark"></i></i> Back to the site</a>
           </li>
         </div>
       </ul>

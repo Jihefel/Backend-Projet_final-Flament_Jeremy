@@ -6,13 +6,13 @@
                 <small>Unread</small>
             </li>
         </ul>
-        <ul class="list-group">
+        <div class="list-group">
             {% for contact in contacts %}
             <a href="{% url 'custom_admin:reply_msg' contact.id %}" class="list-group-item list-group-item-action {% if contact.lu_par_admin == 0 %}list-group-item-danger{% endif %}" aria-current="true">
                 <div class="fw-bold"><i class="fa-solid fa-user fa-sm me-2"></i>{% if contact.user_auteur %}{{ contact.user_auteur }}{% else %}{{ contact.name }}{% endif %}</div>
                 {{ contact.texte }}
               </a>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 {% endblock admincontent %}

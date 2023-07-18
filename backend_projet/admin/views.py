@@ -19,6 +19,10 @@ def admin_home(request):
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
 
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
+
     context = locals()
     return render(request, 'admin/home.html', context)
 
@@ -34,6 +38,10 @@ def infos_site(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     infos = InfosQDP.objects.first()
     if request.method == 'POST':
@@ -55,6 +63,10 @@ def contacts_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     context = locals()
     return render(request, 'admin/pages/mailbox/all.html', context)
@@ -63,6 +75,10 @@ def contacts_reply(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     contact = Contacts.objects.get(id=id)
     if not contact.lu_par_admin:
@@ -71,6 +87,10 @@ def contacts_reply(request, id):
     
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
     
     if contact.user_auteur:
         email = contact.user_auteur.email
@@ -122,6 +142,10 @@ def partners_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     partners = Partenaires.objects.all()
     
@@ -139,6 +163,10 @@ def partners_delete(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     partner = Partenaires.objects.get(id=id)
     messages.success(request, f"Partner {partner.nom} successfully deleted.")
@@ -159,6 +187,10 @@ def partners_create(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     partners = Partenaires.objects.all()
     if request.method == 'POST':
@@ -184,6 +216,10 @@ def partners_update(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     partner = Partenaires.objects.get(id=id)
 
@@ -213,6 +249,10 @@ def members_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     members = User.objects.all()
     
@@ -230,6 +270,10 @@ def members_create(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     members = User.objects.all()
     
@@ -266,6 +310,10 @@ def members_update(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     member = User.objects.get(id=id)
     if request.method == 'POST':
@@ -299,6 +347,10 @@ def members_show(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     member = User.objects.get(id=id)
 
@@ -320,6 +372,10 @@ def products_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     products = Produits.objects.prefetch_related('productvariant_set__variant').all()
     
@@ -337,6 +393,10 @@ def products_create(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     products = Produits.objects.all()
     variants = Variantes.objects.all()[:4]
@@ -414,6 +474,10 @@ def products_update(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     product = Produits.objects.get(id=id)
     variants = product.variations.filter(produits=product)
@@ -466,6 +530,10 @@ def products_show(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     product = Produits.objects.get(id=id)
     pv = ProductVariant.objects.filter(product=product)
@@ -488,6 +556,10 @@ def promos_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     promos = Promotions.objects.all()
     extra_promo = ExtraPromo.objects.first()
@@ -508,6 +580,10 @@ def promos_create(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
 
     if request.method == 'POST':
@@ -543,6 +619,10 @@ def promos_update(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     promo = Promotions.objects.get(id=id)
 
@@ -571,6 +651,10 @@ def promos_show(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     promo = Promotions.objects.get(id=id)
     categories = Categorie.objects.filter(promo=promo)
@@ -590,6 +674,10 @@ def extra_promo(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     extra_promo = ExtraPromo.objects.first()
 
@@ -619,6 +707,10 @@ def categories_all(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     categories = Categorie.objects.all()
     
@@ -636,6 +728,10 @@ def categories_create(request):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
 
     if request.method == 'POST':
@@ -670,6 +766,10 @@ def categories_update(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     categorie = Categorie.objects.get(id=id)
 
@@ -698,6 +798,10 @@ def categories_show(request, id):
     contacts = Contacts.objects.all()
     unreads = Contacts.objects.filter(lu_par_admin=0)
     nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all()
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
 
     categorie = Categorie.objects.get(id=id)
     products = Produits.objects.filter(categorie=categorie)
@@ -705,4 +809,77 @@ def categories_show(request, id):
 
     context = locals()
     return render(request, 'admin/pages/categories/show.html', context)
+#!SECTION
+
+
+#SECTION - COMMANDES
+def orders_all(request):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
+    
+    commandes = Commandes.objects.all().order_by('statut_commande')
+    unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_unconfirmed = unconfirmed.count()
+
+    prod_commandes = ProduitsCommandes.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/orders/all.html', context)
+
+
+# def orders_show(request, id):
+#     role_id_admin = 1
+#     role_id_membre = 2
+    
+#     if request.user.id is not None:
+#         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+#         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+#     contacts = Contacts.objects.all()
+#     unreads = Contacts.objects.filter(lu_par_admin=0)
+#     nb_unread = unreads.count()
+    
+#     commandes = Commandes.objects.all()
+#     unconfirmed = Commandes.objects.filter(statut_commande=0)
+#     nb_unconfirmed = unconfirmed.count()
+    
+#     context = locals()
+#     return render(request, 'admin/pages/orders/all.html', context)
+
+def orders_confirm(request, id):
+    role_id_admin = 1
+    role_id_membre = 2
+    
+    if request.user.id is not None:
+        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
+        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    
+    contacts = Contacts.objects.all()
+    unreads = Contacts.objects.filter(lu_par_admin=0)
+    nb_unread = unreads.count()
+    
+    commande = Commandes.objects.get(id=id)
+    commande.statut_commande = True
+    commande.save()
+
+    prod_commandes = ProduitsCommandes.objects.filter(commande=commande)
+
+    send_mail(
+        "Your order is confirmed and ready to be shipped",
+        "",
+        "jfl.jflament@gmail.com",
+        [commande.user.email],
+        html_message=render_to_string('mails/statut_order.html', {'nom': commande.user.first_name, 'commande': commande, 'prod_commandes': prod_commandes}),
+    )
+    messages.success(request, f"The order #{commande.id} is definitely confirmed")
+    
+    return redirect('custom_admin:orders_all')
 #!SECTION

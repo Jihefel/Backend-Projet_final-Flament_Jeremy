@@ -39,10 +39,10 @@
         </div>
         
         <div class="btn-group">
-            <a href="{% url 'custom_admin:contacts_all' %}" class="default-btn text-center w-100 d-flex align-items-center justify-content-center">
+            <a href="{% url 'custom_admin:orders_all' %}" class="default-btn text-center w-100 d-flex align-items-center justify-content-center">
                 Orders
-                {% if nb_unread != 0 %}
-                    <span class="badge bg-warning text-black ms-3">{{ nb_unread }} </span>
+                {% if nb_unconfirmed != 0 %}
+                    <span class="badge bg-warning text-black ms-3">{{ nb_unconfirmed }} </span>
                 {% endif %}
             </a>
         </div>

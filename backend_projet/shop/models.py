@@ -27,10 +27,8 @@ class User(AbstractUser):
     metiers_hobbies = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     image_banniere_profil = models.ImageField(upload_to='bannieres/', null=True, blank=True)
-    produits_panier = models.ManyToManyField('ProductVariant', related_name='paniers', blank=True)
     produits_wishlist = models.ManyToManyField('Produits', related_name='wishlists', blank=True)
     commandes_passees = models.ManyToManyField('Commandes',related_name='commandes', blank=True)
-    contacts_echanges = models.ManyToManyField('Contacts', related_name='contacts', blank=True)
     abonne_newsletter = models.BooleanField(default=False)
     promo_code_used = models.BooleanField(default=False)
 
@@ -223,11 +221,13 @@ class Commandes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_commande = models.DateField()
     produits_commandes = models.ManyToManyField(ProductVariant, through='ProduitsCommandes')
+    prix_total = models.DecimalField(decimal_places=2, max_digits=100)
     statut_commande = models.BooleanField(default=False)
 
 class ProduitsCommandes(models.Model):
     commande = models.ForeignKey(Commandes, on_delete=models.CASCADE)
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
+    quantite = models.PositiveIntegerField()
 
 class BlogPost(models.Model):
     titre = models.CharField(max_length=255)

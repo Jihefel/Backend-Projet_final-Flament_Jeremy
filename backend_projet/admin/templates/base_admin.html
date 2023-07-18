@@ -29,11 +29,11 @@
                 crossorigin="anonymous"></script>
         <title>Admin Dashboard</title>
     </head>
-    <body>
+    <body style="background-image: url({% static 'shop/assets/img/arnold-schwarzenegger-wallpaper-c7b9aa7b06cae5359cbd08a058d7c943.jpg' %}); background-attachment: fixed; background-repeat: no-repeat; background-size: cover; background-position: top; min-height: 100dvh">
         {% include "shop/components/messages.html" %}
         {% include "admin/components/admin_navbar.html" %}
-        <div class="py-5 px-5 my-5">
-            <div class="row">
+        <div class="py-5 px-5 bg-white bg-opacity-75" style="min-height: calc( 100dvh - 76px )">
+            <div class="row py-5">
                 {% include "admin/components/lateral_nav.html" %}
                 {% block admincontent %}
                 {% endblock admincontent %}

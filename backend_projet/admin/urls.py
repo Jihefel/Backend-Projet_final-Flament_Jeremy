@@ -41,6 +41,10 @@ urlpatterns = [
     path('categories/show/<int:id>', views.categories_show, name='categories_show'),
     path('categories/update/<int:id>', views.categories_update, name='categories_update'),
     path('categories/delete/<int:id>', views.categories_delete, name='categories_delete'),
+    # Orders
+    path('orders/', views.orders_all, name='orders_all'),
+    path('orders/confirm/<int:id>', views.orders_confirm, name='orders_confirm'),
+    # path('orders/delete/<int:id>', views.orders_delete, name='orders_delete'),
     
     
 ]

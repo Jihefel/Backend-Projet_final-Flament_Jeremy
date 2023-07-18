@@ -327,14 +327,15 @@ def checkout(request):
         promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
         shipping_fee = 4.50
         total_final = Panier.calculate_total_final(total_panier, request.user)
+        total_net = total_final - shipping_fee
 
     if request.method == "POST":
-        commande = Commandes(user=request.user, date_commande=date.today(), statut_commande=False)
+        commande = Commandes(user=request.user, date_commande=date.today(), statut_commande=False, prix_total=total_net)
         commande.save()
 
         for product in all_products_in_cart:
             produit = get_object_or_404(ProductVariant, id=product.produit_inclus.id)
-            produits_commandes = ProduitsCommandes(commande=commande, product_variant=produit)
+            produits_commandes = ProduitsCommandes(commande=commande, product_variant=produit, quantite=product.quantite_ajoutee)
             produits_commandes.save()
 
 
