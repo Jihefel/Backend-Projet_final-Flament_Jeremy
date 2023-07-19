@@ -128,7 +128,7 @@ class Produits(models.Model):
     variations = models.ManyToManyField(Variantes, through='ProductVariant', related_name='produit_variations', blank=True)
     promo = models.ForeignKey(Promotions, null=True, blank=True, on_delete=models.CASCADE)
     commentaire = models.ManyToManyField('Commentaires', blank=True)
-    date_ajout_produit_db = models.DateField(auto_now_add=True)
+    date_ajout_produit_db = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.id} - {self.nom} "
 
@@ -145,13 +145,9 @@ class ProductVariant(models.Model):
 
 class Commentaires(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(blank=True)
     texte = models.TextField(blank=True, null=True)
     reponse_a = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
-
-class Tags(models.Model):
-    nom = models.CharField(max_length=255)
-    blog_posts_lies = models.ManyToManyField('BlogPost')
 
 
 class Panier(models.Model):
@@ -220,7 +216,7 @@ class Panier(models.Model):
 
 class Commandes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_commande = models.DateField()
+    date_commande = models.DateTimeField()
     produits_commandes = models.ManyToManyField(ProductVariant, through='ProduitsCommandes')
     prix_total = models.DecimalField(decimal_places=2, max_digits=100)
     statut_commande = models.BooleanField(default=False)
@@ -230,15 +226,28 @@ class ProduitsCommandes(models.Model):
     product_variant = models.ForeignKey(ProductVariant, on_delete=models.CASCADE)
     quantite = models.PositiveIntegerField()
 
+class CategoriesBlog(models.Model):
+    nom = models.CharField(max_length=255)
+    def __str__(self):
+        return self.nom
+
+class Tags(models.Model):
+    nom = models.CharField(max_length=255)
+    def __str__(self):
+        return self.nom
+    
 class BlogPost(models.Model):
     titre = models.CharField(max_length=255)
     texte = models.TextField()
-    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE)
+    categorie = models.ForeignKey(CategoriesBlog, on_delete=models.CASCADE)
+    tags = models.ManyToManyField(Tags, blank=True) 
     image_illustration = models.ImageField(upload_to='blogposts/')
     date_post = models.DateField(auto_now_add=True)
     date_modification = models.DateField(auto_now=True)
-    commentaires_lies = models.ManyToManyField(Commentaires)
-    user_auteur = models.ForeignKey(User, on_delete=models.CASCADE)
+    commentaires_lies = models.ManyToManyField(Commentaires, blank=True)
+    user_auteur = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    def __str__(self):
+        return self.titre
 
 class Contacts(models.Model):
     user_auteur = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, related_name="auteur")
@@ -259,6 +268,6 @@ class Partenaires(models.Model):
     logo = models.ImageField(upload_to='partenaires/')
 
 class Newsletter(models.Model):
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
 
 

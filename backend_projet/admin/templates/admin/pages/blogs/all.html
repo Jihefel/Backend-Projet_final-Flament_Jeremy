@@ -1,0 +1,14 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <ul class="list-group list-group-horizontal mb-4">
+            <li class="list-group-item list-group-item-danger">
+                <small>Unread</small>
+            </li>
+        </ul>
+        <div class="list-group">
+            {% for contact in contacts %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock admincontent %}

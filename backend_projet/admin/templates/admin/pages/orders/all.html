@@ -2,16 +2,17 @@
 {% block admincontent %}
     <div class="col-lg-9 px-5">
         {% if is_admin %}
-            <ul class="list-group list-group-horizontal mb-4">
-                <li class="list-group-item list-group-item-success">
-                    <small>Confirmed</small>
+            <ul class="nav nav-pills mb-4">
+                <li class="nav-item">
+                  <a class="list-group-item list-group-item-danger rounded {% if confirm_param == 0 %}border-danger shadow{% endif %}" aria-current="page" href="{% url 'custom_admin:orders_all' %}?confirmed=0">Pending</a>
                 </li>
-                <li class="list-group-item list-group-item-danger">
-                    <small>Unconfirmed</small>
+                <li class="nav-item">
+                  <a class="list-group-item list-group-item-success rounded {% if confirm_param == 1 %}border-success shadow{% endif %}" href="{% url 'custom_admin:orders_all' %}?confirmed=1">Confirmed</a>
                 </li>
-            </ul>
+              </ul>
             <ul class="list-group">
-                {% for commande in commandes %}
+                {% if confirm_param == 0 %}
+                {% for commande in unconfirmed %}
                     <li class="list-group-item d-flex justify-content-between align-items-start {% if commande.statut_commande == 0 %}list-group-item-danger{% elif commande.statut_commande == 1 %}list-group-item-success{% endif %}">
                         #{{ commande.id }}
                         <div class="ms-2 me-auto w-50">
@@ -54,6 +55,51 @@
                         </div>
                     </li>
                 {% endfor %}
+                {% elif confirm_param == 1 %}
+                {% for commande in confirmed %}
+                    <li class="list-group-item d-flex justify-content-between align-items-start {% if commande.statut_commande == 0 %}list-group-item-danger{% elif commande.statut_commande == 1 %}list-group-item-success{% endif %}">
+                        #{{ commande.id }}
+                        <div class="ms-2 me-auto w-50">
+                            <div class="fw-bold">{{ commande.user.username }}</div>
+                            <div>{{ commande.user.first_name }} {{ commande.user.last_name }}</div>
+                            <div>{{ commande.date_commande }}</div>
+                            <div>{{ commande.prix_total }} €</div>
+                            <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
+                                <div class="accordion-item bg-transparent">
+                                  <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed bg-transparent" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ commande.id }}" aria-expanded="false" aria-controls="flush-collapse{{ commande.id }}">
+                                      Products
+                                    </button>
+                                  </h2>
+                                  <div id="flush-collapse{{ commande.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body">
+                                        <ul>
+                                            {% for prod in prod_commandes %}
+                                            {% if prod.commande_id == commande.id %}
+                                                <a href="{% url 'custom_admin:products_show' prod.product_variant.product.id %}">
+                                                    <li>{{ prod.quantite }} &times; {{ prod.product_variant.product.nom }} - {{ prod.product_variant.variant }}</li>
+                                                </a>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="align-self-center">
+                            {% if commande.statut_commande == 0 %}
+                                <a class="btn-success btn text-white me-5 btn-lg rounded-circle"
+                                   href="{% url 'custom_admin:orders_confirm' commande.id %}"><i class="fa-solid fa-check"></i></a>
+                            {% endif %}
+                            {% comment %} {% if is_admin and not commande.role_id == 1  %}
+                                <a class="default-btn"
+                                   href="{% url 'custom_admin:commandes_delete' commande.id %}"><i class="fa-solid fa-trash"></i></a>
+                            {% endif %} {% endcomment %}
+                        </div>
+                    </li>
+                {% endfor %}
+                {% endif %}
             {% endif %}
         </ul>
     </div>

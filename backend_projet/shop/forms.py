@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 
 
+
 class RegistrationForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
@@ -74,14 +75,10 @@ class UserCreationForm(forms.ModelForm):
         }
 
 class UserUpdateForm(forms.ModelForm):
-    role = forms.ModelChoiceField(
-        queryset=Roles.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        to_field_name='role',
-    )
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'image_banniere_profil', 'avatar', 'metiers_hobbies', 'bio', 'abonne_newsletter']
+        fields = ['username', 'email', 'first_name', 'last_name', 'image_banniere_profil', 'avatar', 'metiers_hobbies', 'bio', 'abonne_newsletter']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -209,21 +206,37 @@ class CommentairesForm(forms.ModelForm):
         model = Commentaires
         fields = ['user', 'reponse_a']
 
-class TagsForm(forms.ModelForm):
-    class Meta:
-        model = Tags
-        fields = ['nom', 'blog_posts_lies']
-
 class RolesForm(forms.ModelForm):
     class Meta:
         model = Roles
         fields = ['role']
+class TagsForm(forms.ModelForm):
+    class Meta:
+        model = Tags
+        fields = ['nom']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class CategoriesBlogForm(forms.ModelForm):
+    class Meta:
+        model = CategoriesBlog
+        fields = ['nom']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'})
+        }
 
 class BlogPostForm(forms.ModelForm):
     class Meta:
         model = BlogPost
-        fields = ['titre', 'texte', 'categorie', 'image_illustration', 'date_post', 'date_modification', 'commentaires_lies', 'user_auteur']
-        exclude = ['date_post', 'date_modification']
+        fields = ['titre', 'texte', 'categorie', 'tags', 'image_illustration']
+        widgets = {
+            'titre': forms.TextInput(attrs={'class': 'form-control'}),
+            'texte': forms.Textarea(attrs={'class': 'form-control'}),
+            'categorie': forms.Select(attrs={'class': 'form-select'}),
+            'tags': forms.SelectMultiple(attrs={'class': 'form-select', 'multiple': True, 'aria-label': 'multiple select example'}),
+            'image_illustration': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
 
 class ContactForm(forms.Form):
     name = forms.CharField(label='Name', max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -284,8 +297,13 @@ class PartenairesForm(forms.ModelForm):
         }
 
 class NewsletterForm(forms.ModelForm):
-    email = forms.EmailField(label='Your E-mail Address:', widget=forms.EmailInput(attrs={'class': 'input-newsletter', 'placeholder': 'Enter your email', 'required': True, 'autocomplete': 'off'}))
-    
+    email = forms.EmailField(
+        label='Your E-mail Address:',
+        widget=forms.EmailInput(
+            attrs={'class': 'input-newsletter', 'placeholder': 'Enter your email', 'required': True, 'autocomplete': 'off'}
+        )
+    )
+
     class Meta:
         model = Newsletter
         fields = ['email']

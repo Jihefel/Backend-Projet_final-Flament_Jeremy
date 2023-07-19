@@ -51,7 +51,7 @@
                     <div class="col-lg-8 col-md-12">
                         <div class="blog-details-desc">
                             <div class="article-image">
-                                <img src="{% static 'shop/assets/img/blog/img1.jpg' %}" alt="image">
+                                <img src="{% if 'https' in blog.image_illustration.url %}{{ blog.image_illustration }}{% else %}{{ blog.image_illustration.url }}{% endif %}" alt="image">
                             </div>
 
                             <div class="article-content">
@@ -60,7 +60,7 @@
                                         <li>
                                             <i class='bx bx-folder-open'></i>
                                             <span>Category</span>
-                                            <a href="#">Fashion</a>
+                                            <a href="#">{{ blog.categorie.nom }}</a>
                                         </li>
                                         <li>
                                             <i class='bx bx-group'></i>
@@ -70,25 +70,23 @@
                                         <li>
                                             <i class='bx bx-calendar'></i>
                                             <span>Last Updated</span>
-                                            <a href="#">01/14/2021</a>
+                                            <a href="#">{{ blog.date_modification|date:"m/d/Y" }}</a>
                                         </li>
                                     </ul>
                                 </div>
 
-                                <h3>The #1 eCommerce blog to grow your business</h3>
+                                <h3>{{ blog.titre }} </h3>
 
-                                <p>Quuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quia non numquam eius modi tempora incidunt ut labore et dolore magnam dolor sit amet, consectetur adipisicing.</p>
+                                <p>{{ blog.texte }} </p>
 
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in  sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
                             </div>
 
                             <div class="article-footer">
                                 <div class="article-tags">
                                     <span><i class='bx bx-purchase-tag'></i></span>
-
-                                    <a href="#">Fashion</a>,
-                                    <a href="#">Games</a>,
-                                    <a href="#">Travel</a>
+                                    {% for tag in tags %}
+                                    <a href="#">{{ tag.nom }} </a>,
+                                    {% endfor %}
                                 </div>
 
                                 <div class="article-share">
@@ -103,23 +101,20 @@
                             </div>
 
                             <div class="article-author">
-                                <div class="author-profile-header"></div>
+                                <div class="author-profile-header" style="background-image: url({{ blog.user_auteur.image_banniere_profil.url }})"></div>
                                 <div class="author-profile">
                                     <div class="author-profile-title">
-                                        <img src="{% static 'shop/assets/img/user1.jpg' %}" class="shadow-sm" alt="image">
+                                        <img src="{{ blog.user_auteur.avatar.url }}" class="shadow-sm" alt="image">
 
                                         <div class="author-profile-title-details d-flex justify-content-between">
                                             <div class="author-profile-details">
                                                 <h4>Chris Orwig</h4>
-                                                <span class="d-block">Photographer, Author, Writer</span>
+                                                <span class="d-block">{{ blog.user_auteur.metiers_hobbies }}</span>
                                             </div>
 
-                                            <div class="author-profile-raque-profile">
-                                                <a href="#" class="d-inline-block">View profile on Xton</a>
-                                            </div>
                                         </div>
                                     </div>
-                                    <p>Orwig is a celebrated photographer, author, and writer who brings passion to everything he does.</p>
+                                    <p>{{ blog.user_auteur.bio }}</p>
                                 </div>
                             </div>
 
@@ -307,29 +302,29 @@
 
                             <section class="widget widget_categories">
                                 <h3 class="widget-title">Categories</h3>
-
                                 <ul>
-                                    <li><a href="#">Design <span class="post-count">(03)</span></a></li>
-                                    <li><a href="#">Lifestyle <span class="post-count">(05)</span></a></li>
-                                    <li><a href="#">Script <span class="post-count">(10)</span></a></li>
-                                    <li><a href="#">Device <span class="post-count">(08)</span></a></li>
-                                    <li><a href="#">Tips <span class="post-count">(01)</span></a></li>
+                                    {% for cat in cats_blog %}
+                                        <li>
+                                            <a href="{% url 'blog' %}?category_blog={{ cat.id }}{% if tag_param %}&tag={{ tag_param }}{% endif %}{% if filter_by_name %}&filter_by_name={{ filter_by_name }}{% endif %}">{{ cat.nom }} <span class="post-count">({{ cat.blogpost_set.count }})</span></a>
+                                        </li>
+                                    {% endfor %}
+                                    {% if cat_param %}
+                                        <a href="{% url 'blog' %}?tag={{ tag_param }}{% if filter_by_name %}{{ tag_param }}&filter_by_name={{ filter_by_name }}{% endif %}"
+                                           class="optional-btn mt-2">Reset</a>
+                                    {% endif %}
                                 </ul>
                             </section>
-
                             <section class="widget widget_tag_cloud">
-                                <h3 class="widget-title">Xton Tags</h3>
-
+                                <h3 class="widget-title">QDP Tags</h3>
                                 <div class="tagcloud">
-                                    <a href="#">Business <span class="tag-link-count"> (3)</span></a>
-                                    <a href="#">Design <span class="tag-link-count"> (3)</span></a>
-                                    <a href="#">Xton <span class="tag-link-count"> (2)</span></a>
-                                    <a href="#">Fashion <span class="tag-link-count"> (2)</span></a>
-                                    <a href="#">Travel <span class="tag-link-count"> (1)</span></a>
-                                    <a href="#">Smart <span class="tag-link-count"> (1)</span></a>
-                                    <a href="#">Marketing <span class="tag-link-count"> (1)</span></a>
-                                    <a href="#">Tips <span class="tag-link-count"> (2)</span></a>
+                                    {% for tag in all_tags %}
+                                        <a href="{% url 'blog' %}?tag={{ tag.id }}{% if cat_param %}&category_blog={{ cat_param }}{% endif %}{% if filter_by_name %}&filter_by_name={{ filter_by_name }}{% endif %}">{{ tag.nom }} <span class="tag-link-count">({{ tag.blogpost_set.count }})</span></a>
+                                    {% endfor %}
                                 </div>
+                                {% if tag_param %}
+                                    <a href="{% url 'blog' %}?category_blog={{ cat_param }}{% if filter_by_name %}{{ tag_param }}&filter_by_name={{ filter_by_name }}{% endif %}"
+                                       class="optional-btn mt-2">Reset</a>
+                                {% endif %}
                             </section>
                         </aside>
                     </div>

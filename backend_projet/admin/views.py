@@ -7,45 +7,15 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from .decorators import admin_required, user_or_admin_required, admin_or_web_required, admin_or_stock_required
 from django.contrib.auth.decorators import login_required
-
+from backend_projet.context_processors import custom_context
 
 
 def admin_home(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
-
-    context = locals()
-    return render(request, 'admin/home.html', context)
+    return render(request, 'admin/home.html')
 
 #SECTION - INFOS
 @admin_required
 def infos_site(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     infos = InfosQDP.objects.first()
     if request.method == 'POST':
@@ -65,26 +35,10 @@ def infos_site(request):
 #SECTION - MAILBOX
 @admin_required
 def contacts_all(request):
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
-
-    context = locals()
-    return render(request, 'admin/pages/mailbox/all.html', context)
+    return render(request, 'admin/pages/mailbox/all.html')
 
 @admin_required
 def contacts_reply(request, id):
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     contact = Contacts.objects.get(id=id)
     if not contact.lu_par_admin:
@@ -139,20 +93,6 @@ def contacts_delete(request, id):
 #SECTION - Partenaires
 @admin_required
 def partners_all(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     partners = Partenaires.objects.all()
     
@@ -161,20 +101,6 @@ def partners_all(request):
 
 @admin_required
 def partners_delete(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     partner = Partenaires.objects.get(id=id)
     messages.success(request, f"Partner {partner.nom} successfully deleted.")
@@ -185,20 +111,6 @@ def partners_delete(request, id):
 
 @admin_required
 def partners_create(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     partners = Partenaires.objects.all()
     if request.method == 'POST':
@@ -215,20 +127,6 @@ def partners_create(request):
 
 @admin_required
 def partners_update(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     partner = Partenaires.objects.get(id=id)
 
@@ -249,20 +147,6 @@ def partners_update(request, id):
 # MEMBERS
 @login_required
 def members_all(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     members = User.objects.all()
     
@@ -271,20 +155,6 @@ def members_all(request):
 
 @admin_required
 def members_create(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     members = User.objects.all()
     
@@ -305,34 +175,28 @@ def members_create(request):
 
 def members_delete(request, id):
     member = User.objects.get(id=id)
-    messages.success(request, f"Member {member.username} successfully deleted.")
-    member.delete()
+    
+    if not member.role_id == 1:
+        member.delete()
+        messages.success(request, f"Member {member.username} successfully deleted.")
+    else:
+        messages.error(request, "Cannot delete an administrator.")
     
     return redirect('custom_admin:members_all')
 
 @user_or_admin_required
 def members_update(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     member = User.objects.get(id=id)
+
     if request.method == 'POST':
         if member.id == request.user.id:
             form = UserUpdateForm(request.POST, request.FILES, instance=member)
         else:
             form = UserRoleUpdateForm(request.POST, request.FILES, instance=member)
+            if member.role_id == 1 and not member.id == request.user.id:
+                messages.error(request, "Cannot update an administrator.")
+                return redirect('custom_admin:members_all')
         if form.is_valid():
             form.save()
             messages.success(request, f"Member {member.username} successfully updated.")
@@ -349,20 +213,6 @@ def members_update(request, id):
     return render(request, 'admin/pages/members/update.html', context)
 
 def members_show(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     member = User.objects.get(id=id)
 
@@ -375,20 +225,6 @@ def members_show(request, id):
 # Produits
 @admin_or_stock_required
 def products_all(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     products = Produits.objects.prefetch_related('productvariant_set__variant').all()
     
@@ -397,20 +233,6 @@ def products_all(request):
 
 @admin_required
 def products_create(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     products = Produits.objects.all()
     variants = Variantes.objects.all()[:4]
@@ -479,20 +301,6 @@ def products_delete(request, id):
 
 @admin_or_stock_required
 def products_update(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     product = Produits.objects.get(id=id)
     variants = product.variations.filter(produits=product)
@@ -536,20 +344,6 @@ def products_update(request, id):
 
 @admin_or_stock_required
 def products_show(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     product = Produits.objects.get(id=id)
     pv = ProductVariant.objects.filter(product=product)
@@ -563,20 +357,6 @@ def products_show(request, id):
 # Promotions
 @admin_required
 def promos_all(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     promos = Promotions.objects.all()
     extra_promo = ExtraPromo.objects.first()
@@ -588,20 +368,6 @@ def promos_all(request):
 
 @admin_required
 def promos_create(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
 
     if request.method == 'POST':
@@ -628,20 +394,6 @@ def promos_delete(request, id):
 
 @admin_required
 def promos_update(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     promo = Promotions.objects.get(id=id)
 
@@ -661,20 +413,6 @@ def promos_update(request, id):
 
 @admin_required
 def promos_show(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     promo = Promotions.objects.get(id=id)
     categories = Categorie.objects.filter(promo=promo)
@@ -685,20 +423,6 @@ def promos_show(request, id):
 
 @admin_required
 def extra_promo(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     extra_promo = ExtraPromo.objects.first()
 
@@ -719,20 +443,6 @@ def extra_promo(request):
 # SECTION - CATEGORIES
 @admin_required
 def categories_all(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     categories = Categorie.objects.all()
     
@@ -741,20 +451,6 @@ def categories_all(request):
 
 @admin_required
 def categories_create(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
 
     if request.method == 'POST':
@@ -780,20 +476,6 @@ def categories_delete(request, id):
 
 @admin_required
 def categories_update(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     categorie = Categorie.objects.get(id=id)
 
@@ -813,20 +495,6 @@ def categories_update(request, id):
 
 @admin_required
 def categories_show(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
-    
-    commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     categorie = Categorie.objects.get(id=id)
     products = Produits.objects.filter(categorie=categorie)
@@ -852,46 +520,26 @@ def orders_all(request):
     nb_unread = unreads.count()
     
     commandes = Commandes.objects.all().order_by('statut_commande')
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
 
     prod_commandes = ProduitsCommandes.objects.all()
+
+    confirm_param = request.GET.get('confirmed')
+
+    if confirm_param == None:
+        confirm_param = 0
+    else:
+        confirm_param = int(confirm_param)
+
+    if confirm_param != 0 and confirm_param != 1:
+        messages.error(request, "Bad request")
+        return redirect('custom_admin:orders_all')
     
     context = locals()
     return render(request, 'admin/pages/orders/all.html', context)
 
 
-# def orders_show(request, id):
-#     role_id_admin = 1
-#     role_id_membre = 2
-    
-#     if request.user.id is not None:
-#         is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-#         is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-#     contacts = Contacts.objects.all()
-#     unreads = Contacts.objects.filter(lu_par_admin=0)
-#     nb_unread = unreads.count()
-    
-#     commandes = Commandes.objects.all()
-#     unconfirmed = Commandes.objects.filter(statut_commande=0)
-#     nb_unconfirmed = unconfirmed.count()
-    
-#     context = locals()
-#     return render(request, 'admin/pages/orders/all.html', context)
-
 @admin_required
 def orders_confirm(request, id):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-    
-    contacts = Contacts.objects.all()
-    unreads = Contacts.objects.filter(lu_par_admin=0)
-    nb_unread = unreads.count()
     
     commande = Commandes.objects.get(id=id)
     commande.statut_commande = True
@@ -909,4 +557,200 @@ def orders_confirm(request, id):
     messages.success(request, f"The order #{commande.id} is definitely confirmed")
     
     return redirect('custom_admin:orders_all')
+#!SECTION
+
+
+# SECTION - Blogs
+@admin_or_web_required
+def blogs_all(request):
+    
+    blogs = BlogPost.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/blogs/all.html', context)
+
+
+@admin_or_web_required
+def blogs_create(request):
+
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Blog successfully created.")
+            return redirect('custom_admin:blogs_all')
+    else:
+        form = BlogPostForm()
+    
+    
+    context = locals()
+    return render(request, 'admin/pages/blogs/create.html', context)
+
+
+@admin_or_web_required
+def blogs_delete(request, id):
+    blog = BlogPost.objects.get(id=id)
+    messages.success(request, f"Blog {blog.nom} successfully deleted.")
+    blog.delete()
+    
+    return redirect('custom_admin:blogs_all')
+
+
+@admin_or_web_required
+def blogs_update(request, id):
+
+    blog = BlogPost.objects.get(id=id)
+
+
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=blog)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Blog {blog.nom} successfully updated.")
+            return redirect('custom_admin:blogs_all')
+    else:
+        form = BlogPostForm(instance=blog)
+        
+    
+    context = locals()
+    return render(request, 'admin/pages/blogs/update.html', context)
+
+
+@admin_or_web_required
+def blogs_show(request, id):
+
+    blog = BlogPost.objects.get(id=id)
+
+    context = locals()
+    return render(request, 'admin/pages/blogs/show.html', context)
+#!SECTION
+
+
+
+# SECTION - Blogs categories
+@admin_required
+def blogs_cat_all(request):
+    
+    blogs_categories = CategoriesBlog.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/categories_blog/all.html', context)
+
+@admin_required
+def blogs_cat_create(request):
+
+    if request.method == 'POST':
+        form = CategoriesBlogForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Blog category successfully created.")
+            return redirect('custom_admin:blogs_cat_all')
+    else:
+        form = CategoriesBlogForm()
+    
+    
+    context = locals()
+    return render(request, 'admin/pages/categories_blog/create.html', context)
+
+
+@admin_required
+def blogs_cat_delete(request, id):
+    cat = CategoriesBlog.objects.get(id=id)
+
+    messages.success(request, f"Blog category {cat.nom} successfully deleted.")
+    cat.delete()
+    
+    return redirect('custom_admin:blogs_cat_all')
+
+@admin_required
+def blogs_cat_update(request, id):
+
+    cat = CategoriesBlogForm.objects.get(id=id)
+
+
+    if request.method == 'POST':
+        form = CategoriesBlogForm(request.POST, instance=cat)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Blog category {cat.nom} successfully updated.")
+            return redirect('custom_admin:blogs_cat_all')
+    else:
+        form = CategoriesBlogForm(instance=cat)
+        
+    
+    context = locals()
+    return render(request, 'admin/pages/categories_blog/update.html', context)
+
+@admin_required
+def blogs_cat_show(request, id):
+
+    cat = CategoriesBlog.objects.get(id=id)
+
+    context = locals()
+    return render(request, 'admin/pages/categories_blog/show.html', context)
+#!SECTION
+
+
+# SECTION - Tags blogs
+@admin_required
+def tags_all(request):
+    
+    tags = Tags.objects.all()
+    
+    context = locals()
+    return render(request, 'admin/pages/tags/all.html', context)
+
+@admin_required
+def tags_create(request):
+
+    if request.method == 'POST':
+        form = TagsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Tag successfully created.")
+            return redirect('custom_admin:blogs_cat_all')
+    else:
+        form = TagsForm()
+    
+    
+    context = locals()
+    return render(request, 'admin/pages/tags/create.html', context)
+
+
+@admin_required
+def tags_delete(request, id):
+
+    tag = Tags.objects.get(id=id)
+
+    messages.success(request, f"Tag {tag.nom} successfully deleted.")
+    tag.delete()
+    
+    return redirect('custom_admin:blogs_cat_all')
+
+@admin_required
+def tags_update(request, id):
+
+    tag = Tags.objects.get(id=id)
+
+
+    if request.method == 'POST':
+        form = TagsForm(request.POST, instance=tag)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Tag {tag.nom} successfully updated.")
+            return redirect('custom_admin:blogs_cat_all')
+    else:
+        form = TagsForm(instance=tag)
+        
+    
+    context = locals()
+    return render(request, 'admin/pages/tags/update.html', context)
+
+@admin_required
+def tags_show(request, id):
+
+    tag = Tags.objects.get(id=id)
+
+    context = locals()
+    return render(request, 'admin/pages/tags/show.html', context)
 #!SECTION

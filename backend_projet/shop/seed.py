@@ -7,13 +7,6 @@ from datetime import date
 
 def run():
     seeder = Seed.seeder()
-
-    User.objects.all().delete()
-    Roles.objects.all().delete()
-    InfosQDP.objects.all().delete()
-    Categorie.objects.all().delete()
-    Produits.objects.all().delete()
-    Partenaires.objects.all().delete()
     
     # Définition des trois possibilités
     roles = ['admin', 'membre', 'webmaster', 'stock']
@@ -172,8 +165,46 @@ def run():
     inserted = seeder.execute()
     print(inserted)
 
+    # Seed Categories blog
+    seeder.add_entity(CategoriesBlog, 5, {
+        'nom': lambda x: seeder.faker.word(),
+    })
 
-   # Créer les variantes
+    inserted = seeder.execute()
+    print(inserted)
+
+    # Seed Tags blog
+    seeder.add_entity(Tags, 15, {
+        'nom': lambda x: seeder.faker.word(),
+    })
+    inserted = seeder.execute()
+    print(inserted)
+
+    # Obtenez tous les tags disponibles
+    all_tags = Tags.objects.all()
+
+
+
+    # Seed Blogs
+    seeder.add_entity(BlogPost, 46, {
+        'titre': lambda x: seeder.faker.sentence(),
+        'texte': lambda x: seeder.faker.paragraph(),
+        'categorie': lambda x: random.choice(CategoriesBlog.objects.all()),
+        'image_illustration': lambda x: seeder.faker.image_url(width=650, height=500),
+        'user_auteur': lambda x: random.choice(User.objects.all())
+    })
+
+    blog_inserted = seeder.execute()
+    print(blog_inserted)
+
+    for blog_post in BlogPost.objects.all():
+        # Choisissez un nombre aléatoire entre 1 et 6 pour déterminer le nombre de tags à sélectionner
+        num_tags = random.randint(1, 6)
+        # Sélectionnez un échantillon aléatoire de tags
+        random_tags = random.sample(list(all_tags), num_tags)
+        blog_post.tags.set(random_tags)
+
+   # Créer les variantes des produits
     contenus = ['250g', '500g', '1kg', '2kg', '30 capsules', '60 capsules', '90 capsules', '120 capsules']
     for contenu in contenus:
         variant = Variantes.objects.create(contenu=contenu)

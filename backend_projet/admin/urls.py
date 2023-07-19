@@ -45,6 +45,22 @@ urlpatterns = [
     path('orders/', views.orders_all, name='orders_all'),
     path('orders/confirm/<int:id>', views.orders_confirm, name='orders_confirm'),
     # path('orders/delete/<int:id>', views.orders_delete, name='orders_delete'),
+    # Blogs
+    path('blogs/', views.blogs_all, name='blogs_all'),
+    path('blogs/create', views.blogs_create, name='blogs_create'),
+    # path('blogs/show/<int:id>', views.blogs_show, name='blogs_show'),
+    path('blogs/update/<int:id>', views.blogs_update, name='blogs_update'),
+    path('blogs/delete/<int:id>', views.blogs_delete, name='blogs_delete'),
+    # Blogs categories
+    path('blogs_cat/', views.blogs_cat_all, name='blogs_cat_all'),
+    path('blogs_cat/create', views.blogs_cat_create, name='blogs_cat_create'),
+    path('blogs_cat/update/<int:id>', views.blogs_cat_update, name='blogs_cat_update'),
+    path('blogs_cat/delete/<int:id>', views.blogs_cat_delete, name='blogs_cat_delete'),
+    # Tags
+    path('tags/', views.tags_all, name='tags_all'),
+    path('tags/create', views.tags_create, name='tags_create'),
+    path('tags/update/<int:id>', views.tags_update, name='tags_update'),
+    path('tags/delete/<int:id>', views.tags_delete, name='tags_delete'),
     
     
 ]

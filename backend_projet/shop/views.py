@@ -6,49 +6,27 @@ from django.contrib.auth import login, authenticate, logout, update_session_auth
 from django.contrib.auth.hashers import make_password
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
-from datetime import date
+from datetime import datetime, date
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.urls import reverse
+from backend_projet.context_processors import custom_context
+
 
 
 
 def index(request):
-    
-    today = date.today()
 
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-
-    # Partenaires
+    # Partners
     partners = Partenaires.objects.all()
-    
-    # Wishlist
+
+    today = date.today()
+    context_global = custom_context(request)
+
+    recent_products = context_global['recent_products']
+
     if request.user.is_authenticated:
         wishlist_products = request.user.produits_wishlist.all()
-
-    # Categories
-    categories = Categorie.objects.all()
-
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-    recent_products = products_sorted[:6]
 
     for product in recent_products:
             variants = product.variations.filter(produits=product)
@@ -72,8 +50,14 @@ def index(request):
         newsletter_form = NewsletterForm(request.POST)
         if newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
+            if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
+                user_known = User.objects.get(email=email)
+                user_known.abonne_newsletter = True
+                messages.success(request, f"{user_known.username} successfully subscribed to the newsletter.")
+                user_known.save()
+            elif User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 1:
+                user_known = User.objects.get(email=email)
+                messages.warning(request, f"{user_known.username} already subscribed to newsletter.")
             else:
                 newsletter_form.save()
                 # Envoyer un e-mail de confirmation ou effectuer d'autres actions
@@ -93,93 +77,17 @@ def index(request):
     return render(request, 'shop/index.html', context)
 
 def handler404(request, exception=None):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4] 
-
-    context = locals()
-
-    response = render(request, 'shop/404.html', context)
+    response = render(request, 'shop/404.html')
     response.status_code = 404
     return response
 
 
 @login_required(login_url = 'login')
 def account(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
-    # Infos du site
-    infos = InfosQDP.objects.first() 
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-    
-    context = locals()
-    return render(request, 'shop/my_account.html', context)
+    return render(request, 'shop/my_account.html')
 
 @login_required(login_url = 'login')
 def edit_account(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-    
-    # Infos du site
-    infos = InfosQDP.objects.first() 
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
 
     if request.method == "POST":
         form = EditProfileForm(request.POST, request.FILES, instance=request.user)
@@ -212,38 +120,10 @@ def direct_newsletter_subscription(request):
 
 @login_required(login_url='login')
 def my_orders(request):
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-    
-    # Infos du site
-    infos = InfosQDP.objects.first() 
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
     # Commandes
     commandes = Commandes.objects.filter(user=request.user).order_by('-id')
 
     prod_commandes = ProduitsCommandes.objects.all()
-
-
-
-
     context = locals()
     return render(request, 'shop/my_orders.html', context)
 
@@ -251,29 +131,8 @@ def my_orders(request):
 
 @login_required(login_url='login')
 def cart(request):
-
-    # Infos du site
-    infos = InfosQDP.objects.first() 
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-    all_products_in_cart = Panier.objects.filter(user=request.user)
-    nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-    total_panier = Panier.get_total_panier(request.user)
+    context_global = custom_context(request)
+    total_panier = context_global['total_panier']
 
     promo_code_name = "kadri"  # Code promo à appliquer
     promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
@@ -303,27 +162,7 @@ def cart(request):
             user.save()
     total_final = Panier.calculate_total_final(total_panier, user)
 
-    # Form newsletter
-    if request.method == 'POST':
-        newsletter_form = NewsletterForm(request.POST)
-        if newsletter_form.is_valid():
-            email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
-            else:
-                newsletter_form.save()
-                # Envoyer un e-mail de confirmation ou effectuer d'autres actions
-                send_mail(
-                    "Thanks for subscribing to our newsletter",
-                    "",
-                    "jfl.jflament@gmail.com",
-                    [email],
-                    html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
-                )
-                messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
-    else:
-        newsletter_form = NewsletterForm()
+    
     
     context = locals()
     return render(request, 'shop/cart.html', context)
@@ -338,47 +177,24 @@ def remove_promo_code(request):
 
 @login_required(login_url='login')
 def checkout(request):
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
+    context_global = custom_context(request)
+
+    nb_products_in_cart = context_global['nb_products_in_cart']
+    all_products_in_cart = context_global['all_products_in_cart']
+    total_panier = context_global['total_panier']
+
 
     if nb_products_in_cart == 0:
         return redirect('all_products')
 
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-        promo_code_name = "kadri"  # Code promo à appliquer
-        promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
-        shipping_fee = 4.50
-        total_final = Panier.calculate_total_final(total_panier, request.user)
-        total_net = total_final - shipping_fee
+    promo_code_name = "kadri"  # Code promo à appliquer
+    promo_code_percentage = 10  # Pourcentage de réduction pour le code promo
+    shipping_fee = 4.50
+    total_final = Panier.calculate_total_final(total_panier, request.user)
+    total_net = total_final - shipping_fee
 
     if request.method == "POST":
-        commande = Commandes(user=request.user, date_commande=date.today(), statut_commande=False, prix_total=total_net)
+        commande = Commandes(user=request.user, date_commande=datetime.now(), statut_commande=False, prix_total=total_net)
         commande.save()
 
         for product in all_products_in_cart:
@@ -409,112 +225,12 @@ def checkout(request):
 
         messages.success(request, "Your order has been  successfully submitted and is now pending confirmation. An admin will confirm it when it will be ready. Thank you!")
         return redirect('home')
-
-
-    # # Form newsletter
-    # if request.method == 'POST':
-    #     newsletter_form = NewsletterForm(request.POST)
-    #     if newsletter_form.is_valid():
-    #         email = newsletter_form.cleaned_data['email']
-    #         if Newsletter.objects.filter(email=email).exists():
-    #             messages.error(request, "Email already subscribed.")
-    #         else:
-    #             newsletter_form.save()
-    #             # Envoyer un e-mail de confirmation ou effectuer d'autres actions
-    #             send_mail(
-    #                 "Thanks for subscribing to our newsletter",
-    #                 "",
-    #                 "jfl.jflament@gmail.com",
-    #                 [email],
-    #                 html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
-    #             )
-    #             messages.success(request, "Successfully subscribed to the newsletter.")
-    #         return redirect('home')
-
-    # else:
-    #     newsletter_form = NewsletterForm()
     
     context = locals()
     return render(request, 'shop/checkout.html', context)
 
-def contact(request):
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
-    # Form newsletter
-    if request.method == 'POST':
-        newsletter_form = NewsletterForm(request.POST)
-        if newsletter_form.is_valid():
-            email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
-            else:
-                newsletter_form.save()
-                # Envoyer un e-mail de confirmation ou effectuer d'autres actions
-                send_mail(
-                    "Thanks for subscribing to our newsletter",
-                    "",
-                    "jfl.jflament@gmail.com",
-                    [email],
-                    html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
-                )
-                messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
-    else:
-        newsletter_form = NewsletterForm()
-    
-    context = locals()
-    return render(request, 'shop/contact.html', context)
 
 def connection(request):
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
 
     if request.method == "POST":
             username = request.POST['username']
@@ -535,6 +251,8 @@ def connection(request):
     context = locals()
     return render(request, 'shop/login.html', context)
 
+
+
 @login_required(login_url='login')
 def deconnection(request):
     logout(request)
@@ -543,31 +261,6 @@ def deconnection(request):
 
 @login_required(login_url = 'login')
 def change_password(request):
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
 
     user = User.objects.get(id=request.user.id)
     if request.method == 'POST':
@@ -589,6 +282,7 @@ def change_password(request):
 
     context = locals()  
     return render(request, 'shop/change_password.html', context)
+
 
 def customPasswordReset(request):
     if request.method == 'POST':
@@ -619,6 +313,8 @@ def customPasswordReset(request):
 
     context = locals()
     return render(request, 'shop/change_password.html', context)
+
+
 
 def all_products(request):
     products = Produits.objects.all()
@@ -712,38 +408,19 @@ def all_products(request):
     # Slice the products based on the calculated indexes
     sliced_products = products[start_index:end_index]
 
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
         if newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
+            if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
+                user_known = User.objects.get(email=email)
+                user_known.abonne_newsletter = True
+                messages.success(request, f"{user_known.username} successfully subscribed to the newsletter.")
+                user_known.save()
+            elif User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 1:
+                user_known = User.objects.get(email=email)
+                messages.warning(request, f"{user_known.username} already subscribed to newsletter.")
             else:
                 newsletter_form.save()
                 # Envoyer un e-mail de confirmation ou effectuer d'autres actions
@@ -762,6 +439,8 @@ def all_products(request):
     context = locals()
     return render(request, 'shop/products-left-sidebar-2.html', context)
 
+
+
 def product(request, id):
     
     product = Produits.objects.get(id=id)
@@ -770,6 +449,10 @@ def product(request, id):
 
    
     variants = product.variations.filter(produits=product) 
+
+    if request.user.is_authenticated:
+        wishlist_products = request.user.produits_wishlist.all()
+        wp = wishlist_products.filter(id=product.id)
 
     if request.GET.get('variant'):
         variant_param = int(request.GET.get('variant'))
@@ -808,41 +491,19 @@ def product(request, id):
                 related_product_variant.prix_promo =  float(related_product_variant.prix) - (float(related_product_variant.prix) * (float(rp.promo.pourcentage_promo) / 100))
             rp.related_product_variant = related_product_variant
 
-
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-        wp = wishlist_products.filter(id=product.id)
-    
-    # Sidebar
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
         if newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
+            if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
+                user_known = User.objects.get(email=email)
+                user_known.abonne_newsletter = True
+                messages.success(request, f"{user_known.username} successfully subscribed to the newsletter.")
+                user_known.save()
+            elif User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 1:
+                user_known = User.objects.get(email=email)
+                messages.warning(request, f"{user_known.username} already subscribed to newsletter.")
             else:
                 newsletter_form.save()
                 # Envoyer un e-mail de confirmation ou effectuer d'autres actions
@@ -862,31 +523,6 @@ def product(request, id):
     return render(request, 'shop/products-type-1.html', context)
 
 def signup(request):
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
 
     if request.method == 'POST':
         form = BootstrapUserCreationForm(request.POST)
@@ -923,7 +559,6 @@ def signup(request):
                 messages.error(request, "Something went wrong.")
 
     else:
-        newsletter_form = NewsletterForm()
         form = BootstrapUserCreationForm()
 
     context = locals()
@@ -932,31 +567,6 @@ def signup(request):
 
 def signup2(request):
     
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
-
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
     # Form signup 2
     last_user = User.objects.last()
     if request.method == 'POST':
@@ -980,40 +590,27 @@ def signup2(request):
     context = locals()
     return render(request, 'shop/signup2.html', context)
 
-def article(request):
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
+def article(request, id):
 
-    role_id_admin = 1
-    role_id_membre = 2
+    blog = BlogPost.objects.get(id=id)
+    cats_blog = CategoriesBlog.objects.all()
+    tags = Tags.objects.filter(blogpost=blog)
+    all_tags = Tags.objects.all()
     
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
-
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
 
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
         if newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
+            if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
+                user_known = User.objects.get(email=email)
+                user_known.abonne_newsletter = True
+                messages.success(request, f"{user_known.username} successfully subscribed to the newsletter.")
+                user_known.save()
+            elif User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 1:
+                user_known = User.objects.get(email=email)
+                messages.warning(request, f"{user_known.username} already subscribed to newsletter.")
             else:
                 newsletter_form.save()
                 # Envoyer un e-mail de confirmation ou effectuer d'autres actions
@@ -1033,39 +630,68 @@ def article(request):
     return render(request, 'shop/single-blog-1.html', context)
 
 def blog(request):
-    
-    # Infos du site
-    infos = InfosQDP.objects.first()
-     
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
-    
-    # Produits
-    products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
-    recent_products_sidebar = products_sorted[:4]
 
-    role_id_admin = 1
-    role_id_membre = 2
-    
-    if request.user.id is not None:
-        is_admin = Roles.objects.filter(id=role_id_admin, user=request.user).exists()
-        is_membre = Roles.objects.filter(id=role_id_membre, user=request.user).exists()
+    blogs = BlogPost.objects.all().order_by('-date_post')
+    cats_blog = CategoriesBlog.objects.all()
+    tags = Tags.objects.all()
 
-    # Cart Modal
-    if request.user.is_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
+
+    if request.GET.get('category_blog'):
+        cat_param = request.GET.get('category_blog')
+        if cat_param:
+            blogs = blogs.filter(categorie_id=cat_param)
+
+    if request.GET.get('tag'):
+        tag_param = request.GET.get('tag')
+        if tag_param:
+            blogs = blogs.filter(tags=tag_param)
+    
+    if request.method == 'GET':
+        filter_by_name = request.GET.get('filter_by_name')
+
+        if filter_by_name:
+            blogs = blogs.filter(titre__icontains=filter_by_name)
+            filtered_blogs = blogs
+        else:
+            filtered_blogs = blogs
+
+    # Vérifier si la liste est vide avant de paginer les produits
+    if not filtered_blogs:
+        paginator = Paginator([], 6)
+        page_number = 1
+        page_obj = paginator.get_page(page_number)
+        start_index = 0
+        end_index = 0
+    else:
+        # Pagination des produits
+        paginator = Paginator(blogs, 6)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+        # Calculate the start and end indexes for the range of products to display
+        per_page = 6  # Number of products per page
+        start_index = (int(page_number) - 1) * per_page
+        end_index = int(page_number) * per_page
+
+    # Adjust end_index if it exceeds the length of the filtered_products list
+    end_index = min(end_index, len(blogs))
+
+    # Slice the products based on the calculated indexes
+    sliced_blogs = blogs[start_index:end_index]
 
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
         if newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
-            if Newsletter.objects.filter(email=email).exists():
-                messages.error(request, "Email already subscribed.")
+            if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
+                user_known = User.objects.get(email=email)
+                user_known.abonne_newsletter = True
+                messages.success(request, f"{user_known.username} successfully subscribed to the newsletter.")
+                user_known.save()
+            elif User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 1:
+                user_known = User.objects.get(email=email)
+                messages.warning(request, f"{user_known.username} already subscribed to newsletter.")
             else:
                 newsletter_form.save()
                 # Envoyer un e-mail de confirmation ou effectuer d'autres actions
@@ -1105,8 +731,6 @@ def wishlist(request, id):
 
 def contact(request):
 
-    # Infos du site
-    infos = InfosQDP.objects.first()
 
     is_user_authenticated = request.user.is_authenticated
     admins = User.objects.filter(role=1)
@@ -1114,16 +738,6 @@ def contact(request):
     for admin in admins:
         admins_emails.append(admin.email)
 
-    # Cart Modal
-    if is_user_authenticated:
-        products_in_cart = Panier.objects.filter(user=request.user).order_by('-id')[:4]
-        all_products_in_cart = Panier.objects.filter(user=request.user)
-        nb_products_in_cart = Panier.objects.filter(user=request.user).count()
-        total_panier = Panier.get_total_panier(request.user)
-
-    # Wishlist
-    if request.user.is_authenticated:
-        wishlist_products = request.user.produits_wishlist.all()
 
     if is_user_authenticated:
         user_auteur = User.objects.get(username=request.user.username)
@@ -1186,7 +800,22 @@ def add_to_cart(request, id):
     product_variant = ProductVariant.objects.get(id=id)
     product = Produits.objects.get(productvariant=product_variant)
     user = request.user
+
+    # Vérifier si la quantité demandée est valide
+    if not request.GET.get('quantity').isdigit() or int(request.GET.get('quantity')) <= 0:
+        # Gérer l'erreur de quantité invalide
+        messages.error(request,"Invalid quantity")
+        return redirect(reverse('product', args=[product.id]) + f"?variant={id}")
+    
     quantity = int(request.GET.get('quantity'))
+
+    # Vérifier la disponibilité en stock
+    if int(quantity) > product_variant.quantite_stock:
+        # Gérer l'erreur de quantité supérieure à la disponibilité en stock
+        messages.error(request,"Requested quantity exceeds stock availability")
+        return redirect(reverse('product', args=[product.id]) + f"?variant={id}")
+    
+
     # Vérifier si le produit_variant est déjà présent dans le panier de l'utilisateur
     if Panier.objects.filter(produit_inclus_id=product_variant).exists():
         # Si le produit_variant existe déjà, mettre à jour la quantité

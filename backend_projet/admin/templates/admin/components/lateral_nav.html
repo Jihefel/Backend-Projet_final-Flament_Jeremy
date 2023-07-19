@@ -14,12 +14,21 @@
         </div>
 
         <div class="btn-group dropend">
-            <a href="{% url 'custom_admin:partners_all' %}" class="btn default-btn w-100">Blog posts</a>
+            <a href="{% url 'custom_admin:blogs_all' %}" class="btn default-btn w-100">Blog posts</a>
             <button type="button" class="btn optional-btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="visually-hidden">Toggle Dropend</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'custom_admin:partners_create' %}"> Create</a></li>
+                <li><h6 class="dropdown-header">Blogs</h6></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:blogs_create' %}"> Create</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Blog categories</h6></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:blogs_cat_all' %}"> See all</a></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:blogs_cat_create' %}"> Create</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Tags blog</h6></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:tags_all' %}"> See all</a></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:tags_create' %}"> Create</a></li>
             </ul>
         </div>
         {% else %}
@@ -32,7 +41,7 @@
         <div class="btn-group">
             <a href="{% url 'custom_admin:contacts_all' %}" class="default-btn text-center w-100 d-flex align-items-center justify-content-center">
                 Mailbox
-                {% if nb_unread != 0 %}
+                {% if nb_unread and nb_unread != 0 %}
                     <span class="badge bg-warning text-black ms-3">{{ nb_unread }} </span>
                 {% endif %}
             </a>
@@ -41,7 +50,7 @@
         <div class="btn-group">
             <a href="{% url 'custom_admin:orders_all' %}" class="default-btn text-center w-100 d-flex align-items-center justify-content-center">
                 Orders
-                {% if nb_unconfirmed != 0 %}
+                {% if nb_unconfirmed and nb_unconfirmed != 0 %}
                     <span class="badge bg-warning text-black ms-3">{{ nb_unconfirmed }} </span>
                 {% endif %}
             </a>
@@ -94,17 +103,27 @@
             </button>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'custom_admin:promos_create' %}"> Create</a></li>
+                <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'custom_admin:extra_promo' %}"> Extra promo</a></li>
             </ul>
         </div>
         
         <div class="btn-group dropend">
-            <a href="{% url 'custom_admin:partners_all' %}" class="btn default-btn w-100">Blog posts</a>
+            <a href="{% url 'custom_admin:blogs_all' %}" class="btn default-btn w-100">Blog posts</a>
             <button type="button" class="btn optional-btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="visually-hidden">Toggle Dropend</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'custom_admin:partners_create' %}"> Create</a></li>
+                <li><h6 class="dropdown-header">Blogs</h6></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:blogs_create' %}"> Create</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Blog categories</h6></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:blogs_cat_all' %}"> See all</a></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:blogs_cat_create' %}"> Create</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><h6 class="dropdown-header">Tags blog</h6></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:tags_all' %}"> See all</a></li>
+                <li><a class="dropdown-item" href="{% url 'custom_admin:tags_create' %}"> Create</a></li>
             </ul>
         </div>
         {% endif %}
