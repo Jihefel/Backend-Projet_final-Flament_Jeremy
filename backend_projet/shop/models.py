@@ -144,11 +144,10 @@ class ProductVariant(models.Model):
         unique_together = ('product', 'variant')
 
 class Commentaires(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, null=True)
+    email = models.EmailField(null=True)
     date = models.DateTimeField(blank=True)
     texte = models.TextField(blank=True, null=True)
-    reponse_a = models.ForeignKey('Commentaires', null=True, blank=True, on_delete=models.CASCADE)
-
 
 class Panier(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

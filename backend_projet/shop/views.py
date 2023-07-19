@@ -597,10 +597,21 @@ def article(request, id):
     tags = Tags.objects.filter(blogpost=blog)
     all_tags = Tags.objects.all()
     
+    commentaires = Commentaires.objects.all().order_by('-date')
+    nb_commentaires = commentaires.count()
 
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
+        comment_form = CommentairesForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.date = datetime.now()
+            comment.save()
+            blog.commentaires_lies.add(comment)
+            blog.save()
+            messages.success(request, f"Comment successfully posted on {blog.titre}")
+            return redirect('article', blog.id)
         if newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
             if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
@@ -623,8 +634,10 @@ def article(request, id):
                 )
                 messages.success(request, "Successfully subscribed to the newsletter.")
             return redirect('home')
+        
     else:
         newsletter_form = NewsletterForm()
+        comment_form = CommentairesForm()
     
     context = locals()
     return render(request, 'shop/single-blog-1.html', context)

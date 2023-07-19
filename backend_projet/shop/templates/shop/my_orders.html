@@ -57,6 +57,7 @@
                     <h3>My Orders</h3>
                     <p>{{ user.username }}, here are your previous orders.</p>
                     <div class="row mt-5">
+                        {% if commandes %}
                         <ul class="list-group list-group-horizontal mb-4 ps-1">
                             <li class="list-group-item list-group-item-danger">
                                 <small>Pending</small>
@@ -65,6 +66,7 @@
                                 <small>Confirmed</small>
                             </li>
                         </ul>
+                        {% endif %}
                         <div class="accordion accordion-flush" id="accordionFlushExample">
                             {% for order in commandes %}
                                 <div class="accordion-item">
@@ -106,6 +108,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                {% empty %}
+                                <p>You don't have any order</p>
                             {% endfor %}
                         </div>
                     </div>

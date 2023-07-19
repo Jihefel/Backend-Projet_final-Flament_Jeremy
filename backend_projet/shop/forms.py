@@ -204,12 +204,18 @@ class NameFilterForm(forms.Form):
 class CommentairesForm(forms.ModelForm):
     class Meta:
         model = Commentaires
-        fields = ['user', 'reponse_a']
+        fields = ['name', 'email', 'texte']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your Name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Your Email'}),
+            'texte': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Your Comment', 'rows': 5}),
+        }
 
 class RolesForm(forms.ModelForm):
     class Meta:
         model = Roles
         fields = ['role']
+
 class TagsForm(forms.ModelForm):
     class Meta:
         model = Tags
