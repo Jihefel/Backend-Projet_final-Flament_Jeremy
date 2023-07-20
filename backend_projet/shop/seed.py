@@ -174,7 +174,7 @@ def run():
     print(inserted)
 
     # Seed Tags blog
-    seeder.add_entity(Tags, 15, {
+    seeder.add_entity(Tags, 10, {
         'nom': lambda x: seeder.faker.word(),
     })
     inserted = seeder.execute()
@@ -186,7 +186,7 @@ def run():
 
 
     # Seed Blogs
-    seeder.add_entity(BlogPost, 46, {
+    seeder.add_entity(BlogPost, 20, {
         'titre': lambda x: seeder.faker.sentence(),
         'texte': lambda x: seeder.faker.paragraph(),
         'categorie': lambda x: random.choice(CategoriesBlog.objects.all()),

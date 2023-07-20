@@ -31,6 +31,7 @@
     <link rel="icon"
           type="image/png"
           href="{% static 'shop/assets/img/favicon.png' %}">
+    <script src="https://kit.fontawesome.com/508b7484b8.js" crossorigin="anonymous"></script>
     {% load bootstrap5 %}
 {% endblock head %}
 {% block content %}
@@ -101,6 +102,12 @@
                 </div>
                 <div class="col-lg-4 col-md-12">
                     <aside class="widget-area">
+                        {% if user.is_authenticated %}
+                            <section class="widget">
+                                <a href="{% url 'custom_admin:blogs_create' %}">
+                                    <button class="default-btn"><i class="fa-solid fa-pen-nib me-1"></i> Write a blog post</button></a>
+                            </section>
+                        {% endif %}
                         <section class="widget widget_search">
                             <form class="search-form" method="get" action="{% url 'blog' %}">
                                 <label>
@@ -120,42 +127,20 @@
                         </section>
                         <section class="widget widget_xton_posts_thumb">
                             <h3 class="widget-title">Popular Posts</h3>
+                            {% for p_blog in most_popular_blogs %}
                             <article class="item">
-                                <a href="#" class="thumb">
-                                    <span class="fullimage cover bg1" role="img"></span>
+                                <a href="{% url 'article' p_blog.id %}" class="thumb">
+                                    <img class="fullimage cover bg1" role="img" src="{% if 'https' in p_blog.image_illustration.url %}{{ p_blog.image_illustration }}{% else %}{{ p_blog.image_illustration.url }}{% endif %}" />
                                 </a>
                                 <div class="info">
-                                    <span>June 10, 2021</span>
+                                    <span>{{ p_blog.date_post }} </span>
                                     <h4 class="title usmall">
-                                        <a href="#">Top ecommerce conferences in 2021</a>
+                                        <a href="{% url 'article' p_blog.id %}">{{ p_blog.titre }} </a>
                                     </h4>
                                 </div>
                                 <div class="clear"></div>
                             </article>
-                            <article class="item">
-                                <a href="#" class="thumb">
-                                    <span class="fullimage cover bg2" role="img"></span>
-                                </a>
-                                <div class="info">
-                                    <span>June 21, 2021</span>
-                                    <h4 class="title usmall">
-                                        <a href="#">Introducing the 2021 bigCommerce partner</a>
-                                    </h4>
-                                </div>
-                                <div class="clear"></div>
-                            </article>
-                            <article class="item">
-                                <a href="#" class="thumb">
-                                    <span class="fullimage cover bg3" role="img"></span>
-                                </a>
-                                <div class="info">
-                                    <span>June 30, 2021</span>
-                                    <h4 class="title usmall">
-                                        <a href="#">Best platforms for selling your products</a>
-                                    </h4>
-                                </div>
-                                <div class="clear"></div>
-                            </article>
+                            {% endfor %}
                         </section>
                         <section class="widget widget_categories">
                             <h3 class="widget-title">Categories</h3>
@@ -239,306 +224,7 @@
         </div>
     </section>
     <!-- End Facility Area -->
-    <!-- Start Sidebar Modal -->
-    <div class="modal right fade sidebarModal"
-         id="sidebarModal"
-         tabindex="-1"
-         role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <button type="button"
-                        class="close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                    <span aria-hidden="true"><i class='bx bx-x'></i></span>
-                </button>
-                <div class="modal-body">
-                    <div class="sidebar-about-content">
-                        <h3>About The Store</h3>
-                        <div class="about-the-store">
-                            <p>
-                                One of the most popular on the web is shopping. Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit.
-                            </p>
-                            <ul class="sidebar-contact-info">
-                                <li>
-                                    <i class='bx bx-map'></i> <a href="#" target="_blank">Wonder Street, USA, New
-                                    York</a>
-                                </li>
-                                <li>
-                                    <i class='bx bx-phone-call'></i> <a href="tel:+01321654214">+01 321 654 214</a>
-                                </li>
-                                <li>
-                                    <i class='bx bx-envelope'></i> <a href="mailto:hello@xton.com">hello@xton.com</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <ul class="social-link">
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-facebook'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-twitter'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-instagram'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-linkedin'></i></a>
-                            </li>
-                            <li>
-                                <a href="#" class="d-block" target="_blank"><i class='bx bxl-pinterest-alt'></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-new-in-store">
-                        <h3>New In Store</h3>
-                        <ul class="products-list">
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img1.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img2.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img3.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img4.jpg' %}" alt="image">
-                                </a>
-                            </li>
-                        </ul>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua.
-                        </p>
-                        <a href="#" class="shop-now-btn">Shop Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Sidebar Modal -->
-    <!-- Start QuickView Modal Area -->
-    <div class="modal fade productsQuickView"
-         id="productsQuickView"
-         tabindex="-1"
-         role="dialog"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <button type="button"
-                        class="close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                    <span aria-hidden="true"><i class='bx bx-x'></i></span>
-                </button>
-                <div class="row align-items-center">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="products-image">
-                            <img src="{% static 'shop/assets/img/quick-view-img.jpg' %}" alt="image">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="products-content">
-                            <h3>
-                                <a href="#">Long Sleeve Leopard T-Shirt</a>
-                            </h3>
-                            <div class="price">
-                                <span class="old-price">$210.00</span>
-                                <span class="new-price">$200.00</span>
-                            </div>
-                            <div class="products-review">
-                                <div class="rating">
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                    <i class='bx bxs-star'></i>
-                                </div>
-                                <a href="#" class="rating-count">3 reviews</a>
-                            </div>
-                            <ul class="products-info">
-                                <li>
-                                    <span>Vendor:</span> <a href="#">Lereve</a>
-                                </li>
-                                <li>
-                                    <span>Availability:</span> <a href="#">In stock (7 items)</a>
-                                </li>
-                                <li>
-                                    <span>Products Type:</span> <a href="#">T-Shirt</a>
-                                </li>
-                            </ul>
-                            <div class="products-color-switch">
-                                <h4>Color:</h4>
-                                <ul>
-                                    <li>
-                                        <a href="#"
-                                           data-bs-toggle="tooltip"
-                                           data-placement="top"
-                                           title="Black"
-                                           class="color-black"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"
-                                           data-bs-toggle="tooltip"
-                                           data-placement="top"
-                                           title="White"
-                                           class="color-white"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"
-                                           data-bs-toggle="tooltip"
-                                           data-placement="top"
-                                           title="Green"
-                                           class="color-green"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"
-                                           data-bs-toggle="tooltip"
-                                           data-placement="top"
-                                           title="Yellow Green"
-                                           class="color-yellowgreen"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"
-                                           data-bs-toggle="tooltip"
-                                           data-placement="top"
-                                           title="Teal"
-                                           class="color-teal"></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="products-size-wrapper">
-                                <h4>Size:</h4>
-                                <ul>
-                                    <li>
-                                        <a href="#">XS</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="#">S</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">M</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">XL</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">XXL</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="products-add-to-cart">
-                                <div class="input-counter">
-                                    <span class="minus-btn"><i class='bx bx-minus'></i></span>
-                                    <input type="text" value="1">
-                                    <span class="plus-btn"><i class='bx bx-plus'></i></span>
-                                </div>
-                                <button type="submit" class="default-btn">Add to Cart</button>
-                            </div>
-                            <a href="#" class="view-full-info">View Full Info</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End QuickView Modal Area -->
-    <!-- Start Shopping Cart Modal -->
-    <div class="modal right fade shoppingCartModal"
-         id="shoppingCartModal"
-         tabindex="-1"
-         role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <button type="button"
-                        class="close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                    <span aria-hidden="true"><i class='bx bx-x'></i></span>
-                </button>
-                <div class="modal-body">
-                    <h3>My Cart (3)</h3>
-                    <div class="products-cart-content">
-                        <div class="products-cart">
-                            <div class="products-image">
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img1.jpg' %}" alt="image">
-                                </a>
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="#">Long Sleeve Leopard T-Shirt</a>
-                                </h3>
-                                <span>Blue / XS</span>
-                                <div class="products-price">
-                                    <span>1</span>
-                                    <span>x</span>
-                                    <span class="price">$250.00</span>
-                                </div>
-                                <a href="#" class="remove-btn"><i class='bx bx-trash'></i></a>
-                            </div>
-                        </div>
-                        <div class="products-cart">
-                            <div class="products-image">
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img2.jpg' %}" alt="image">
-                                </a>
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="#">Causal V-Neck Soft Raglan</a>
-                                </h3>
-                                <span>Blue / XS</span>
-                                <div class="products-price">
-                                    <span>1</span>
-                                    <span>x</span>
-                                    <span class="price">$200.00</span>
-                                </div>
-                                <a href="#" class="remove-btn"><i class='bx bx-trash'></i></a>
-                            </div>
-                        </div>
-                        <div class="products-cart">
-                            <div class="products-image">
-                                <a href="#">
-                                    <img src="{% static 'shop/assets/img/products/img3.jpg' %}" alt="image">
-                                </a>
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="#">Hanes Men's Pullover</a>
-                                </h3>
-                                <span>Blue / XS</span>
-                                <div class="products-price">
-                                    <span>1</span>
-                                    <span>x</span>
-                                    <span class="price">$200.00</span>
-                                </div>
-                                <a href="#" class="remove-btn"><i class='bx bx-trash'></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="products-cart-subtotal">
-                        <span>Subtotal</span>
-                        <span class="subtotal">$524.00</span>
-                    </div>
-                    <div class="products-cart-btn">
-                        <a href="#" class="default-btn">Proceed to Checkout</a>
-                        <a href="#" class="optional-btn">View Shopping Cart</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Shopping Cart Modal -->
+    
     <div class="go-top">
         <i class='bx bx-up-arrow-alt'></i>
     </div>

@@ -33,7 +33,7 @@
                                 <a class="optional-btn"
                                    href="{% url 'custom_admin:members_update' member.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
                             {% endif %}
-                            {% if is_admin and not member.role_id == 1  %}
+                            {% if is_admin and not member.role_id == 1 %}
                                 <a class="default-btn"
                                    href="{% url 'custom_admin:members_delete' member.id %}"><i class="fa-solid fa-trash"></i></a>
                             {% endif %}
@@ -51,8 +51,10 @@
                            href="{% url 'custom_admin:members_show' user.id %}"><i class="fa-solid fa-circle-info"></i></a>
                         <a class="optional-btn"
                            href="{% url 'custom_admin:members_update' user.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <a class="default-btn"
-                           href="{% url 'custom_admin:members_delete' user.id %}"><i class="fa-solid fa-trash"></i></a>
+                        {% if not user == request.user %}
+                            <a class="default-btn"
+                        href="{% url 'custom_admin:members_delete' user.id %}"><i class="fa-solid fa-trash"></i></a>
+                        {% endif %}
                     </div>
                 </li>
             {% endif %}

@@ -5,16 +5,16 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from .decorators import admin_required, user_or_admin_required, admin_or_web_required, admin_or_stock_required
+from .decorators import admin_required, user_or_admin_required, admin_or_web_required, admin_or_stock_required, admin_or_stock_or_web_required
 from django.contrib.auth.decorators import login_required
 from backend_projet.context_processors import custom_context
 
-
+@login_required
 def admin_home(request):
     return render(request, 'admin/home.html')
 
 #SECTION - INFOS
-@admin_required
+@admin_or_web_required
 def infos_site(request):
 
     infos = InfosQDP.objects.first()
@@ -87,11 +87,19 @@ def contacts_delete(request, id):
     contact.delete()
     return redirect('custom_admin:contacts_all')
 
+@admin_required
+def contacts_mark_as_unread(request, id):
+    contact = Contacts.objects.get(id=id)
+    messages.success(request, f"Message marked as unread.")
+    contact.lu_par_admin = False
+    contact.save()
+    return redirect('custom_admin:contacts_all')
+
 #!SECTION
 
 
 #SECTION - Partenaires
-@admin_required
+@admin_or_web_required
 def partners_all(request):
 
     partners = Partenaires.objects.all()
@@ -99,7 +107,7 @@ def partners_all(request):
     context = locals()
     return render(request, 'admin/pages/partners/all.html', context)
 
-@admin_required
+@admin_or_web_required
 def partners_delete(request, id):
 
     partner = Partenaires.objects.get(id=id)
@@ -109,7 +117,7 @@ def partners_delete(request, id):
     context = locals()
     return redirect('custom_admin:partners_all')
 
-@admin_required
+@admin_or_web_required
 def partners_create(request):
 
     partners = Partenaires.objects.all()
@@ -125,7 +133,7 @@ def partners_create(request):
     context = locals()
     return render(request, 'admin/pages/partners/create.html', context)
 
-@admin_required
+@admin_or_web_required
 def partners_update(request, id):
 
     partner = Partenaires.objects.get(id=id)
@@ -172,15 +180,18 @@ def members_create(request):
     context = locals()
     return render(request, 'admin/pages/members/create.html', context)
 
-
+@admin_required
 def members_delete(request, id):
     member = User.objects.get(id=id)
     
-    if not member.role_id == 1:
+    if not request.user.role_id == 1:
+        messages.error(request, "Cannot delete someone else.")
+    elif request.user != member:
         member.delete()
         messages.success(request, f"Member {member.username} successfully deleted.")
     else:
         messages.error(request, "Cannot delete an administrator.")
+
     
     return redirect('custom_admin:members_all')
 
@@ -223,7 +234,7 @@ def members_show(request, id):
 
 #SECTION - PRODUITS
 # Produits
-@admin_or_stock_required
+@admin_or_stock_or_web_required
 def products_all(request):
 
     products = Produits.objects.prefetch_related('productvariant_set__variant').all()
@@ -231,7 +242,7 @@ def products_all(request):
     context = locals()
     return render(request, 'admin/pages/products/all.html', context)
 
-@admin_required
+@admin_or_web_required
 def products_create(request):
 
     products = Produits.objects.all()
@@ -291,7 +302,7 @@ def products_create(request):
     return render(request, 'admin/pages/products/create.html', context)
 
 
-@admin_required
+@admin_or_web_required
 def products_delete(request, id):
     product = Produits.objects.get(id=id)
     messages.success(request, f"Product {product.nom} successfully deleted.")
@@ -299,7 +310,7 @@ def products_delete(request, id):
     
     return redirect('custom_admin:products_all')
 
-@admin_or_stock_required
+@admin_or_stock_or_web_required
 def products_update(request, id):
 
     product = Produits.objects.get(id=id)
@@ -307,19 +318,25 @@ def products_update(request, id):
 
     
     if request.method == 'POST':
-        form = ProduitsForm(request.POST, request.FILES, instance=product)
+        if request.user.role_id == 1 or request.user.role_id == 3:
+            form = ProduitsForm(request.POST, request.FILES, instance=product)
         variant_forms = []
         qte_forms = []  # Nouvelle liste pour les formulaires de quantité
         for variant in variants:
             prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
             variant_form = VariantForm(request.POST, instance=variant, prefix=prefix)
             product_variant = ProductVariant.objects.get(product=product, variant=variant)
-            qte_form = ProductVariantForm(request.POST, instance=product_variant, prefix=prefix)
+            if request.user.role_id == 1 or request.user.role_id == 3:
+                qte_form = ProductVariantForm(request.POST, instance=product_variant, prefix=prefix)
+            else:
+                qte_form = StockForm(request.POST, instance=product_variant, prefix=prefix)
             variant_forms.append(variant_form)
             qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
 
-        if form.is_valid() and all([vf.is_valid() for vf in variant_forms]) and all([qf.is_valid() for qf in qte_forms]):
-            form.save()
+        if request.user.role_id == 1:
+            if form.is_valid():
+                form.save()
+        if all([vf.is_valid() for vf in variant_forms]) and all([qf.is_valid() for qf in qte_forms]):
             for variant_form in variant_forms:
                 variant_form.save()
             for qte_form in qte_forms:
@@ -327,14 +344,18 @@ def products_update(request, id):
             messages.success(request, f"Product {product.nom} successfully updated.")
             return redirect('custom_admin:products_all')
     else:
-        form = ProduitsForm(instance=product)
+        if request.user.role_id == 1 or request.user.role_id == 3:
+            form = ProduitsForm(instance=product)
         variant_forms = []
         qte_forms = []  # Nouvelle liste pour les formulaires de quantité
         for variant in variants:
             prefix = f"variant_{variant.id}"  # Préfixe commun pour les deux types de formulaires
             variant_form = VariantForm(instance=variant, prefix=prefix)
             product_variant = ProductVariant.objects.get(product=product, variant=variant)
-            qte_form = ProductVariantForm(instance=product_variant, prefix=prefix)
+            if request.user.role_id == 1 or request.user.role_id == 3:
+                qte_form = ProductVariantForm(instance=product_variant, prefix=prefix)
+            else:
+                qte_form = StockForm(instance=product_variant, prefix=prefix)
             variant_forms.append(variant_form)
             qte_forms.append(qte_form)  # Ajouter le formulaire de quantité à la liste qte_forms
         
@@ -342,7 +363,7 @@ def products_update(request, id):
     context = locals()
     return render(request, 'admin/pages/products/update.html', context)
 
-@admin_or_stock_required
+@admin_or_stock_or_web_required
 def products_show(request, id):
 
     product = Produits.objects.get(id=id)
@@ -355,7 +376,7 @@ def products_show(request, id):
 
 # SECTION - PROMOS
 # Promotions
-@admin_required
+@admin_or_web_required
 def promos_all(request):
 
     promos = Promotions.objects.all()
@@ -366,7 +387,7 @@ def promos_all(request):
     context = locals()
     return render(request, 'admin/pages/promos/all.html', context)
 
-@admin_required
+@admin_or_web_required
 def promos_create(request):
 
 
@@ -384,7 +405,7 @@ def promos_create(request):
     return render(request, 'admin/pages/promos/create.html', context)
 
 
-@admin_required
+@admin_or_web_required
 def promos_delete(request, id):
     promo = Promotions.objects.get(id=id)
     messages.success(request, f"Promotion {promo.nom} successfully deleted.")
@@ -392,7 +413,7 @@ def promos_delete(request, id):
     
     return redirect('custom_admin:promos_all')
 
-@admin_required
+@admin_or_web_required
 def promos_update(request, id):
 
     promo = Promotions.objects.get(id=id)
@@ -411,7 +432,7 @@ def promos_update(request, id):
     context = locals()
     return render(request, 'admin/pages/promos/update.html', context)
 
-@admin_required
+@admin_or_web_required
 def promos_show(request, id):
 
     promo = Promotions.objects.get(id=id)
@@ -421,7 +442,7 @@ def promos_show(request, id):
     context = locals()
     return render(request, 'admin/pages/promos/show.html', context)
 
-@admin_required
+@admin_or_web_required
 def extra_promo(request):
 
     extra_promo = ExtraPromo.objects.first()
@@ -441,7 +462,7 @@ def extra_promo(request):
 
 
 # SECTION - CATEGORIES
-@admin_required
+@admin_or_web_required
 def categories_all(request):
 
     categories = Categorie.objects.all()
@@ -449,7 +470,7 @@ def categories_all(request):
     context = locals()
     return render(request, 'admin/pages/categories/all.html', context)
 
-@admin_required
+@admin_or_web_required
 def categories_create(request):
 
 
@@ -466,7 +487,7 @@ def categories_create(request):
     context = locals()
     return render(request, 'admin/pages/categories/create.html', context)
 
-@admin_required
+@admin_or_web_required
 def categories_delete(request, id):
     categorie = Categorie.objects.get(id=id)
     messages.success(request, f"Promotion {categorie.nom} successfully deleted.")
@@ -474,7 +495,7 @@ def categories_delete(request, id):
     
     return redirect('custom_admin:categories_all')
 
-@admin_required
+@admin_or_web_required
 def categories_update(request, id):
 
     categorie = Categorie.objects.get(id=id)
@@ -493,7 +514,7 @@ def categories_update(request, id):
     context = locals()
     return render(request, 'admin/pages/categories/update.html', context)
 
-@admin_required
+@admin_or_web_required
 def categories_show(request, id):
 
     categorie = Categorie.objects.get(id=id)
@@ -520,6 +541,8 @@ def orders_all(request):
     nb_unread = unreads.count()
     
     commandes = Commandes.objects.all().order_by('statut_commande')
+    cmd_confirmed = Commandes.objects.filter(statut_commande=1)
+
 
     prod_commandes = ProduitsCommandes.objects.all()
 
@@ -564,21 +587,53 @@ def orders_confirm(request, id):
 @admin_or_web_required
 def blogs_all(request):
     
-    blogs = BlogPost.objects.all()
+    blogs = BlogPost.objects.all().order_by('-date_post')
+
+    confirm_param = request.GET.get('confirmed')
+
+    filter_by_name = request.GET.get('filter_by_name')
+
+    blogs_confirmed = blogs.filter(is_confirmed=1)
+
+    if filter_by_name:
+        blogs = blogs.filter(titre__icontains=filter_by_name)
+        filtered_blogs = blogs
+    else:
+        filtered_blogs = blogs
+
+    if confirm_param == None:
+        confirm_param = 0
+    else:
+        confirm_param = int(confirm_param)
+
+    if confirm_param != 0 and confirm_param != 1 and confirm_param != 2:
+        messages.error(request, "Bad request")
+        return redirect('custom_admin:blogs_all')
     
     context = locals()
     return render(request, 'admin/pages/blogs/all.html', context)
 
 
-@admin_or_web_required
+@login_required
 def blogs_create(request):
 
     if request.method == 'POST':
         form = BlogPostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, f"Blog successfully created.")
-            return redirect('custom_admin:blogs_all')
+            blog = form.save(commit=False)
+            if request.user.role_id == 1 or request.user.role_id == 3:
+                blog.is_confirmed = True
+                blog.user_auteur = request.user
+                blog.save()
+                messages.success(request, f"Blog successfully created.")
+                return redirect('custom_admin:blogs_all')
+            else:
+                blog.is_confirmed = False
+                blog.user_auteur = request.user
+                blog.save()
+                messages.success(request, f"Blog successfully created and is now pending confirmation from admins.")
+                return redirect('home')
+            
     else:
         form = BlogPostForm()
     
@@ -590,7 +645,7 @@ def blogs_create(request):
 @admin_or_web_required
 def blogs_delete(request, id):
     blog = BlogPost.objects.get(id=id)
-    messages.success(request, f"Blog {blog.nom} successfully deleted.")
+    messages.success(request, f"Blog {blog.titre} successfully deleted.")
     blog.delete()
     
     return redirect('custom_admin:blogs_all')
@@ -620,15 +675,34 @@ def blogs_update(request, id):
 def blogs_show(request, id):
 
     blog = BlogPost.objects.get(id=id)
+    tags = Tags.objects.filter(blogpost=blog)
+    commentaires = Commentaires.objects.filter(blogpost=blog).order_by('-date')
+    nb_commentaires = commentaires.count()
 
     context = locals()
     return render(request, 'admin/pages/blogs/show.html', context)
+
+@admin_or_web_required
+def blogs_confirm(request, id):
+    
+    blog = BlogPost.objects.get(id=id)
+
+    if blog.is_confirmed == 0:
+        blog.is_confirmed = True
+        messages.success(request, f"The blog '{blog.titre}' is confirmed and is now published")
+    else:
+        blog.is_confirmed = False
+        messages.success(request, f"The blog '{blog.titre}' is now unpublished")
+    blog.save()
+
+    
+    return redirect('custom_admin:blogs_all')
 #!SECTION
 
 
 
 # SECTION - Blogs categories
-@admin_required
+@admin_or_web_required
 def blogs_cat_all(request):
     
     blogs_categories = CategoriesBlog.objects.all()
@@ -636,7 +710,7 @@ def blogs_cat_all(request):
     context = locals()
     return render(request, 'admin/pages/categories_blog/all.html', context)
 
-@admin_required
+@admin_or_web_required
 def blogs_cat_create(request):
 
     if request.method == 'POST':
@@ -653,7 +727,7 @@ def blogs_cat_create(request):
     return render(request, 'admin/pages/categories_blog/create.html', context)
 
 
-@admin_required
+@admin_or_web_required
 def blogs_cat_delete(request, id):
     cat = CategoriesBlog.objects.get(id=id)
 
@@ -662,11 +736,10 @@ def blogs_cat_delete(request, id):
     
     return redirect('custom_admin:blogs_cat_all')
 
-@admin_required
+@admin_or_web_required
 def blogs_cat_update(request, id):
 
-    cat = CategoriesBlogForm.objects.get(id=id)
-
+    cat = CategoriesBlog.objects.get(id=id)
 
     if request.method == 'POST':
         form = CategoriesBlogForm(request.POST, instance=cat)
@@ -681,7 +754,7 @@ def blogs_cat_update(request, id):
     context = locals()
     return render(request, 'admin/pages/categories_blog/update.html', context)
 
-@admin_required
+@admin_or_web_required
 def blogs_cat_show(request, id):
 
     cat = CategoriesBlog.objects.get(id=id)
@@ -692,7 +765,7 @@ def blogs_cat_show(request, id):
 
 
 # SECTION - Tags blogs
-@admin_required
+@admin_or_web_required
 def tags_all(request):
     
     tags = Tags.objects.all()
@@ -700,7 +773,7 @@ def tags_all(request):
     context = locals()
     return render(request, 'admin/pages/tags/all.html', context)
 
-@admin_required
+@admin_or_web_required
 def tags_create(request):
 
     if request.method == 'POST':
@@ -717,7 +790,7 @@ def tags_create(request):
     return render(request, 'admin/pages/tags/create.html', context)
 
 
-@admin_required
+@admin_or_web_required
 def tags_delete(request, id):
 
     tag = Tags.objects.get(id=id)
@@ -727,7 +800,7 @@ def tags_delete(request, id):
     
     return redirect('custom_admin:blogs_cat_all')
 
-@admin_required
+@admin_or_web_required
 def tags_update(request, id):
 
     tag = Tags.objects.get(id=id)
@@ -746,7 +819,7 @@ def tags_update(request, id):
     context = locals()
     return render(request, 'admin/pages/tags/update.html', context)
 
-@admin_required
+@admin_or_web_required
 def tags_show(request, id):
 
     tag = Tags.objects.get(id=id)

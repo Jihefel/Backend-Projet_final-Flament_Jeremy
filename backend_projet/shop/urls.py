@@ -14,7 +14,6 @@ urlpatterns = [
     path('edit-account/', views.edit_account, name='edit_account'),
     path('subscribe_newsletter/', views.direct_newsletter_subscription, name='direct_newsletter_subscription'),
     path('change_password/', views.change_password, name='change_password'),
-    path('reset_password/', views.customPasswordReset, name='reset_password'),
     path('my_orders/', views.my_orders, name='my_orders'),
     path('products/', views.all_products, name='all_products'),
     path('products/<int:id>', views.product, name='product'),
@@ -28,4 +27,9 @@ urlpatterns = [
     path('delete_from_cart/<int:id>', views.delete_from_cart, name='delete_from_cart'),
     path('update_cart/', views.update_cart, name='update_cart'),
     path('remove_code/', views.remove_promo_code, name='remove_code'),
+    # Password reset
+    path('password_reset/', views.CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', views.CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password_reset_confirm/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', views.CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]

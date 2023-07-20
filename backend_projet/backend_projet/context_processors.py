@@ -1,4 +1,6 @@
 from shop.models import *
+from django.db.models import Count
+
 
 def custom_context(request):
     role_id_admin = 1
@@ -36,6 +38,16 @@ def custom_context(request):
     products_sorted = Produits.objects.order_by('-date_ajout_produit_db')
     recent_products_sidebar = products_sorted[:4]
     recent_products = products_sorted[:6]
+    products_with_comment_count = Produits.objects.annotate(num_comments=Count('commentaire'))
+    most_popular_products = products_with_comment_count.order_by('-num_comments')[:6]
+
+    # Blogs
+    # Annoter les blogs avec le nombre de commentaires
+    # Récupérer les blogs avec le nombre de commentaires
+    blogs_with_comment_count = BlogPost.objects.annotate(num_comments=Count('commentaires_lies'))
+
+    # Trier les blogs par nombre de commentaires en ordre décroissant
+    most_popular_blogs = blogs_with_comment_count.order_by('-num_comments')[:3]
 
 
     # Back
@@ -44,9 +56,12 @@ def custom_context(request):
     nb_unread = unreads.count()
     
     commandes = Commandes.objects.all()
-    unconfirmed = Commandes.objects.filter(statut_commande=0)
-    nb_unconfirmed = unconfirmed.count()
+    cmd_unconfirmed = Commandes.objects.filter(statut_commande=0)
+    nb_cmd_unconfirmed = cmd_unconfirmed.count()
 
+    blogs = BlogPost.objects.all()
+    blogs_unconfirmed = BlogPost.objects.filter(is_confirmed=0)
+    nb_blogs_unconfirmed = blogs_unconfirmed.count()
 
     context = {
         'is_admin': is_admin,
@@ -66,8 +81,12 @@ def custom_context(request):
         'unreads': unreads,
         'nb_unread': nb_unread,
         'commandes': commandes,
-        'unconfirmed': unconfirmed,
-        'nb_unconfirmed': nb_unconfirmed
+        'cmd_unconfirmed': cmd_unconfirmed,
+        'nb_cmd_unconfirmed': nb_cmd_unconfirmed,
+        'blogs_unconfirmed': blogs_unconfirmed,
+        'nb_blogs_unconfirmed': nb_blogs_unconfirmed,
+        'most_popular_blogs': most_popular_blogs,
+        'most_popular_products': most_popular_products,
     }
 
     return context

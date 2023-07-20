@@ -243,6 +243,7 @@ class BlogPost(models.Model):
     image_illustration = models.ImageField(upload_to='blogposts/')
     date_post = models.DateField(auto_now_add=True)
     date_modification = models.DateField(auto_now=True)
+    is_confirmed = models.BooleanField(default=True)
     commentaires_lies = models.ManyToManyField(Commentaires, blank=True)
     user_auteur = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):

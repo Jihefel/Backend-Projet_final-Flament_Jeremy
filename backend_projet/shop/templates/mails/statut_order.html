@@ -1,97 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet"
-              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-        <title>Order confirmation</title>
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <div class="card mt-4">
-                        <div class="card-body">
-                            <h2 class="card-title">Order confirmation</h2>
-                            <p>Here are the details of your order :</p>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Product</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Unit Price</th>
-                                        <th scope="col">Quantity</th>
-                                        <th scope="col">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for product in all_products_in_cart %}
-                                        {% with product.produit_inclus.product as produit %}
-                                            <tr>
-                                                <td class="product-thumbnail w-25">
-                                                        <img src="{% if 'https' in produit.image_1.url %}{{ produit.image_1 }}{% else %}{{ produit.image_1.url }}{% endif %}"
-                                                             alt="item"
-                                                             class="img-fluid img-thumbnail w-25">
-                                                </td>
-                                                <td class="product-name">
-                                                    <span class="fw-bold">{{ produit.nom }}</span>
-                                                    <ul class="list-unstyled">
-                                                        <li>
-                                                            <small>Type: <span>{{ produit.type }}</span></small>
-                                                        </li>
-                                                        <li>
-                                                            <small>Size: <span>{{ product.produit_inclus.variant.contenu }}</span></small>
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                                <td class="product-price">
-                                                    <span class="unit-amount">{{ product.prix_unitaire|floatformat:2 }}€</span>
-                                                </td>
-                                                <td class="product-quantity">
-                                                    <span>{{ product.quantite_ajoutee }}</span>
-                                                </td>
-                                                <td class="product-subtotal">
-                                                    <span class="subtotal-amount">{{ product.total_individuel|floatformat:2 }}€</span>
-                                                </td>
-                                            </tr>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <div class="cart-totals">
-                                <h3>Cart Totals</h3>
-                                <ul>
-                                    <li>
-                                        Subtotal <span>{{ total_panier|floatformat:2 }} €</span>
-                                    </li>
-                                    <li>
-                                        Shipping <span>{{ shipping_fee|floatformat:2 }} €</span>
-                                    </li>
-                                    {% if user.promo_code_used %}
-                                        <li>
-                                            Promo code <span>{{ promo_code_name }} (+{{ promo_code_percentage }}%)</span>
-                                        </li>
-                                    {% endif %}
-                                    <li>
-                                        Total <span class="fw-bold">{{ total_final|floatformat:2 }} €</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <p>Your order is pending sending confirmation! We will send you an email when your order is sent !</p>
-                            <p>Thanks again for your order !</p>
-                            <p>QDP Team</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-                integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-                crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
-                integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
-                crossorigin="anonymous"></script>
-    </body>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <p>Hello {{ nom }},</p>
+    <p>Your order with reference number {{ commande.id }} has been confirmed and is ready to be shipped.</p>
+    <p>Here are the details of your order:</p>
+    <ul>
+        {% for prod_commande in prod_commandes %}
+            <li>{{ prod_commande.product_variant.product.nom }} - {{ prod_commande.quantite }} units</li>
+        {% endfor %}
+    </ul>
+    <h4>Total : {{ commande.prix_total }}</h4>
+    <p>If you have any questions or need further assistance, feel free to contact us.</p>
+    <p>Thank you for shopping with us!</p>
+    <p>Best regards,</p>
+    <p>The QDP Team</p>
+</body>
 </html>
+

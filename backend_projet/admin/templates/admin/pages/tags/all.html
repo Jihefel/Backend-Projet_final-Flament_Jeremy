@@ -1,0 +1,20 @@
+{% extends "base_admin.html" %}
+{% block admincontent %}
+    <div class="col-lg-9 px-5">
+        <ul class="list-group">
+            {% for tag in tags %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">{{ tag.nom }}</div>
+                    </div>
+                    <div class="input-group justify-content-end w-50">
+                        <a class="optional-btn"
+                           href="{% url 'custom_admin:tags_update' tag.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a class="default-btn"
+                           href="{% url 'custom_admin:tags_delete' tag.id %}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock admincontent %}

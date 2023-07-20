@@ -1,14 +1,91 @@
 {% extends "base_admin.html" %}
 {% block admincontent %}
     <div class="col-lg-9 px-5">
-        <ul class="list-group list-group-horizontal mb-4">
-            <li class="list-group-item list-group-item-danger">
-                <small>Unread</small>
+        <ul class="nav nav-pills mb-4">
+            <li class="nav-item">
+                <a class="list-group-item list-group-item-danger rounded {% if confirm_param == 0 %}border-danger shadow{% endif %}"
+                   aria-current="page"
+                   href="{% url 'custom_admin:blogs_all' %}?confirmed=0">Pending</a>
+            </li>
+            <li class="nav-item">
+                <a class="list-group-item list-group-item-success rounded {% if confirm_param == 1 %}border-success shadow{% endif %}"
+                   aria-current="page"
+                   href="{% url 'custom_admin:blogs_all' %}?confirmed=1">Confirmed</a>
+            </li>
+            <li class="nav-item">
+                <a class="list-group-item rounded {% if confirm_param == 2 %}border-dark shadow{% endif %}"
+                   href="{% url 'custom_admin:blogs_all' %}?confirmed=2">All</a>
             </li>
         </ul>
-        <div class="list-group">
-            {% for contact in contacts %}
-            {% endfor %}
-        </div>
+        <ul class="list-group">
+            {% if confirm_param == 0 %}
+                {% for blog in blogs_unconfirmed %}
+                    <div class="d-flex">
+                        <a href="{% url 'custom_admin:blogs_show' blog.id %}"
+                           class="list-group-item list-group-item-action list-group-item-danger">
+                            <small class="text-secondary">{{ blog.date_post }}</small>
+                            <div class="fw-bold {% if blog.user_auteur.role_id == 1 %}text-danger{% elif blog.user_auteur.role_id == 3 %}text-info {% elif blog.user_auteur.role_id == 4 %}text-secondary{% endif %}">
+                                <i class="fa-solid fa-user fa-sm me-2"></i>
+                                {{ blog.user_auteur }}
+                            </div>
+                            {{ blog.titre }}
+                        </a>
+                        <a href="{% url 'custom_admin:blogs_confirm' blog.id %}"
+                           class="default-btn d-flex align-items-center bg-success"><i class="fa-solid fa-check"></i></a>
+                        <a href="{% url 'custom_admin:blogs_delete' blog.id %}"
+                           class="default-btn d-flex align-items-center"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                {% empty %}
+                    <p>No blog to confirm</p>
+                {% endfor %}
+            {% elif confirm_param == 1 %}
+                {% for blog in blogs_confirmed %}
+                    <div class="d-flex">
+                        <a href="{% url 'custom_admin:blogs_show' blog.id %}"
+                           class="list-group-item list-group-item-action list-group-item-success">
+                            <small class="text-secondary">{{ blog.date_post }}</small>
+                            <div class="fw-bold {% if blog.user_auteur.role_id == 1 %}text-danger{% elif blog.user_auteur.role_id == 3 %}text-info {% elif blog.user_auteur.role_id == 4 %}text-secondary{% endif %}">
+                                <i class="fa-solid fa-user fa-sm me-2"></i>
+                                {{ blog.user_auteur }}
+                            </div>
+                            {{ blog.titre }}
+                        </a>
+                        <a href="{% url 'custom_admin:blogs_confirm' blog.id %}"
+                           class="optional-btn d-flex align-items-center bg-warning"><i class="fa-solid fa-eye-slash"></i></a>
+                        <a href="{% url 'custom_admin:blogs_delete' blog.id %}"
+                           class="default-btn d-flex align-items-center"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                {% empty %}
+                    <p>No blog is confirmed</p>
+                {% endfor %}
+            {% elif confirm_param == 2 %}
+                <form action="{% url 'custom_admin:blogs_all' %}" method="get">
+                    <div class="input-group w-25 mb-3">
+                        <input type="text" placeholder="Search a blog post" name="filter_by_name" {% if filter_by_name %}value={{ filter_by_name }}{% endif %} class="search-field form-control" autocomplete="off">
+                        <input type="hidden" name="confirmed" value="2">
+                        <button type="submit" class="default-btn">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+                <div class="list-group">
+                    {% for blog in blogs %}
+                        <div class="d-flex">
+                            <a href="{% url 'custom_admin:blogs_show' blog.id %}"
+                               class="list-group-item list-group-item-action">
+                                <small class="text-secondary">{{ blog.date_post }}</small>
+                                <div class="fw-bold {% if blog.user_auteur.role_id == 1 %}text-danger{% elif blog.user_auteur.role_id == 3 %}text-info {% elif blog.user_auteur.role_id == 4 %}text-secondary{% endif %}">
+                                    <i class="fa-solid fa-user fa-sm me-2"></i>
+                                    {{ blog.user_auteur }}
+                                </div>
+                                {{ blog.titre }}
+                            </a>
+                            <a href="{% url 'custom_admin:blogs_delete' blog.id %}"
+                               class="default-btn d-flex align-items-center"><i class="fa-solid fa-trash"></i></a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </ul>
     </div>
 {% endblock admincontent %}

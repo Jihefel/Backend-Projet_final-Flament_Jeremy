@@ -13,11 +13,6 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ['username', 'password1', 'password2', 'email', 'first_name', 'last_name']
 
-class CustomResetPasswordForm(forms.Form):
-    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='New password')
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm new password')
-
 class BootstrapUserCreationForm(RegistrationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,7 +70,6 @@ class UserCreationForm(forms.ModelForm):
         }
 
 class UserUpdateForm(forms.ModelForm):
-
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'image_banniere_profil', 'avatar', 'metiers_hobbies', 'bio', 'abonne_newsletter']
@@ -89,7 +83,6 @@ class UserUpdateForm(forms.ModelForm):
             'metiers_hobbies': forms.TextInput(attrs={'class': 'form-control'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'abonne_newsletter': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-
         }
 
 class UserRoleUpdateForm(forms.ModelForm):
@@ -145,6 +138,12 @@ class ProductVariantForm(forms.ModelForm):
             'prix': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
+class StockForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields = ['quantite_stock']
+
+
 class ProduitsForm(forms.ModelForm):
     class Meta:
         model = Produits
@@ -173,6 +172,7 @@ class VariantForm(forms.ModelForm):
         widgets = {
             'contenu': forms.Select(attrs={'class': 'col-form-label border-0'})
         } 
+
 
 class PriceFilterForm(forms.Form):
     filter_by_price = forms.IntegerField(

@@ -11,6 +11,7 @@ urlpatterns = [
     path('contacts/', views.contacts_all, name='contacts_all'),
     path('contacts/reply/<int:id>', views.contacts_reply, name='reply_msg'),
     path('contacts/delete/<int:id>', views.contacts_delete, name='contacts_delete'),
+    path('contacts/mark_as_unread/<int:id>', views.contacts_mark_as_unread, name='contacts_mark_as_unread'),
     # Partners
     path('partners/', views.partners_all, name='partners_all'),
     path('partners/create', views.partners_create, name='partners_create'),
@@ -48,9 +49,10 @@ urlpatterns = [
     # Blogs
     path('blogs/', views.blogs_all, name='blogs_all'),
     path('blogs/create', views.blogs_create, name='blogs_create'),
-    # path('blogs/show/<int:id>', views.blogs_show, name='blogs_show'),
+    path('blogs/show/<int:id>', views.blogs_show, name='blogs_show'),
     path('blogs/update/<int:id>', views.blogs_update, name='blogs_update'),
     path('blogs/delete/<int:id>', views.blogs_delete, name='blogs_delete'),
+    path('blogs/confirm/<int:id>', views.blogs_confirm, name='blogs_confirm'),
     # Blogs categories
     path('blogs_cat/', views.blogs_cat_all, name='blogs_cat_all'),
     path('blogs_cat/create', views.blogs_cat_create, name='blogs_cat_create'),

@@ -1,90 +1,123 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block head %}
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Links of CSS files -->
-    <link rel="stylesheet" href="{% static 'shop/assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/animate.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/boxicons.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/animate.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/boxicons.min.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/flaticon.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/magnific-popup.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/nice-select.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/magnific-popup.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/nice-select.min.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/slick.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/meanmenu.min.css' %}">
-    <link rel="stylesheet" href="{% static 'shop/assets/css/rangeSlider.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/meanmenu.min.css' %}">
+    <link rel="stylesheet"
+          href="{% static 'shop/assets/css/rangeSlider.min.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/dark.css' %}">
     <link rel="stylesheet" href="{% static 'shop/assets/css/responsive.css' %}">
-
     <title>QDP - Que d'la poudre</title>
-
-    <link rel="icon" type="image/png" href="{% static 'shop/assets/img/favicon.png' %}">
-
+    <link rel="icon"
+          type="image/png"
+          href="{% static 'shop/assets/img/favicon.png' %}">
     {% load bootstrap5 %}
 {% endblock head %}
-
-    {% block content %}
-
-        <!-- Start Page Title -->
-        <div class="page-title-area">
-            <div class="container">
-                <div class="page-title-content">
-                    <h2>{{ product.nom }}</h2>
-                    <ul>
-                        <li><a href="{% url 'home' %}">Home</a></li>
-                        <li><a href="{% url 'all_products' %}">Products</a></li>
-                        <li>Products Details</li>
-                    </ul>
-                </div>
+{% block content %}
+    <!-- Start Page Title -->
+    <div class="page-title-area">
+        <div class="container">
+            <div class="page-title-content">
+                <h2>{{ product.nom }}</h2>
+                <ul>
+                    <li>
+                        <a href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'all_products' %}">Products</a>
+                    </li>
+                    <li>Products Details</li>
+                </ul>
             </div>
         </div>
-        <!-- End Page Title -->
-
-        <!-- Start Product Details Area -->
-        <section class="product-details-area pt-100 pb-70">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-5 col-md-12">
-                        <div class="products-details-image">
-                            <ul class="products-details-image-slides">
-                                <li><img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}" alt="image"></li>
-                                <li><img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}" alt="image"></li>
-                                <li><img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}" alt="image"></li>
-                                <li><img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}" alt="image"></li>
-                                <li><img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}" alt="image"></li>
+    </div>
+    <!-- End Page Title -->
+    <!-- Start Product Details Area -->
+    <section class="product-details-area pt-100 pb-70">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-md-12">
+                    <div class="products-details-image">
+                        <ul class="products-details-image-slides">
+                            <li>
+                                <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}"
+                                     alt="image">
+                            </li>
+                            <li>
+                                <img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}"
+                                     alt="image">
+                            </li>
+                            <li>
+                                <img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}"
+                                     alt="image">
+                            </li>
+                            <li>
+                                <img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}"
+                                     alt="image">
+                            </li>
+                            <li>
+                                <img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}"
+                                     alt="image">
+                            </li>
+                        </ul>
+                        <div class="slick-thumbs">
+                            <ul>
+                                <li>
+                                    <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}"
+                                         alt="image">
+                                </li>
+                                <li>
+                                    <img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}"
+                                         alt="image">
+                                </li>
+                                <li>
+                                    <img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}"
+                                         alt="image">
+                                </li>
+                                <li>
+                                    <img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}"
+                                         alt="image">
+                                </li>
+                                <li>
+                                    <img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}"
+                                         alt="image">
+                                </li>
                             </ul>
-
-                            <div class="slick-thumbs">
-                                <ul>
-                                    <li><img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}" alt="image"></li>
-                                    <li><img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}" alt="image"></li>
-                                    <li><img src="{% if 'https' in product.image_3.url %}{{ product.image_3 }}{% else %}{{ product.image_3.url }}{% endif %}" alt="image"></li>
-                                    <li><img src="{% if 'https' in product.image_4.url %}{{ product.image_4 }}{% else %}{{ product.image_4.url }}{% endif %}" alt="image"></li>
-                                    <li><img src="{% if 'https' in product.image_5.url %}{{ product.image_5 }}{% else %}{{ product.image_5.url }}{% endif %}" alt="image"></li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
-
-                    <div class="col-lg-7 col-md-12">
-                        <div class="products-details-desc">
-                            <h3>{{ product.nom }}</h3>
-
-                            <div class="price">
-                                {% if product.promo %}
+                </div>
+                <div class="col-lg-7 col-md-12">
+                    <div class="products-details-desc">
+                        <h3>{{ product.nom }}</h3>
+                        <div class="price">
+                            {% if product.promo %}
                                 <span class="new-price">{{ product.product_variant.prix_promo|floatformat:2 }}€</span>
                                 <span class="old-price">{{ product.product_variant.prix }}€</span>
                             {% else %}
                                 <span class="new-price">{{ product.product_variant.prix }}€</span>
                             {% endif %}
-                            </div>
-
-                            {% comment %} <div class="products-review">
+                        </div>
+                        {% comment %} <div class="products-review">
                                 <div class="rating">
                                     <i class="bx bx-star"></i>
                                     <i class="bx bx-star"></i>
@@ -93,515 +126,388 @@
                                     <i class="bx bx-star"></i>
                                 </div>
                                 <a href="#" class="rating-count">3 reviews</a>
-                            </div> {% endcomment %}
-
-                            <ul class="products-info">
-                                <li><span>Availability:</span> <a>{% if product.product_variant.quantite_stock != 0 %}
-                                    In stock ({{ product.product_variant.quantite_stock }} items)
-                                {% else %}
-                                    <span class="text-danger">Sold out</span>
-                                {% endif %}</a></li>
+                        </div> {% endcomment %}
+                        <ul class="products-info">
+                            <li>
+                                <span>Availability:</span> <a>
+                                    {% if product.product_variant.quantite_stock != 0 %}
+                                        In stock ({{ product.product_variant.quantite_stock }} items)
+                                    {% else %}
+                                        <span class="text-danger">Sold out</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li>
+                                <span>Product Category:</span> <a href="{% url 'all_products' %}?category={{ product.categorie.id }}">{{ product.categorie }}</a>
+                            </li>
+                            <li>
+                                <span>Product Type:</span> <a href="{% url 'all_products' %}?type={{ product.type }}">{{ product.type }}</a>
+                            </li>
+                        </ul>
+                        <div class="products-size-wrapper">
+                            <span>Size:</span>
+                            {% for variant_with_stock in variants_with_stock %}
+                                {% with variant_with_stock.variant as var %}
+                                    <a {% if variant_with_stock.has_stock %}href="?variant={{ var.id }}"{% endif %}>
+                                        <button class="{% if not variant_with_stock.has_stock %}btn btn-disabled{% else %}{% if var.id == variant_param %}default-btn{% else %}optional-btn{% endif %}{% endif %}"
+                                                {% if not variant_with_stock.has_stock %}disabled{% endif %}>
+                                            {{ var }}
+                                        </button>
+                                    </a>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                        <div class="products-info-btn">
+                            <a href="{% url 'contact' %}"><i class="bx bx-envelope"></i> Ask about this products</a>
+                        </div>
+                        <form class="products-add-to-cart"
+                              action="{% url 'add_to_cart' product.product_variant.id %}?quantity={{ quantity }}"
+                              method="get">
+                            {% csrf_token %}
+                            <div class="input-counter">
+                                <span class="minus-btn"><i class='bx bx-minus'></i></span>
+                                <input readonly
+                                       type="text"
+                                       name="quantity"
+                                       value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                       min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                       max="{{ product.product_variant.quantite_stock }}"
+                                       {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
+                                <span class="plus-btn"><i class='bx bx-plus'></i></span>
+                            </div>
+                            {% if product.product_variant.quantite_stock != 0 %}
+                                <button type="submit" class="default-btn">Add To Cart</button>
+                            {% else %}
+                                <button type="button" class="optional-btn" disabled>SOLD OUT</button>
+                            {% endif %}
+                        </form>
+                        <div class="wishlist-compare-btn">
+                        <a href="{% url 'wishlist' product.id %}"
+                           class="{% if wp %}default-btn{% else %}optional-btn{% endif %}"><i class="bx bx{% if user.is_authenticated and product in wishlist_products %}s{% endif %}-heart"></i>
+                        {% if wp %}
+                            Remove from Wishlist
+                        {% else %}
+                            Add to Wishlist
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="buy-checkbox-btn">
+                    <div class="item">
+                        <a {% if product.product_variant.quantite_stock == 0 %}{% else %}href="{% url 'add_to_cart' product.product_variant.id %}?quantity=1"{% endif %}
+                           class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}">
+                            {% if product.product_variant.quantite_stock == 0 %}
+                                Sold Out!
+                            {% else %}
+                                Buy it now!
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab products-details-tab">
+        <ul class="tabs">
+            <li>
+                <a href="#">
+                    <div class="dot"></div>
+                    Description
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <div class="dot"></div>
+                    Comments
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tabs-item">
+                <div class="products-details-tab-content">
+                    <p>{{ product.description }}</p>
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne"
+                                        aria-expanded="false"
+                                        aria-controls="collapseOne">Ingredients</button>
+                            </h2>
+                            <div id="collapseOne"
+                                 class="accordion-collapse collapse"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">{{ product.ingredients }}</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo"
+                                        aria-expanded="false"
+                                        aria-controls="collapseTwo">Macronutrients</button>
+                            </h2>
+                            <div id="collapseTwo"
+                                 class="accordion-collapse collapse"
+                                 data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">{{ product.macronutriments }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabs-item">
+                <div class="products-details-tab-content">
+                    <div class="comments-area">
+                        <h3 class="comments-title">
+                            {{ nb_commentaires }} Comment{% if nb_commentaires > 1 %}s{% endif %}
+                            :
+                        </h3>
+                        <ol class="comment-list">
+                            {% for comment in commentaires %}
+                                <li class="comment">
+                                    <article class="comment-body ps-1">
+                                        <footer class="comment-meta">
+                                            <div class="comment-author vcard">
+                                                <b class="fn">{{ comment.name }}</b>
+                                                <span class="says">says:</span>
+                                            </div>
+                                            <div class="comment-metadata">
+                                                <a href="#">
+                                                    <span>{{ comment.date }}</span>
+                                                </a>
+                                            </div>
+                                        </footer>
+                                        <div class="comment-content">
+                                            <p>{{ comment.texte }}</p>
+                                        </div>
+                                    </article>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                        <div class="comment-respond">
+                            <h3 class="comment-reply-title">Leave a Comment</h3>
+                            <form class="comment-form" method="post">
+                                {% csrf_token %}
+                                <div class="mt-3">{{ comment_form.as_p }}</div>
+                                <p class="form-submit mt-3">
+                                    <input type="submit"
+                                           name="submit"
+                                           id="submit"
+                                           class="submit"
+                                           value="Post A Comment">
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div class="related-products">
+    <div class="container">
+        <div class="section-title">
+            <span class="sub-title">Our Shop</span>
+            <h2>Related Products</h2>
+        </div>
+        <div class="products-slides owl-carousel owl-theme">
+            {% for product in related_products %}
+                <div class="single-products-box">
+                    <div class="products-image">
+                        <a href="{% url 'product' product.id %}">
+                            <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}"
+                                 class="main-image"
+                                 alt="image">
+                            <img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}"
+                                 class="hover-image"
+                                 alt="image">
+                        </a>
+                        <div class="products-button">
+                            <ul>
                                 <li>
-                                    <span>Product Category:</span> <a href="{% url 'all_products' %}?category={{ product.categorie.id }}">{{ product.categorie }}</a>
+                                    <div class="wishlist-btn">
+                                        <a href="{% url 'wishlist' product.id %}">
+                                            <i class="bx bx{% if user.is_authenticated and product in wishlist_products %}s{% endif %}-heart"></i>
+                                            <span class="tooltip-label">Add to Wishlist</span>
+                                        </a>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span>Product Type:</span> <a href="{% url 'all_products' %}?type={{ product.type }}">{{ product.type }}</a>
+                                    <div class="quick-view-btn">
+                                        <a href="#"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#productsQuickView{{ product.id }}">
+                                            <i class='bx bx-search-alt'></i>
+                                            <span class="tooltip-label">Quick View</span>
+                                        </a>
+                                    </div>
                                 </li>
                             </ul>
-
-                            <div class="products-size-wrapper">
-                                <span>Size:</span>
-
-                                {% for variant_with_stock in variants_with_stock %}
-                                    {% with variant_with_stock.variant as var %}
-                                        <a {% if variant_with_stock.has_stock %}href="?variant={{ var.id }}"{% endif %}>
-                                            <button class="{% if not variant_with_stock.has_stock %}btn btn-disabled{% else %}{% if var.id == variant_param %}default-btn{% else %}optional-btn{% endif %}{% endif %}" {% if not variant_with_stock.has_stock %}disabled{% endif %}>{{ var }}</button>
-                                        </a>
-                                    {% endwith %}
-                                {% endfor %}
-                            </div>
-
-                            <div class="products-info-btn">
-                                <a href="{% url 'contact' %}"><i class="bx bx-envelope"></i> Ask about this products</a>
-                            </div>
-
-                            <form class="products-add-to-cart" action="{% url 'add_to_cart' product.product_variant.id %}?quantity={{ quantity }}" method="get">
-                                    {% csrf_token %}
-                                <div class="input-counter">
-                                    <span class="minus-btn"><i class='bx bx-minus'></i></span>
-                                    <input readonly
-                                           type="text"
-                                           name="quantity"
-                                           value="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
-                                           min="{% if product.product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
-                                           max="{{ product.product_variant.quantite_stock }}"
-                                           {% if product.product_variant.quantite_stock == 0 %}disabled{% endif %}>
-                                    <span class="plus-btn"><i class='bx bx-plus'></i></span>
-                                </div>
-                                {% if product.product_variant.quantite_stock != 0 %}
-                                    <button type="submit" class="default-btn">Add To Cart</button>
-                                    {% else %}
-                                    <button type="button" class="optional-btn" disabled>SOLD OUT</button>
-                                    {% endif %}
-                            </form>
-
-                            <div class="wishlist-compare-btn">
-                                <a href="{% url 'wishlist' product.id %}" class="{% if wp %}default-btn{% else %}optional-btn{% endif %}"><i class="bx bx{% if wp %}s{% endif %}-heart"></i> {% if wp %}  Remove from Wishlist {% else %}  Add to Wishlist{% endif %} </a>
-                            </div>
-
-                            <div class="buy-checkbox-btn">
-            
-
-                                <div class="item">
-                                    <a {% if product.product_variant.quantite_stock == 0 %}{% else %}href="{% url 'add_to_cart' product.product_variant.id %}?quantity=1"{% endif %} class="{% if product.product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}">{% if product.product_variant.quantite_stock == 0 %}Sold Out! {% else %}Buy it now!{% endif %}</a>
-                                </div>
-                            </div>
                         </div>
+                        {% if product.promo %}<div class="sale-tag">Sale!</div>{% endif %}
+                        {% if product.date_ajout_produit_db == today %}<div class="new-tag">New!</div>{% endif %}
+                    </div>
+                    <div class="products-content">
+                        <h3>
+                            <a href="{% url 'product' product.id %}">{{ product.nom }}</a>
+                        </h3>
+                        <div class="price">
+                            {% if product.promo %}
+                                <span class="old-price">{{ product.related_product_variant.prix }}€</span>
+                                <span class="new-price">{{ product.related_product_variant.prix_promo|floatformat:2 }}€</span>
+                            {% else %}
+                                <span class="new-price">{{ product.related_product_variant.prix }}€</span>
+                            {% endif %}
+                        </div>
+                        <a href="#" class="add-to-cart">Add to Cart</a>
                     </div>
                 </div>
-
-                <div class="tab products-details-tab">
-                    <ul class="tabs">
-                        <li><a href="#">
-                            <div class="dot"></div> Description
-                        </a></li>
-
-                        <li><a href="#">
-                            <div class="dot"></div> Comments
-                        </a></li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <div class="tabs-item">
-                            <div class="products-details-tab-content">
-                                <p>{{ product.description }} </p>
-
-                                <div class="accordion accordion-flush" id="accordionFlushExample">
-                                    <div class="accordion-item">
-                                      <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                          Ingredients
-                                        </button>
-                                      </h2>
-                                      <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                                        <div class="accordion-body">
-                                          {{ product.ingredients }}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="accordion-item">
-                                      <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                            Macronutrients
-                                        </button>
-                                      </h2>
-                                      <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                                        <div class="accordion-body">
-                                          {{ product.macronutriments }}
-                                        </div>
-                                      </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tabs-item">
-                            <div class="products-details-tab-content">
-                                <div class="comments-area">
-                                    <h3 class="comments-title">2 Comments:</h3>
-    
-                                    <ol class="comment-list">
-                                        <li class="comment">
-                                            <article class="comment-body">
-                                                <footer class="comment-meta">
-                                                    <div class="comment-author vcard">
-                                                        <img src="{% static 'shop/assets/img/user1.jpg' %}" class="avatar" alt="image">
-                                                        <b class="fn">John Jones</b>
-                                                        <span class="says">says:</span>
-                                                    </div>
-    
-                                                    <div class="comment-metadata">
-                                                        <a>
-                                                            <span>April 24, 2021 at 10:59 am</span>
-                                                        </a>
-                                                    </div>
-                                                </footer>
-    
-                                                <div class="comment-content">
-                                                    <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
-                                                </div>
-    
-                                                <div class="reply">
-                                                    <a href="#" class="comment-reply-link">Reply</a>
-                                                </div>
-                                            </article>
-    
-                                            <ol class="children">
-                                                <li class="comment">
-                                                    <article class="comment-body">
-                                                        <footer class="comment-meta">
-                                                            <div class="comment-author vcard">
-                                                                <img src="{% static 'shop/assets/img/user2.jpg' %}" class="avatar" alt="image">
-                                                                <b class="fn">Steven Smith</b>
-                                                                <span class="says">says:</span>
-                                                            </div>
-                
-                                                            <div class="comment-metadata">
-                                                                <a href="#">
-                                                                    <span>April 24, 2021 at 10:59 am</span>
-                                                                </a>
-                                                            </div>
-                                                        </footer>
-                
-                                                        <div class="comment-content">
-                                                            <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
-                                                        </div>
-                
-                                                        <div class="reply">
-                                                            <a href="#" class="comment-reply-link">Reply</a>
-                                                        </div>
-                                                    </article>
-    
-                                                    <ol class="children">
-                                                        <li class="comment">
-                                                            <article class="comment-body">
-                                                                <footer class="comment-meta">
-                                                                    <div class="comment-author vcard">
-                                                                        <img src="{% static 'shop/assets/img/user3.jpg' %}" class="avatar" alt="image">
-                                                                        <b class="fn">Sarah Taylor</b>
-                                                                        <span class="says">says:</span>
-                                                                    </div>
-                        
-                                                                    <div class="comment-metadata">
-                                                                        <a href="#">
-                                                                            <span>April 24, 2021 at 10:59 am</span>
-                                                                        </a>
-                                                                    </div>
-                                                                </footer>
-                        
-                                                                <div class="comment-content">
-                                                                    <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
-                                                                </div>
-                        
-                                                                <div class="reply">
-                                                                    <a href="#" class="comment-reply-link">Reply</a>
-                                                                </div>
-                                                            </article>
-                                                        </li>
-                                                    </ol>
-                                                </li>
-                                            </ol>
-                                        </li>
-    
-                                        <li class="comment">
-                                            <article class="comment-body">
-                                                <footer class="comment-meta">
-                                                    <div class="comment-author vcard">
-                                                        <img src="{% static 'shop/assets/img/user4.jpg' %}" class="avatar" alt="image">
-                                                        <b class="fn">John Doe</b>
-                                                        <span class="says">says:</span>
-                                                    </div>
-    
-                                                    <div class="comment-metadata">
-                                                        <a href="#">
-                                                            <span>April 24, 2021 at 10:59 am</span>
-                                                        </a>
-                                                    </div>
-                                                </footer>
-    
-                                                <div class="comment-content">
-                                                    <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
-                                                </div>
-    
-                                                <div class="reply">
-                                                    <a href="#" class="comment-reply-link">Reply</a>
-                                                </div>
-                                            </article>
-    
-                                            <ol class="children">
-                                                <li class="comment">
-                                                    <article class="comment-body">
-                                                        <footer class="comment-meta">
-                                                            <div class="comment-author vcard">
-                                                                <img src="{% static 'shop/assets/img/user1.jpg' %}" class="avatar" alt="image">
-                                                                <b class="fn">James Anderson</b>
-                                                                <span class="says">says:</span>
-                                                            </div>
-                
-                                                            <div class="comment-metadata">
-                                                                <a href="#">
-                                                                    <span>April 24, 2021 at 10:59 am</span>
-                                                                </a>
-                                                            </div>
-                                                        </footer>
-                
-                                                        <div class="comment-content">
-                                                            <p>Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen.</p>
-                                                        </div>
-                
-                                                        <div class="reply">
-                                                            <a href="#" class="comment-reply-link">Reply</a>
-                                                        </div>
-                                                    </article>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                    </ol>
-    
-                                    <div class="comment-respond">
-                                        <h3 class="comment-reply-title">Leave a Reply</h3>
-    
-                                        <form class="comment-form">
-                                            <p class="comment-notes">
-                                                <span id="email-notes">Your email address will not be published.</span>
-                                                Required fields are marked 
-                                                <span class="required">*</span>
-                                            </p>
-                                            <p class="comment-form-author">
-                                                <label>Name <span class="required">*</span></label>
-                                                <input type="text" id="author" placeholder="Your Name*" name="author" required="required">
-                                            </p>
-                                            <p class="comment-form-email">
-                                                <label>Email <span class="required">*</span></label>
-                                                <input type="email" id="email" placeholder="Your Email*" name="email" required="required">
-                                            </p>
-                                            <p class="comment-form-url">
-                                                <label>Website</label>
-                                                <input type="url" id="url" placeholder="Website" name="url">
-                                            </p>
-                                            <p class="comment-form-comment">
-                                                <label>Comment</label>
-                                                <textarea name="comment" id="comment" cols="45" placeholder="Your Comment..." rows="5" maxlength="65525" required="required"></textarea>
-                                            </p>
-                                            <p class="comment-form-cookies-consent">
-                                                <input type="checkbox" value="yes" name="wp-comment-cookies-consent" id="wp-comment-cookies-consent">
-                                                <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label>
-                                            </p>
-                                            <p class="form-submit">
-                                                <input type="submit" name="submit" id="submit" class="submit" value="Post A Comment">
-                                            </p>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="related-products">
-                <div class="container">
-                    <div class="section-title">
-                        <span class="sub-title">Our Shop</span>
-                        <h2>Related Products</h2>
-                    </div>
-
-                    <div class="products-slides owl-carousel owl-theme">
-                        {% for product in related_products %}
-                        <div class="single-products-box">
-                            <div class="products-image">
-                                <a href="{% url 'product' product.id %}">
+            {% endfor %}
+        </div>
+        {% for product in related_products %}
+            <!-- Start QuickView Modal Area -->
+            <div class="modal fade productsQuickView"
+                 id="productsQuickView{{ product.id }}"
+                 tabindex="-1"
+                 role="dialog"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <button type="button"
+                                class="close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true"><i class='bx bx-x'></i></span>
+                        </button>
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 col-md-6">
+                                <div class="products-image">
                                     <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}"
-                                         class="main-image"
                                          alt="image">
-                                    <img src="{% if 'https' in product.image_2.url %}{{ product.image_2 }}{% else %}{{ product.image_2.url }}{% endif %}"
-                                         class="hover-image"
-                                         alt="image">
-                                </a>
-                                <div class="products-button">
-                                    <ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <div class="products-content">
+                                    <h3>
+                                        <a href="{% url 'product' product.id %}">{{ product.nom }}</a>
+                                    </h3>
+                                    <div class="price">
+                                        {% if product.promo %}
+                                            <span class="old-price">{{ product.related_product_variant.prix }}€</span>
+                                            <span class="new-price">{{ product.related_product_variant.prix_promo|floatformat:2 }}€</span>
+                                        {% else %}
+                                            <span class="new-price">{{ product.related_product_variant.prix }}€</span>
+                                        {% endif %}
+                                    </div>
+                                    <ul class="products-info">
                                         <li>
-                                            <div class="wishlist-btn">
-                                                <a href="{% url 'wishlist' product.id %}">
-                                                    <i class='bx bx-heart'></i>
-                                                    <span class="tooltip-label">Add to Wishlist</span>
-                                                </a>
-                                            </div>
+                                            <span>Vendor:</span> <a>{{ product.marque_vendeur }}</a>
                                         </li>
                                         <li>
-                                            <div class="quick-view-btn">
-                                                <a href="#"
-                                                   data-bs-toggle="modal"
-                                                   data-bs-target="#productsQuickView{{ product.id }}">
-                                                    <i class='bx bx-search-alt'></i>
-                                                    <span class="tooltip-label">Quick View</span>
-                                                </a>
-                                            </div>
+                                            <span>Availability:</span> <a>
+                                                {% if product.related_product_variant.quantite_stock != 0 %}
+                                                    In stock ({{ product.related_product_variant.quantite_stock }} items)
+                                                {% else %}
+                                                    <span class="text-danger">Sold out</span>
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <span>Products Type:</span> <a href="?category={{ product.categorie.id }}">{{ product.categorie }}</a>
                                         </li>
                                     </ul>
-                                </div>
-                                {% if product.promo %}<div class="sale-tag">Sale!</div>{% endif %}
-                                {% if product.date_ajout_produit_db == today %}<div class="new-tag">New!</div>{% endif %}
-                            </div>
-                            <div class="products-content">
-                                <h3>
-                                    <a href="{% url 'product' product.id %}">{{ product.nom }}</a>
-                                </h3>
-                                <div class="price">
-                                    {% if product.promo %}
-                                        <span class="old-price">{{ product.related_product_variant.prix }}€</span>
-                                        <span class="new-price">{{ product.related_product_variant.prix_promo|floatformat:2 }}€</span>
-                                    {% else %}
-                                        <span class="new-price">{{ product.related_product_variant.prix }}€</span>
-                                    {% endif %}
-                                </div>
-                                <a href="#" class="add-to-cart">Add to Cart</a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    
-                    {% for product in related_products %}
-                    <!-- Start QuickView Modal Area -->
-                    <div class="modal fade productsQuickView"
-                    id="productsQuickView{{ product.id }}"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <button type="button"
-                                class="close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close">
-                                        <span aria-hidden="true"><i class='bx bx-x'></i></span>
-                                    </button>
-                                    <div class="row align-items-center">
-                                        <div class="col-lg-6 col-md-6">
-                                            <div class="products-image">
-                                                <img src="{% if 'https' in product.image_1.url %}{{ product.image_1 }}{% else %}{{ product.image_1.url }}{% endif %}"
-                                                alt="image">
-                                            </div>
+                                    <div class="products-size-wrapper">
+                                        <h4>Variation :</h4>
+                                        <p>{{ product.related_product_variant.variant.contenu }}</p>
+                                    </div>
+                                    <form class="products-add-to-cart" method="post">
+                                        {% csrf_token %}
+                                        <div class="input-counter">
+                                            <span class="minus-btn"><i class='bx bx-minus'></i></span>
+                                            <input readonly
+                                                   type="text"
+                                                   value="{% if product.related_product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                                   min="{% if product.related_product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
+                                                   max="{{ product.related_product_variant.quantite_stock }}"
+                                                   {% if product.related_product_variant.quantite_stock == 0 %}disabled{% endif %}>
+                                            <span class="plus-btn"><i class='bx bx-plus'></i></span>
                                         </div>
-                                        <div class="col-lg-6 col-md-6">
-                                            <div class="products-content">
-                                                <h3>
-                                                    <a href="{% url 'product' product.id %}">{{ product.nom }}</a>
-                                            </h3>
-                                            <div class="price">
-                                                {% if product.promo %}
-                                                <span class="old-price">{{ product.related_product_variant.prix }}€</span>
-                                                <span class="new-price">{{ product.related_product_variant.prix_promo|floatformat:2 }}€</span>
-                                                {% else %}
-                                                <span class="new-price">{{ product.related_product_variant.prix }}€</span>
-                                                {% endif %}
-                                            </div>
-                                            <ul class="products-info">
-                                                <li>
-                                                    <span>Vendor:</span> <a>{{ product.marque_vendeur }}</a>
-                                                </li>
-                                                <li>
-                                                    <span>Availability:</span> <a>
-                                                        {% if product.related_product_variant.quantite_stock != 0 %}
-                                                        In stock ({{ product.related_product_variant.quantite_stock }} items)
-                                                        {% else %}
-                                                        <span class="text-danger">Sold out</span>
-                                                        {% endif %}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <span>Products Type:</span> <a href="?category={{ product.categorie.id }}">{{ product.categorie }}</a>
-                                                </li>
-                                            </ul>
-                                            <div class="products-size-wrapper">
-                                                <h4>Variation :</h4>
-                                                <p>{{ product.related_product_variant.variant.contenu }}</p>
-                                            </div>
-                                            <form class="products-add-to-cart" method="post">
-                                                {% csrf_token %}
-                                                <div class="input-counter">
-                                                    <span class="minus-btn"><i class='bx bx-minus'></i></span>
-                                                    <input readonly
-                                                    type="text"
-                                                    value="{% if product.related_product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
-                                                    min="{% if product.related_product_variant.quantite_stock != 0 %}1{% else %}0{% endif %}"
-                                                    max="{{ product.related_product_variant.quantite_stock }}"
-                                                    {% if product.related_product_variant.quantite_stock == 0 %}disabled{% endif %}>
-                                                    <span class="plus-btn"><i class='bx bx-plus'></i></span>
-                                                </div>
-                                                <button type="submit"
+                                        <button type="submit"
                                                 class="{% if product.related_product_variant.quantite_stock == 0 %}optional-btn{% else %}default-btn{% endif %}"
                                                 {% if product.related_product_variant.quantite_stock == 0 %}disabled{% endif %}>
-                                                Add to Cart
-                                                </button>
-                                            </form>
-                                            <a href="{% url 'product' product.id %}" class="view-full-info">View Full Info</a>
-                                        </div>
-                                    </div>
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                    <a href="{% url 'product' product.id %}" class="view-full-info">View Full Info</a>
                                 </div>
                             </div>
-                            </div>
                         </div>
-                        <!-- End QuickView Modal Area -->
-                        {% endfor %}
-                    </div>
-                </div> 
-        </section>
-        <!-- End Product Details Area -->
-
-        <!-- Start Facility Area -->
-        <section class="facility-area pb-70">
-            <div class="container">
-                <div class="facility-slides owl-carousel owl-theme">
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-tracking"></i>
-                        </div>
-                        <h3>Free Shipping Worldwide</h3>
-                    </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-return"></i>
-                        </div>
-                        <h3>Easy Return Policy</h3>
-                    </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-shuffle"></i>
-                        </div>
-                        <h3>7 Day Exchange Policy</h3>
-                    </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-sale"></i>
-                        </div>
-                        <h3>Weekend Discount Coupon</h3>
-                    </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-credit-card"></i>
-                        </div>
-                        <h3>Secure Payment Methods</h3>
-                    </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-location"></i>
-                        </div>
-                        <h3>Track Your Package</h3>
-                    </div>
-
-                    <div class="single-facility-box">
-                        <div class="icon">
-                            <i class="flaticon-customer-service"></i>
-                        </div>
-                        <h3>24/7 Customer Support</h3>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- End Facility Area -->
-
-        
-        
-
-
-        <div class="go-top"><i class="bx bx-up-arrow-alt"></i></div>
-
+            <!-- End QuickView Modal Area -->
+        {% endfor %}
+    </div>
+</div>
+</section>
+<!-- End Product Details Area -->
+<!-- Start Facility Area -->
+<section class="facility-area pb-70">
+    <div class="container">
+        <div class="facility-slides owl-carousel owl-theme">
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-tracking"></i>
+                </div>
+                <h3>Free Shipping Worldwide</h3>
+            </div>
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-return"></i>
+                </div>
+                <h3>Easy Return Policy</h3>
+            </div>
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-shuffle"></i>
+                </div>
+                <h3>7 Day Exchange Policy</h3>
+            </div>
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-sale"></i>
+                </div>
+                <h3>Weekend Discount Coupon</h3>
+            </div>
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-credit-card"></i>
+                </div>
+                <h3>Secure Payment Methods</h3>
+            </div>
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-location"></i>
+                </div>
+                <h3>Track Your Package</h3>
+            </div>
+            <div class="single-facility-box">
+                <div class="icon">
+                    <i class="flaticon-customer-service"></i>
+                </div>
+                <h3>24/7 Customer Support</h3>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Facility Area -->
+<div class="go-top">
+    <i class="bx bx-up-arrow-alt"></i>
+</div>
 {% endblock content %}

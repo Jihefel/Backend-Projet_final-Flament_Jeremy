@@ -23,8 +23,9 @@
                                        href="{% url 'custom_admin:products_show' product.id %}"><i class="fa-solid fa-circle-info"></i></a>
                                     <a class="optional-btn"
                                        href="{% url 'custom_admin:products_update' product.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a class="default-btn"
-                                       href="{% url 'custom_admin:products_delete' product.id %}"><i class="fa-solid fa-trash"></i></a>
+                                    {% if is_admin or is_web %}
+                                        <a class="default-btn" href="{% url 'custom_admin:products_delete' product.id %}"><i class="fa-solid fa-trash"></i></a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </ul>

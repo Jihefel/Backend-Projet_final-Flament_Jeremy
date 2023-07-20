@@ -22,7 +22,10 @@
                 </div>
                 {{ contact.texte }}
             </a>
-            <a href="{% url 'custom_admin:contacts_delete' contact.id %}" class="default-btn d-flex align-items-center"><i class="fa-solid fa-trash"></i></a>
+            {% if contact.lu_par_admin == 1 %}
+                <a href="{% url 'custom_admin:contacts_mark_as_unread' contact.id %}" class="optional-btn d-flex align-items-center"><i class="fa-solid fa-envelope"></i></a>
+            {% endif %}
+                <a href="{% url 'custom_admin:contacts_delete' contact.id %}" class="default-btn d-flex align-items-center"><i class="fa-solid fa-trash"></i></a>
             </div>
             {% endfor %}
         </div>

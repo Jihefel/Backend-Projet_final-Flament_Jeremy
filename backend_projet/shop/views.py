@@ -11,6 +11,8 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.urls import reverse
 from backend_projet.context_processors import custom_context
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+
 
 
 
@@ -24,11 +26,21 @@ def index(request):
     context_global = custom_context(request)
 
     recent_products = context_global['recent_products']
+    most_popular_products = context_global['most_popular_products']
 
     if request.user.is_authenticated:
         wishlist_products = request.user.produits_wishlist.all()
 
     for product in recent_products:
+            variants = product.variations.filter(produits=product)
+            first_variant = variants.first()
+            if first_variant:
+                product_variant = ProductVariant.objects.get(product=product, variant=first_variant)
+                if product.promo:
+                    product_variant.prix_promo = float(product_variant.prix) - (float(product_variant.prix) * (float(product.promo.pourcentage_promo) / 100))
+                product.product_variant = product_variant  # Add the product_variant to the product object
+
+    for product in most_popular_products:
             variants = product.variations.filter(produits=product)
             first_variant = variants.first()
             if first_variant:
@@ -69,7 +81,7 @@ def index(request):
                     html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
                 )
                 messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         newsletter_form = NewsletterForm()
     
@@ -233,21 +245,21 @@ def checkout(request):
 def connection(request):
 
     if request.method == "POST":
-            username = request.POST['username']
-            password = request.POST['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, f"Welcome {user.username}")
-                return redirect('home')
-            else:
-                if not username in User.objects.all():
-                    messages.error(request, "Unknown account.")
-                else :
-                    messages.error(request, "Username or password incorrect.")
-                
-                context = locals()
-                return render(request, 'shop/login.html', context)
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Welcome {user.username}")
+            return redirect('home')
+        else:
+            if not User.objects.filter(username=username).exists():
+                messages.error(request, "Unknown account.")
+            else :
+                messages.error(request, "Username or password incorrect.")
+            
+            context = locals()
+            return render(request, 'shop/login.html', context)
     context = locals()
     return render(request, 'shop/login.html', context)
 
@@ -282,38 +294,6 @@ def change_password(request):
 
     context = locals()  
     return render(request, 'shop/change_password.html', context)
-
-
-def customPasswordReset(request):
-    if request.method == 'POST':
-        form = CustomResetPasswordForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password1 = form.cleaned_data['password1']
-            password2 = form.cleaned_data['password2']
-            if not User.objects.filter(email=email).exists():
-                messages.error(request, 'Email does not match any known user')
-            elif password1 != password2:
-                messages.error(request, "Passwords do not match")
-            else:
-                user = User.objects.get(email=email)
-                user.password = make_password(password1)
-                user.save()
-                messages.success(request, 'Your password has been reset successfully.')
-                send_mail(
-                    f"{user.username}, your password has been reset and changed",
-                    "",
-                    "jfl.jflament@gmail.com",
-                    [user.email],
-                    html_message=render_to_string('mails/confirm_password.html', {'user': user}),
-                    )
-                return redirect('login')  # Redirection vers la page de connexion après la modification du mot de passe
-    else:
-        form = CustomResetPasswordForm()
-
-    context = locals()
-    return render(request, 'shop/change_password.html', context)
-
 
 
 def all_products(request):
@@ -432,7 +412,7 @@ def all_products(request):
                     html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
                 )
                 messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         newsletter_form = NewsletterForm()
     
@@ -447,8 +427,11 @@ def product(request, id):
 
     related_products = Produits.objects.all().order_by('?')[:6]
 
-   
+    
     variants = product.variations.filter(produits=product) 
+
+    commentaires = Commentaires.objects.filter(produits=product).order_by('-date')
+    nb_commentaires = commentaires.count()
 
     if request.user.is_authenticated:
         wishlist_products = request.user.produits_wishlist.all()
@@ -494,7 +477,16 @@ def product(request, id):
     # Form newsletter
     if request.method == 'POST':
         newsletter_form = NewsletterForm(request.POST)
-        if newsletter_form.is_valid():
+        comment_form = CommentairesForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.date = datetime.now()
+            comment.save()
+            product.commentaire.add(comment)
+            product.save()
+            messages.success(request, f"Comment successfully posted on {product.nom}")
+            return redirect('product', product.id)
+        elif newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
             if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
                 user_known = User.objects.get(email=email)
@@ -515,9 +507,10 @@ def product(request, id):
                     html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
                 )
                 messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         newsletter_form = NewsletterForm()
+        comment_form = CommentairesForm()
     
     context = locals()
     return render(request, 'shop/products-type-1.html', context)
@@ -597,7 +590,7 @@ def article(request, id):
     tags = Tags.objects.filter(blogpost=blog)
     all_tags = Tags.objects.all()
     
-    commentaires = Commentaires.objects.all().order_by('-date')
+    commentaires = Commentaires.objects.filter(blogpost=blog).order_by('-date')
     nb_commentaires = commentaires.count()
 
     # Form newsletter
@@ -612,7 +605,7 @@ def article(request, id):
             blog.save()
             messages.success(request, f"Comment successfully posted on {blog.titre}")
             return redirect('article', blog.id)
-        if newsletter_form.is_valid():
+        elif newsletter_form.is_valid():
             email = newsletter_form.cleaned_data['email']
             if User.objects.filter(email=email).exists() and User.objects.get(email=email).abonne_newsletter == 0:
                 user_known = User.objects.get(email=email)
@@ -633,7 +626,7 @@ def article(request, id):
                     html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
                 )
                 messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         
     else:
         newsletter_form = NewsletterForm()
@@ -644,7 +637,7 @@ def article(request, id):
 
 def blog(request):
 
-    blogs = BlogPost.objects.all().order_by('-date_post')
+    blogs = BlogPost.objects.filter(is_confirmed=1).order_by('-date_post')
     cats_blog = CategoriesBlog.objects.all()
     tags = Tags.objects.all()
 
@@ -716,7 +709,7 @@ def blog(request):
                     html_message=render_to_string('mails/subscribe_newsletter.html', {'email': email}),
                 )
                 messages.success(request, "Successfully subscribed to the newsletter.")
-            return redirect('home')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         newsletter_form = NewsletterForm()
     
@@ -879,3 +872,18 @@ def delete_from_cart(request,id):
     product_in_cart.delete_from_cart()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+# Reset Password
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'shop/password_reset.html'
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'shop/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'shop/password_reset_confirm.html'
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'shop/password_reset_complete.html'
