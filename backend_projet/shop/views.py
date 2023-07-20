@@ -823,7 +823,7 @@ def add_to_cart(request, id):
     
 
     # Vérifier si le produit_variant est déjà présent dans le panier de l'utilisateur
-    if Panier.objects.filter(produit_inclus_id=product_variant).exists():
+    if Panier.objects.filter(produit_inclus_id=product_variant, user=user).exists():
         # Si le produit_variant existe déjà, mettre à jour la quantité
         product_in_cart = Panier.objects.get(produit_inclus_id=product_variant)
         product_in_cart.quantite_ajoutee += int(quantity)
