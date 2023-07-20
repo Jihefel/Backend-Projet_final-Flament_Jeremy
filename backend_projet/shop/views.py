@@ -825,7 +825,7 @@ def add_to_cart(request, id):
     # Vérifier si le produit_variant est déjà présent dans le panier de l'utilisateur
     if Panier.objects.filter(produit_inclus_id=product_variant, user=user).exists():
         # Si le produit_variant existe déjà, mettre à jour la quantité
-        product_in_cart = Panier.objects.get(produit_inclus_id=product_variant)
+        product_in_cart = Panier.objects.get(produit_inclus_id=product_variant, user=user)
         product_in_cart.quantite_ajoutee += int(quantity)
         product_in_cart.save()
         product_variant.quantite_stock -= int(quantity)
@@ -867,7 +867,7 @@ def update_cart(request):
 
 @login_required(login_url = 'login')
 def delete_from_cart(request,id):
-    product_in_cart = Panier.objects.get(produit_inclus_id=id)
+    product_in_cart = Panier.objects.get(produit_inclus_id=id, user = request.user)
     messages.success(request, f"You successfully deleted the product from your cart")
     product_in_cart.delete_from_cart()
 
